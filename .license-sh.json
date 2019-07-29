@@ -1,0 +1,19 @@
+{
+  "preset": "enterprise",
+  "whitelist": [
+    "GPL-2"
+  ],
+  "blacklist": [
+    "Apache"
+  ],
+  "projects": [
+    {
+      "directory": "./examples/npm-0",
+      "type": "npm"
+    },
+    {
+      "directory": "./backend",
+      "type": "python"
+    }
+  ]
+}
