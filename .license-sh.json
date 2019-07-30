@@ -11,10 +11,6 @@
   ],
   "projects": [
     {
-      "directory": "/Users/janvorcak/WebstormProjects/managed-services/frontend",
-      "type": "npm"
-    },
-    {
       "directory": "./examples/npm-0",
       "type": "npm"
     }

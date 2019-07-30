@@ -28,12 +28,18 @@ class NpmRunner:
     direct_dependencies = package.get('requires', {}).keys()
     version = package.get('version')
 
-    print(package_name)
-    return {
-      name: {
+    def get_json(name):
+      return {
         "version": version,
-        "dependencies": NpmRunner.get_dependencies(name, all_dependencies, package.get('dependencies', {}).get(name, None))
-      } for name in direct_dependencies
+        "dependencies": NpmRunner.get_dependencies(
+          name,
+          all_dependencies,
+          package.get('dependencies', {}).get(name, None)
+        )
+      }
+
+    return {
+      name: get_json(name) for name in direct_dependencies
     }
 
   @staticmethod
