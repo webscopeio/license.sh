@@ -6,14 +6,17 @@
   "blacklist": [
     "Apache"
   ],
+  "ignored": [
+
+  ],
   "projects": [
     {
-      "directory": "./examples/npm-0",
+      "directory": "/Users/janvorcak/WebstormProjects/managed-services/frontend",
       "type": "npm"
     },
     {
-      "directory": "./backend",
-      "type": "python"
+      "directory": "./examples/npm-0",
+      "type": "npm"
     }
   ]
 }

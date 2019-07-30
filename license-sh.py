@@ -39,7 +39,7 @@ if __name__ == '__main__':
         directory = project['directory']
         project_type = project['type']
         # project_runner = __import__(f'./license_sh.runners.{project_type}.Runner')
-        runner = NpmRunner(directory)
+        runner = NpmRunner(directory, config)
         runner.check()
   except FileNotFoundError:
     # TODO = test - file does not exist
