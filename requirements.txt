@@ -1,3 +1,5 @@
 PyInquirer
 anytree
 yaspin
+urllib3
+aiohttp

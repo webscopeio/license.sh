@@ -1,11 +1,85 @@
+import asyncio
+from json import JSONDecodeError
+
+import aiohttp
 import json
 import subprocess
 from os import path
-from pprint import pprint
+
+import aiohttp as aiohttp
+from anytree import AnyNode, RenderTree, AsciiStyle
+import threading
+import urllib3
+import time
+
+from license_sh.reporters.ConsoleReporter import ConsoleReporter
+
+NPM_HOST = 'https://registry.npmjs.org'
+http = urllib3.HTTPConnectionPool(NPM_HOST, num_pools=50)
 
 from yaspin import yaspin
 
-from license_sh.reporters.ConsoleReporter import ConsoleReporter
+
+def flatten_package_lock_dependencies(package_lock_dependencies):
+  """
+  Flattens package.lock dependencies
+  :param package_lock_dependencies:
+  :return: tuple(flat_array, dep_mapping)
+     WHERE
+     array flat_array is a flat array of all dependencies
+     dict dep_mapping is a tree representing nested dependencies
+  """
+  # get the root dependencies
+  root_deps = [(name, dep.get('version')) for name, dep in package_lock_dependencies.items()]
+
+  for dep in package_lock_dependencies.values():
+    version, requires, dependencies = [dep.get(k, None) for k in ('version', 'requires', 'dependencies')]
+    if dependencies:
+      deps = flatten_package_lock_dependencies(dependencies)
+      root_deps += deps
+
+  return set(root_deps)
+
+
+def add_nested_dependencies(dependency, package_lock_tree, parent):
+  for name, version_request in dependency.get('requires', {}).items():
+    node = AnyNode(name=name, version_request=version_request, parent=parent, dependencies=dependency.get('dependencies'))
+
+    dep = None
+    p = node
+    names = []
+    while p.parent:
+      if dep is None and p.dependencies and p.dependencies.get(name):
+        dep = p.dependencies.get(name)
+      p = p.parent
+      names.append(p.name)
+
+    # check the root
+    if dep is None and p.dependencies and p.dependencies.get(name):
+      dep = p.dependencies.get(name)
+
+    node.version = dep.get('version')
+
+    names = names[:-1]  # let's forget about top level
+
+    # if I'm not already in a tree
+    if name not in names:
+      if dep:
+        add_nested_dependencies(dep, package_lock_tree, node)
+
+
+def get_dependency_tree(package_json, package_lock_tree):
+  root = AnyNode(name=package_json.get('name', 'package.json'), dependencies=package_lock_tree,
+                 version=package_json.get('version'))
+
+  # load root dependencies from package.json
+  for dep_name in package_json.get('dependencies', {}).keys():
+    dependency = package_lock_tree[dep_name]
+    version = dependency.get("version")
+    parent = AnyNode(name=dep_name, version=version, parent=root, dependencies=dependency.get('dependencies'))
+    add_nested_dependencies(dependency, package_lock_tree, parent=parent)
+
+  return root
 
 
 class NpmRunner:
@@ -22,60 +96,40 @@ class NpmRunner:
     self.package_lock_path = path.join(directory, 'package-lock.json')
 
   @staticmethod
-  def get_dependencies(package_name, all_dependencies, package=None):
-    # if package is not provided, we get it from all_dependencies
-    package = package or all_dependencies[package_name]
-    direct_dependencies = package.get('requires', {}).keys()
-    version = package.get('version')
-
-    def get_json(name):
-      return {
-        "version": version,
-        "dependencies": NpmRunner.get_dependencies(
-          name,
-          all_dependencies,
-          package.get('dependencies', {}).get(name, None)
-        )
-      }
-
-    return {
-      name: get_json(name) for name in direct_dependencies
-    }
-
-  @staticmethod
-  def transform_package_lock_to_dependency_tree(root_dependencies, all_dependencies):
-    dependencies = {
-      name: {
-        'version': all_dependencies[name]['version'],
-        'dependencies': NpmRunner.get_dependencies(name, all_dependencies, all_dependencies[name]),
-      } for name in root_dependencies.keys()
-    }
-    return dependencies
-
-  @staticmethod
   def fetch_licenses(all_dependencies):
     license_map = {}
-    counter = 0
-    dependencies_len = len(all_dependencies)
+
+    urls = [f'{NPM_HOST}/{dependency}/{version}' for dependency, version in all_dependencies]
 
     with yaspin(text="Fetching license info from npm ...") as sp:
-      for dependency, content in all_dependencies.items():
-        exact_version = f'{dependency}@{content["version"]}'
-        result = subprocess.run(['npm', 'info', exact_version, '--json'], stdout=subprocess.PIPE)
-        license = json.loads(result.stdout)['license']
+      async def fetch(session, url):
+        async with session.get(url) as resp:
+          return await resp.text()
+          # Catch HTTP errors/exceptions here
 
-        counter += 1
-        percent = counter / dependencies_len
-        sp.text = f"{'%.2f' % percent}% - {dependency} ~ {license}"
-        license_map[dependency] = license
+      async def fetch_concurrent(urls):
+        loop = asyncio.get_event_loop()
+        async with aiohttp.ClientSession() as session:
+          tasks = []
+          for u in urls:
+            tasks.append(loop.create_task(fetch(session, u)))
+
+          for result in asyncio.as_completed(tasks):
+            try:
+              page = json.loads(await result)
+              license_map[f"{page['name']}@{page['version']}"] = page.get('license', 'Unknown')
+            except JSONDecodeError:
+              # TODO - investiage why does such a thing happen
+              pass
+
+      asyncio.run(fetch_concurrent(urls))
 
     return license_map
 
   def check(self):
     with open(self.package_json_path) as package_json_file:
       package_json = json.load(package_json_file)
-      project_name = package_json['name']
-      root_dependencies = package_json['dependencies']
+      project_name = package_json.get('name', 'package.json')
 
     with open(self.package_lock_path) as package_lock_file:
       package_lock = json.load(package_lock_file)
@@ -86,10 +140,8 @@ class NpmRunner:
       print(f"Initiated License.sh check for NPM project {project_name} located at {self.directory}")
       print("===========")
 
-    dependencies = NpmRunner.transform_package_lock_to_dependency_tree(root_dependencies, all_dependencies)
+    dep_tree = get_dependency_tree(package_json, all_dependencies)
+    flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
+    license_map = NpmRunner.fetch_licenses(flat_dependencies)
 
-    license_map = {}
-    # license_map = NpmRunner.fetch_licenses(all_dependencies)
-    #
-    # print("\n")
-    ConsoleReporter.output(dependencies, license_map, project_name=project_name)
+    ConsoleReporter.output(dep_tree, flat_dependencies, license_map, project_name=project_name)
