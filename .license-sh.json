@@ -11,8 +11,13 @@
   ],
   "projects": [
     {
+      "directory": "/Users/janvorcak/WebstormProjects/license-sh-shell",
+      "type": "python"
+    },
+    {
       "directory": "/Users/janvorcak/WebstormProjects/managed-services/frontend",
-      "type": "npm"
+      "type": "npm",
+      "skip": true
     },
     {
       "directory": "./examples/npm-0",

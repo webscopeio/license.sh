@@ -1,16 +1,11 @@
 import asyncio
-from json import JSONDecodeError
-
-import aiohttp
 import json
-import subprocess
+from json import JSONDecodeError
 from os import path
 
 import aiohttp as aiohttp
-from anytree import AnyNode, RenderTree, AsciiStyle
-import threading
 import urllib3
-import time
+from anytree import AnyNode
 
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
 
@@ -140,8 +135,9 @@ class NpmRunner:
       print(f"Initiated License.sh check for NPM project {project_name} located at {self.directory}")
       print("===========")
 
-    dep_tree = get_dependency_tree(package_json, all_dependencies)
-    flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
+    with yaspin(text="Analysing dependencies ...") as sp:
+      dep_tree = get_dependency_tree(package_json, all_dependencies)
+      flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
     license_map = NpmRunner.fetch_licenses(flat_dependencies)
 
     ConsoleReporter.output(dep_tree, flat_dependencies, license_map, project_name=project_name)

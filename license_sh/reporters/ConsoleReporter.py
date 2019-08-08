@@ -19,7 +19,7 @@ class ConsoleReporter:
       license = license_map.get(f'{node.name}@{node.version}', None)
       print(f"{pre}{node.name} - {node.version} - {GREEN}{license}{RESET}")
 
-    print(f"\n{GREEN}All licenses are compatible with your .license-sh.json 🎉{RESET}\n")
+    print(f"\n✅ {GREEN}All licenses are compatible with your .license-sh.json 🎉{RESET}\n")
     return 0
 
   @staticmethod

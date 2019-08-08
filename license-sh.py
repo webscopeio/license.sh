@@ -23,6 +23,7 @@ import json
 
 from docopt import docopt
 from license_sh.runners.npm import NpmRunner
+from license_sh.runners.python import PythonRunner
 
 if __name__ == '__main__':
   arguments = docopt(__doc__, version='License.sh')
@@ -38,9 +39,18 @@ if __name__ == '__main__':
       for project in config['projects']:
         directory = project['directory']
         project_type = project['type']
-        # project_runner = __import__(f'./license_sh.runners.{project_type}.Runner')
-        runner = NpmRunner(directory, config)
+
+        # skip if requested
+        if project.get('skip', False):
+          print(f"⚠️  Skipping {directory}")
+          continue
+
+        if project_type == 'npm':
+          runner = NpmRunner(directory, config)
+        if project_type == 'python':
+          runner = PythonRunner(directory, config)
         runner.check()
+
   except FileNotFoundError:
     # TODO = test - file does not exist
     print('File not found')

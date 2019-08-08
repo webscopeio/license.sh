@@ -1,0 +1,7 @@
+class ProjectIdentifier:
+
+  # Python
+  PYTHON_REQUIREMENTS = 'PYTHON_REQUIREMENTS'
+  PYTHON_PIPENV = 'PYTHON_PIPENV'
+
+
