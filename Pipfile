@@ -10,6 +10,7 @@ anytree = "*"
 yaspin = "*"
 aiohttp = "*"
 PyInquirer = "*"
+urllib3 = "*"
 
 [requires]
 python_version = "3.7"
