@@ -1,5 +1,0 @@
-toml
-PyInquirer
-anytree
-yaspin
-aiohttp
