@@ -7,7 +7,8 @@
 
 module.exports = {
   docs: {
-    "Getting Started": ['introduction'],
+    "Getting Started": ['introduction', 'installation'],
+    Licenses: ['supported-licenses', 'license-presets', 'configuration'],
     Languages: ['lang-python', 'lang-javascript'],
   },
 };

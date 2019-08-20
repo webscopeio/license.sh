@@ -3,20 +3,10 @@ id: introduction
 title: Introduction
 ---
 
-You can write JSX and use React components within your Markdown thanks to [MDX](https://mdxjs.com/).
+- TODO - Write an abstract
 
-export const Highlight = ({children, color}) => (
-  <span
-    style={{
-      backgroundColor: color,
-      borderRadius: '2px',
-      color: '#fff',
-      padding: '0.2rem',
-    }}>
-    {children}
-  </span>
-);
+License.sh is a tool that helps you identify whether open source licenses used
+in your project comply with your legal rules.
 
-<Highlight color="#25c2a0">Docusaurus green</Highlight> and <Highlight color="#1877F2">Facebook blue</Highlight> are my favorite colors.
-
-I can write **Markdown** alongside my _JSX_!
+This tool identifies the type of the project and transitively check all of your dependencies
+and compare them to your whitelist or one of our [presets](license-presets).
