@@ -11,6 +11,7 @@ yaspin = "*"
 aiohttp = "*"
 PyInquirer = "*"
 urllib3 = "*"
+docopt = "*"
 
 [requires]
 python_version = "3.7"

@@ -140,4 +140,4 @@ class NpmRunner:
       flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
     license_map = NpmRunner.fetch_licenses(flat_dependencies)
 
-    ConsoleReporter.output(dep_tree, flat_dependencies, license_map, project_name=project_name)
+    return dep_tree, license_map

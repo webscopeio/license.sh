@@ -81,5 +81,6 @@ class PythonRunner:
     all_dependencies = flatten_dependency_tree(root)
     license_map = PythonRunner.fetch_licenses(all_dependencies)
 
-    ConsoleReporter.output(root, [], license_map)
+    return root, license_map
+
 

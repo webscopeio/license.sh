@@ -11,10 +11,10 @@ Options:
   -h --help     Show this screen.
   --version     Show version.
 """
+from license_sh.config import LICENSE_WHITELIST
+from license_sh.reporters.ConsoleReporter import ConsoleReporter
 
 VERSION = "1.0.0"
-
-import json
 
 from docopt import docopt
 
@@ -33,8 +33,11 @@ if __name__ == '__main__':
 
   if ProjectType.PYTHON_PIPENV in project_types:
     runner = PythonRunner(path, config)
-    runner.check()
+    root, license_map = runner.check()
+    ConsoleReporter.output(root, [], license_map, LICENSE_WHITELIST)
 
   if ProjectType.NPM in project_types:
     runner = NpmRunner(path, config)
-    runner.check()
+    root, license_map = runner.check()
+    ConsoleReporter.output(root, [], license_map, LICENSE_WHITELIST)
+
