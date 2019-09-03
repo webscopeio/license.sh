@@ -18,6 +18,7 @@ setup(
     'license_sh.runners.python',
     'license_sh.reporters',
   ],
+  license='MIT',
   install_requires=[
     "anytree",
     "yaspin",
