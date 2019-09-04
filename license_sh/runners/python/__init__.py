@@ -5,7 +5,7 @@ import subprocess
 from json import JSONDecodeError
 
 import aiohttp
-from anytree import AnyNode
+from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
 
 from license_sh.helpers import flatten_dependency_tree
@@ -27,10 +27,9 @@ PYPI_HOST = 'https://pypi.org/pypi'
 
 class PythonRunner:
 
-  def __init__(self, directory: str, config):
+  def __init__(self, directory: str):
     self.directory = directory
     self.verbose = True
-    self.config = config
 
     self.pipfile_path: str = os.path.join(self.directory, 'Pipfile')
     self.pipfile_lock_path: str = os.path.join(self.directory, 'Pipfile.lock')
@@ -80,6 +79,9 @@ class PythonRunner:
 
     all_dependencies = flatten_dependency_tree(root)
     license_map = PythonRunner.fetch_licenses(all_dependencies)
+
+    for node in PreOrderIter(root):
+      node.license = license_map.get(f'{node.name}@{node.version}', None)
 
     return root, license_map
 

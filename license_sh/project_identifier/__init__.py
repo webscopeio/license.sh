@@ -12,7 +12,7 @@ class ProjectType(Enum):
 __file_exists = lambda path: isfile(path) and access(path, R_OK)
 
 
-def get_project_types(dir_path: str):
+def get_project_types(dir_path: str) -> [ProjectType]:
   types = []
 
   # check for python's pipenv

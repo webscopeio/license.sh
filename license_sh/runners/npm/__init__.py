@@ -5,7 +5,7 @@ from os import path
 
 import aiohttp as aiohttp
 import urllib3
-from anytree import AnyNode
+from anytree import AnyNode, PreOrderIter
 
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
 
@@ -74,6 +74,8 @@ def get_dependency_tree(package_json, package_lock_tree):
     parent = AnyNode(name=dep_name, version=version, parent=root, dependencies=dependency.get('dependencies'))
     add_nested_dependencies(dependency, package_lock_tree, parent=parent)
 
+
+
   return root
 
 
@@ -83,10 +85,9 @@ class NpmRunner:
   for each of the packages (including transitive dependencies)
   """
 
-  def __init__(self, directory: str, config):
+  def __init__(self, directory: str):
     self.directory = directory
     self.verbose = True
-    self.config = config
     self.package_json_path = path.join(directory, 'package.json')
     self.package_lock_path = path.join(directory, 'package-lock.json')
 
@@ -139,5 +140,10 @@ class NpmRunner:
       dep_tree = get_dependency_tree(package_json, all_dependencies)
       flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
     license_map = NpmRunner.fetch_licenses(flat_dependencies)
+
+    for node in PreOrderIter(dep_tree):
+      delattr(node, 'dependencies')
+      delattr(node, 'version_request')
+      node.license = license_map.get(f'{node.name}@{node.version}', None)
 
     return dep_tree, license_map

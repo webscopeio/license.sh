@@ -2,17 +2,20 @@
 """License.sh
 
 Usage:
-  license-sh.py
-  license-sh.py <path>
+  license-sh.py [options]
+  license-sh.py <path> [options]
   license-sh.py (-h | --help)
   license-sh.py --version
 
 Options:
-  -h --help     Show this screen.
-  --version     Show version.
+  -h --help                           Show this screen.
+  -o <reporter> --output <reporter>   Output [default: console].
+  -t --tree                           Show full dependency tree.
+  --version                           Show version.
 """
 from license_sh.config import LICENSE_WHITELIST
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
+from license_sh.reporters.JSONConsoleReporter import JSONConsoleReporter
 
 VERSION = "1.0.0"
 
@@ -26,18 +29,23 @@ if __name__ == '__main__':
   arguments = docopt(__doc__, version=VERSION)
 
   path = arguments['<path>'] or '.'
+  output = arguments['--output']
+  tree = arguments['--tree']
 
-  config = {}
+  # docopt guarantees that output variable contains either console or json
+  Reporter = {
+    'console': ConsoleReporter,
+    'json': JSONConsoleReporter,
+  }[output]
 
   project_types = get_project_types(path)
 
   if ProjectType.PYTHON_PIPENV in project_types:
-    runner = PythonRunner(path, config)
+    runner = PythonRunner(path)
     root, license_map = runner.check()
-    ConsoleReporter.output(root, [], license_map, LICENSE_WHITELIST)
+    Reporter.output(root, [], license_map, LICENSE_WHITELIST, tree=tree)
 
   if ProjectType.NPM in project_types:
-    runner = NpmRunner(path, config)
+    runner = NpmRunner(path)
     root, license_map = runner.check()
-    ConsoleReporter.output(root, [], license_map, LICENSE_WHITELIST)
-
+    Reporter.output(root, [], license_map, LICENSE_WHITELIST, tree=tree)

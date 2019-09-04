@@ -51,24 +51,4 @@ form]() and we will let you know once we add support for them.
 * Python :snake:
   * pipenv
   
-## Usage
 
-```
-License.sh
-
-Usage:
-  license-sh.py
-  license-sh.py <path>
-  license-sh.py (-h | --help)
-  license-sh.py --version
-
-Options:
-  -h --help     Show this screen.
-  --version     Show version.
-```
-
-## OSS Maintainers
-
-- [@jvorcak](https://github.com/jvorcak)
-
-This software was developed in [Webscope.io](https://webscope.io)

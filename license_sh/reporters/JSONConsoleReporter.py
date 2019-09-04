@@ -2,6 +2,7 @@ from typing import Tuple
 
 from anytree import Node, RenderTree, AsciiStyle, findall, Walker, AnyNode, ContStyle
 from license_sh.helpers import GREEN, RESET
+from anytree.exporter import JsonExporter
 
 
 def assign_children(parent, package):
@@ -35,20 +36,9 @@ def render_tree(tree: AnyNode, license_map) -> None:
       print(' ')
 
 
-class ConsoleReporter:
+class JSONConsoleReporter:
   @staticmethod
   def output(dependency_tree, flat_dependencies, license_map, whitelist, project_name=None, tree=False):
-    if tree:
-      render_tree(dependency_tree, license_map)
-    else:
-      bad_nodes = findall(dependency_tree, filter_=lambda node: is_bad_license(license_map, node, whitelist))
-      for bad_node in bad_nodes:
-        w = Walker()
-        upwards, common, downwards = w.walk(dependency_tree, bad_node)
-        tree = get_tree_path(downwards)
-        render_tree(tree, license_map)
+    exporter = JsonExporter(indent=2)
+    print(exporter.export(dependency_tree))
     return 0
-
-  # @staticmethod
-  # def get_license_for(license_map, dependency: str):
-  #   return f" {GREEN}\u2713 {license_map.get(dependency, 'Unknown')}{RESET}"
