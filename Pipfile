@@ -12,6 +12,7 @@ aiohttp = "*"
 PyInquirer = "*"
 urllib3 = "*"
 docopt = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.7"

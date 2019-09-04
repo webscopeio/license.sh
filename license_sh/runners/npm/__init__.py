@@ -143,7 +143,7 @@ class NpmRunner:
 
     for node in PreOrderIter(dep_tree):
       delattr(node, 'dependencies')
-      delattr(node, 'version_request')
+      hasattr(node, 'version_request') and delattr(node, 'version_request')
       node.license = license_map.get(f'{node.name}@{node.version}', None)
 
     return dep_tree, license_map

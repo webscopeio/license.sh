@@ -14,6 +14,7 @@ Options:
   --version                           Show version.
 """
 from license_sh.config import LICENSE_WHITELIST
+from license_sh.helpers import annotate_dep_tree
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
 from license_sh.reporters.JSONConsoleReporter import JSONConsoleReporter
 
@@ -40,12 +41,16 @@ if __name__ == '__main__':
 
   project_types = get_project_types(path)
 
+  dep_tree = None
+  license_map = {}
+
   if ProjectType.PYTHON_PIPENV in project_types:
     runner = PythonRunner(path)
-    root, license_map = runner.check()
-    Reporter.output(root, [], license_map, LICENSE_WHITELIST, tree=tree)
+    dep_tree, license_map = runner.check()
 
   if ProjectType.NPM in project_types:
     runner = NpmRunner(path)
-    root, license_map = runner.check()
-    Reporter.output(root, [], license_map, LICENSE_WHITELIST, tree=tree)
+    dep_tree, license_map = runner.check()
+
+  annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
+  Reporter.output(annotated_dep_tree, [], license_map, LICENSE_WHITELIST, tree=tree)

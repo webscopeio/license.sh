@@ -80,7 +80,7 @@ It's constructed by each resolver based on package manager metadata e.g.
 `package-lock.json`, `Pipfile.lock`. Licenses are fetched by a resolved 
 from central repositories e.g. NPM or PyPI.
 
-### Analyzed License Dependency tree
+### Annotated License Dependency tree
 
 The complete dependency tree is usually not what user wants to see as a
 result of his/her analysis. 
@@ -89,7 +89,7 @@ What is interesting for an user is to identify which one of the root
 dependencies is not in allowed licenses and see all problematic paths
 for that dependency.
 
-Analyzed License Dependency tree is an extension of a
+Annotated License Dependency tree is an extension of a
 [License Dependency Tree](#license-dependency-tree). 
 
 Each node has two more properties:
