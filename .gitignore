@@ -2,3 +2,5 @@
 examples
 *.pyc
 .dist
+.vscode
+**/node_modules/**
