@@ -7,6 +7,7 @@ from enum import Enum
 class ProjectType(Enum):
   PYTHON_PIPENV = 'python_pipenv'
   NPM = 'npm'
+  YARN = 'yarn'
 
 
 __file_exists = lambda path: isfile(path) and access(path, R_OK)
@@ -28,5 +29,12 @@ def get_project_types(dir_path: str) -> [ProjectType]:
 
   if __file_exists(pipfile_path) and __file_exists(pipfile_lock_path):
     types += [ProjectType.NPM]
+
+
+   # check for yarn
+  yarn_path: str = os.path.join(dir_path, 'package.json')
+  yarn_lock_path: str = os.path.join(dir_path, 'yarn.lock')
+  if __file_exists(yarn_path) and __file_exists(yarn_lock_path):
+    types += [ProjectType.YARN]
 
   return types

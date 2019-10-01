@@ -24,6 +24,7 @@ from docopt import docopt
 
 from license_sh.project_identifier import get_project_types, ProjectType
 from license_sh.runners.npm import NpmRunner
+from license_sh.runners.yarn import YarnRunner
 from license_sh.runners.python import PythonRunner
 
 if __name__ == '__main__':
@@ -50,6 +51,10 @@ if __name__ == '__main__':
 
   if ProjectType.NPM in project_types:
     runner = NpmRunner(path)
+    dep_tree, license_map = runner.check()
+
+  if ProjectType.YARN in project_types:
+    runner = YarnRunner(path)
     dep_tree, license_map = runner.check()
 
   annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
