@@ -9,7 +9,6 @@ from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
 
 from license_sh.helpers import flatten_dependency_tree
-from license_sh.reporters.ConsoleReporter import ConsoleReporter
 
 
 def add_nested_dependencies(dep, parent):

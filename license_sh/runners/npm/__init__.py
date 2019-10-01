@@ -7,8 +7,6 @@ import aiohttp as aiohttp
 import urllib3
 from anytree import AnyNode, PreOrderIter
 
-from license_sh.reporters.ConsoleReporter import ConsoleReporter
-
 NPM_HOST = 'https://registry.npmjs.org'
 http = urllib3.HTTPConnectionPool(NPM_HOST, num_pools=50)
 

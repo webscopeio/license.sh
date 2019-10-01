@@ -14,6 +14,11 @@ def flatten_dependency_tree(tree):
   return set([(node.name, node.version) for node in PreOrderIter(tree) if tree is not node])
 
 
+def is_license_problem(license_text, whitelist):
+  # whitelist.split('')
+  return license_text not in whitelist
+
+
 def annotate_dep_tree(tree, whitelist: [str]):
   """
   An idea of this function is to go through elements from the bottom -> up and
@@ -23,7 +28,7 @@ def annotate_dep_tree(tree, whitelist: [str]):
   :return:
   """
   for node in PreOrderIter(tree):
-    node.license_problem = node.license not in whitelist
+    node.license_problem = is_license_problem(node.license, whitelist)
 
   for node in list(LevelOrderIter(tree))[::-1]:
     node.subtree_problem = False if node.is_leaf \
