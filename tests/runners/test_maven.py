@@ -1,5 +1,6 @@
 import unittest
-from license_sh.utils.MvnDependencyTreeParser import parse 
+from license_sh.runners.maven import parse, parse_licenses
+import xml.etree.ElementTree as ET
 
 class ParserTestCase(unittest.TestCase):
   def test_none_tree(self):
@@ -140,7 +141,65 @@ class ParserTestCase(unittest.TestCase):
     self.assertEqual(child.parent.parent.parent.name, 'vaadin-spring-boot-starter')
     self.assertEqual(child.parent.parent.parent.parent.name, 'license-tree')
 
+  def test_parse_licenses_xml(self):
+    license_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<licenseSummary>
+  <dependencies>
+    <dependency>
+      <groupId>antlr</groupId>
+      <artifactId>antlr</artifactId>
+      <version>2.7.7</version>
+      <licenses>
+        <license>
+          <name>BSD License</name>
+          <url>http://www.antlr.org/license.html</url>
+          <distribution>repo</distribution>
+          <file>bsd license - license.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.2.3</version>
+      <licenses>
+        <license>
+          <name>Eclipse Public License - v 1.0</name>
+          <url>http://www.eclipse.org/legal/epl-v10.html</url>
+          <file>eclipse public license - v 1.0 - epl-v10.html</file>
+        </license>
+        <license>
+          <name>GNU Lesser General Public License</name>
+          <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+          <file>gnu lesser general public license - lgpl-2.1.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>1.2.3</version>
+      <licenses>
+        <license>
+          <name>Eclipse Public License - v 1.0</name>
+          <url>http://www.eclipse.org/legal/epl-v10.html</url>
+          <file>eclipse public license - v 1.0 - epl-v10.html</file>
+        </license>
+        <license>
+          <name>GNU Lesser General Public License</name>
+          <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+          <file>gnu lesser general public license - lgpl-2.1.html</file>
+        </license>
+      </licenses>
+    </dependency>
+  </dependencies>
+</licenseSummary>
+'''
 
+    license_map = parse_licenses(ET.fromstring(license_text))
+    self.assertEqual(license_map['antlr@2.7.7'], 'BSD License')
+    self.assertEqual(license_map['logback-classic@1.2.3'], 'Eclipse Public License - v 1.0 AND GNU Lesser General Public License') 
+    self.assertEqual(license_map['logback-core@1.2.3'], 'Eclipse Public License - v 1.0 AND GNU Lesser General Public License') 
 
 
 

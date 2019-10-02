@@ -42,5 +42,4 @@ class ConsoleReporter:
   def output(dependency_tree, flat_dependencies, license_map, whitelist, project_name=None, tree=False):
     for node in LevelOrderIter(dependency_tree):
       node.children = filter(lambda subnode: subnode.subtree_problem or subnode.license_problem, node.children)
-
     render_tree(dependency_tree, license_map, whitelist)

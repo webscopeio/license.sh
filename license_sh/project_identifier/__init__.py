@@ -7,6 +7,7 @@ from enum import Enum
 class ProjectType(Enum):
   PYTHON_PIPENV = 'python_pipenv'
   NPM = 'npm'
+  MAVEN = 'maven'
 
 
 __file_exists = lambda path: isfile(path) and access(path, R_OK)
@@ -28,5 +29,11 @@ def get_project_types(dir_path: str) -> [ProjectType]:
 
   if __file_exists(pipfile_path) and __file_exists(pipfile_lock_path):
     types += [ProjectType.NPM]
+
+  # check for maven
+  maven_path: str = os.path.join(dir_path, 'pom.xml')
+
+  if __file_exists(maven_path):
+    types += [ProjectType.MAVEN]
 
   return types
