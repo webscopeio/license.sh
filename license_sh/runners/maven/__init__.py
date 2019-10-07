@@ -20,44 +20,18 @@ def parse_licenses(xml):
 
   return license_map
 
-def parse(tree_text):
-  if not tree_text:
+def parse(xml, parent = None):
+  if xml is None:
     return None
-  raw_lines = tree_text.split('\n')
-  root = parse_dependency(raw_lines[0], True)
-  parent = root
-  for raw_line in raw_lines[1:]:
-    if not raw_line.strip():
-      break
-    dependency = parse_dependency(raw_line)
-    new_parent = parent
-    while new_parent.level >= dependency.level:
-      new_parent = new_parent.parent
-    dependency.parent = new_parent
-    parent = dependency
+  root = AnyNode(name=xml.tag, version=xml.get('version'), parent=parent)
+  for dependency in xml:
+    parse(dependency, root)
   return root
 
-def get_dependency_level(raw_line):
-  index = 0
-  level = 0
-  POS_LENGTH = 3
-  while True:
-    level += 1
-    pos_string = raw_line[index : index+POS_LENGTH]
-    if pos_string == '+- ' or pos_string == '\\- ':
-      break
-    
-    index += POS_LENGTH
-  return level
-
-def parse_dependency(raw_line, root = False):
-  raw_dependency = raw_line if root else raw_line.split('-', 1)[1].strip()
-  dependency = raw_dependency.split(':')
-  return AnyNode(
-    name=dependency[1],
-    version=dependency[3],
-    level=(0 if root else get_dependency_level(raw_line))
-  )
+DEPENDENCY_JAR = './jar/maven-dependency-plugin-3.1.1-Licensesh.jar'
+GROUP_ID = 'org.apache.maven.plugins'
+ARTIFACT_ID = 'maven-dependency-plugin'
+VERSION = '3.1.1-Licensesh'
 
 class MavenRunner:
   """
@@ -99,14 +73,26 @@ class MavenRunner:
       )
       subprocess.run([
         'mvn',
-        'dependency:tree',
+        'install:install-file',
+        f'-Dfile={DEPENDENCY_JAR}',
+        f'-DgroupId={GROUP_ID}',
+        f'-DartifactId={ARTIFACT_ID}',
+        f'-Dversion={VERSION}',
+        f'-Dpackaging=jar'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+      )
+      subprocess.run([
+        'mvn',
+        f'{GROUP_ID}:{ARTIFACT_ID}:{VERSION}:tree',
+        f'-DoutputType=xml',
         f'-DoutputFile={self.dependency_tree_file}',
         '-f',
         self.directory],
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stderr=subprocess.PIPE,
       )
-      dep_tree = parse(open(self.dependency_tree_file, "r").read())
+      dep_tree = parse(ET.parse(self.dependency_tree_file).getroot())
       license_map = parse_licenses(ET.parse(self.license_xml_file))
     with yaspin(text="Cleaning ...") as sp:
       try:
@@ -115,7 +101,6 @@ class MavenRunner:
         print ("Error: %s - %s." % (e.filename, e.strerror))
 
     for node in PreOrderIter(dep_tree):
-      delattr(node, 'level')
       node.license = license_map.get(node.name + '@' + node.version, None)
 
     return dep_tree, license_map

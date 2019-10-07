@@ -8,138 +8,86 @@ class ParserTestCase(unittest.TestCase):
     self.assertIsNone(tree)
 
   def test_empty_tree(self):
-    tree_text = 'com.license:license-tree:jar:0.0.1-SNAPSHOT'
-    tree = parse(tree_text)
+    tree_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<license-tree version="0.0.1-SNAPSHOT">
+</license-tree>
+    '''
+    tree = parse(ET.fromstring(tree_text))
     self.assertTrue(tree)
     self.assertEqual(tree.name, 'license-tree')
     self.assertEqual(tree.version, '0.0.1-SNAPSHOT')
     self.assertEqual(len(tree.children), 0)
 
-  def test_single_dependency(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile'''
-    tree = parse(tree_text)
-    self.assertTrue(tree)
-    self.assertEqual(tree.name, 'license-tree')
-    self.assertEqual(tree.version, '0.0.1-SNAPSHOT')
+  def test_single_child_tree(self):
+    tree_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<license-tree version="0.0.1-SNAPSHOT">
+<spring-boot-starter-data-jpa version="2.1.8.RELEASE" />
+</license-tree>
+    '''
+    tree = parse(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 1)
     self.assertEqual(tree.children[0].name, 'spring-boot-starter-data-jpa')
     self.assertEqual(tree.children[0].version, '2.1.8.RELEASE')
 
-  def test_two_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-+- org.hibernate:hibernate-core:jar:5.3.11.Final:compile'''
-    tree = parse(tree_text)
+  def test_two_children_tree(self):
+    tree_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<license-tree version="0.0.1-SNAPSHOT">
+  <spring-boot-starter-data-jpa version="2.1.8.RELEASE" />
+  <atmosphere-runtime version="2.4.30.slf4jvaadin1"/>
+</license-tree>
+    '''
+    tree = parse(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 2)
-    self.assertEqual(tree.children[1].name, 'hibernate-core')
-    self.assertEqual(tree.children[1].version, '5.3.11.Final')
-
-  def test_nested_dependency(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-|  +- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile'''
-    tree = parse(tree_text)
+    self.assertEqual(tree.children[1].name, 'atmosphere-runtime')
+    self.assertEqual(tree.children[1].version, '2.4.30.slf4jvaadin1')
+  
+  def test_nested_child_tree(self):
+    tree_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<license-tree version="0.0.1-SNAPSHOT">
+  <spring-boot-starter-data-jpa version="2.1.8.RELEASE">
+    <atmosphere-runtime version="2.4.30.slf4jvaadin1"/>
+  </spring-boot-starter-data-jpa>
+</license-tree>
+    '''
+    tree = parse(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 1)
-    self.assertEqual(len(tree.children[0].children), 1)
-    child = tree.children[0].children[0]
-    self.assertEqual(child.name, 'spring-boot-starter-aop')
-    self.assertEqual(child.version, '2.1.8.RELEASE')
+    self.assertEqual(tree.children[0].children[0].name, 'atmosphere-runtime')
+    self.assertEqual(tree.children[0].children[0].version, '2.4.30.slf4jvaadin1')
 
-  def test_two_nested_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-|  +- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile
-|  +- org.aspectj:aspectjweaver:jar:1.9.4:compile'''
-    tree = parse(tree_text)    
-    self.assertEqual(len(tree.children[0].children), 2)
-    child = tree.children[0].children[1]
-    self.assertEqual(child.name, 'aspectjweaver')
-    self.assertEqual(child.version, '1.9.4')
+  def test_nested_children_tree(self):
+    tree_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<license-tree version="0.0.1-SNAPSHOT">
+  <spring-boot-starter-data-jpa version="2.1.8.RELEASE">
+    <atmosphere-runtime version="2.4.30.slf4jvaadin1"/>
+    <jackson-datatype-jdk8 version="2.9.9"/>
+    <vaadin-context-menu-flow version="3.0.2">
+      <vaadin-context-menu version="4.3.12"/>
+    </vaadin-context-menu-flow>
+  </spring-boot-starter-data-jpa>
+  <spring-core version="5.1.9.RELEASE">
+    <spring-jcl version="5.1.9.RELEASE"/>
+  </spring-core>
+</license-tree>
+    '''
+    tree = parse(ET.fromstring(tree_text))
+    self.assertEqual(tree.name, 'license-tree')
+    self.assertEqual(tree.version, '0.0.1-SNAPSHOT')
+    self.assertEqual(tree.children[0].name, 'spring-boot-starter-data-jpa')
+    self.assertEqual(tree.children[0].version, '2.1.8.RELEASE')
+    self.assertEqual(tree.children[0].children[0].name, 'atmosphere-runtime')
+    self.assertEqual(tree.children[0].children[0].version, '2.4.30.slf4jvaadin1')
+    self.assertEqual(tree.children[0].children[1].name, 'jackson-datatype-jdk8')
+    self.assertEqual(tree.children[0].children[1].version, '2.9.9')
+    self.assertEqual(tree.children[0].children[2].name, 'vaadin-context-menu-flow')
+    self.assertEqual(tree.children[0].children[2].version, '3.0.2')
+    self.assertEqual(tree.children[0].children[2].children[0].name, 'vaadin-context-menu')
+    self.assertEqual(tree.children[0].children[2].children[0].version, '4.3.12')
+    self.assertEqual(tree.children[1].name, 'spring-core')
+    self.assertEqual(tree.children[1].version, '5.1.9.RELEASE')
+    self.assertEqual(tree.children[1].children[0].name, 'spring-jcl')
+    self.assertEqual(tree.children[1].children[0].version, '5.1.9.RELEASE')
+    
 
-  def test_nested_nested_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-|  +- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile
-|  |  \- org.aspectj:aspectjweaver:jar:1.9.4:compile'''
-    tree = parse(tree_text)    
-    self.assertEqual(len(tree.children[0].children), 1)
-    child = tree.children[0].children[0].children[0]
-    self.assertEqual(child.name, 'aspectjweaver')
-    self.assertEqual(child.version, '1.9.4')
-
-  def test_nested_parent_nested_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-|  \- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile
-+- javax.persistence:javax.persistence-api:jar:2.2:compile
-|  +- com.zaxxer:HikariCP:jar:3.2.0:compile'''
-    tree = parse(tree_text)
-    self.assertEqual(len(tree.children), 2)
-    child = tree.children[1].children[0]
-    self.assertEqual(child.name, 'HikariCP')
-    self.assertEqual(child.version, '3.2.0')
-    self.assertEqual(child.parent.name, 'javax.persistence-api')
-
-  def test_nested2_parent2_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- org.springframework.boot:spring-boot-starter-data-jpa:jar:2.1.8.RELEASE:compile
-|  \- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile
-|  |  \- org.springframework.boot:spring-boot-starter-aop:jar:2.1.8.RELEASE:compile
-+- javax.persistence:javax.persistence-api:jar:2.2:compile
-|  +- com.zaxxer:HikariCP:jar:3.2.0:compile'''
-    tree = parse(tree_text)
-    self.assertEqual(len(tree.children), 2)
-    child = tree.children[1].children[0]
-    self.assertEqual(child.name, 'HikariCP')
-    self.assertEqual(child.version, '3.2.0')
-    self.assertEqual(child.parent.name, 'javax.persistence-api')
-
-  def test_last_nested_dependencies(self):
-    tree_text = '''com.license:license-tree:jar:0.0.1-SNAPSHOT
-+- com.vaadin:vaadin-spring-boot-starter:jar:14.0.5:compile
-|  +- com.vaadin:vaadin-spring:jar:12.0.6:compile
-|  |  +- com.vaadin:flow-server:jar:2.0.12:compile
-|  |  |  +- com.vaadin.external.gwt:gwt-elemental:jar:2.8.2.vaadin2:compile
-|  |  |  +- commons-fileupload:commons-fileupload:jar:1.3.3:compile
-|  |  |  +- commons-io:commons-io:jar:2.5:compile
-|  |  |  +- org.jsoup:jsoup:jar:1.11.3:compile
-|  |  |  +- com.helger:ph-css:jar:6.1.1:compile
-|  |  |  +- com.helger:ph-commons:jar:9.1.2:compile
-|  |  |  \- com.vaadin.external:gentyref:jar:1.2.0.vaadin1:compile
-|  |  +- com.vaadin:flow-push:jar:2.0.12:compile
-|  |  |  \- com.vaadin.external.atmosphere:atmosphere-runtime:jar:2.4.30.slf4jvaadin1:compile
-|  |  +- com.vaadin:flow-client:jar:2.0.12:compile
-|  |  \- org.springframework:spring-websocket:jar:5.1.9.RELEASE:compile
-|  \- com.vaadin:vaadin-core:jar:14.0.5:compile
-|     +- com.vaadin:flow-html-components:jar:2.0.12:compile
-|     +- com.vaadin:flow-data:jar:2.0.12:compile
-|     \- com.vaadin:vaadin-menu-bar-flow:jar:1.0.1:compile
-|        \- org.webjars.bowergithub.vaadin:vaadin-menu-bar:jar:1.0.3:compile
-\- org.springframework.security:spring-security-test:jar:5.1.6.RELEASE:test
-   +- org.springframework.security:spring-security-core:jar:5.1.6.RELEASE:test
-   \- org.springframework.security:spring-security-web:jar:5.1.6.RELEASE:test'''
-
-    tree = parse(tree_text)
-    self.assertEqual(len(tree.children), 2)
-    self.assertEqual(len(tree.children[0].children), 2)
-    self.assertEqual(len(tree.children[0].children[0].children), 4)
-    self.assertEqual(len(tree.children[0].children[0].children[0].children), 7)
-    self.assertEqual(len(tree.children[0].children[0].children[1].children), 1)
-    self.assertEqual(len(tree.children[0].children[0].children[3].children), 0)
-    self.assertEqual(len(tree.children[0].children[1].children), 3)
-    self.assertEqual(len(tree.children[0].children[1].children), 3)
-    self.assertEqual(len(tree.children[0].children[1].children[1].children), 0)
-    self.assertEqual(len(tree.children[0].children[1].children[2].children), 1)
-    self.assertEqual(len(tree.children[1].children), 2)
-    self.assertEqual(len(tree.children[1].children[1].children), 0)
-
-    child = tree.children[0].children[1].children[2].children[0]
-    self.assertEqual(child.name, 'vaadin-menu-bar')
-    self.assertEqual(child.parent.name, 'vaadin-menu-bar-flow')
-    self.assertEqual(child.parent.parent.name, 'vaadin-core')
-    self.assertEqual(child.parent.parent.parent.name, 'vaadin-spring-boot-starter')
-    self.assertEqual(child.parent.parent.parent.parent.name, 'license-tree')
 
   def test_parse_licenses_xml(self):
     license_text = '''<?xml version="1.0" encoding="UTF-8" standalone="no"?>
