@@ -1,81 +1,64 @@
 import asyncio
 import json
-from json import JSONDecodeError
+import subprocess
 from os import path
-
-import aiohttp as aiohttp
-import urllib3
 from anytree import AnyNode, PreOrderIter
-
-NPM_HOST = 'https://registry.npmjs.org'
-http = urllib3.HTTPConnectionPool(NPM_HOST, num_pools=50)
+from typing import Dict
 
 from yaspin import yaspin
 
-
-def flatten_package_lock_dependencies(package_lock_dependencies):
+def parse(json_element, parent = None) -> AnyNode:
+  """Recursivelly parse `npm list --json --long` output to anytree
+  
+  Arguments:
+      json_element {json} -- Json root element
+  
+  Keyword Arguments:
+      parent {AnyNode} -- Parent of json_element (default: {None})
+  
+  Returns:
+      AnyNode -- Parsed tree from json_element
   """
-  Flattens package.lock dependencies
-  :param package_lock_dependencies:
-  :return: tuple(flat_array, dep_mapping)
-     WHERE
-     array flat_array is a flat array of all dependencies
-     dict dep_mapping is a tree representing nested dependencies
+  if not json_element:
+    return None
+  name = json_element.get('name', 'project_name')
+  version = json_element.get('version', 'project_version')
+  node = AnyNode(name=name, version=version, parent=parent, license=license)
+  for dependency in json_element.get('dependencies', {}).values():
+    parse(dependency, node)
+  return node
+
+def parse_licenses(json_element, result = None) -> Dict[str, str]:
+  """Recursivelly parse `npm list --json --long` output to license dict
+  
+  Arguments:
+      json_element {json} -- Json root element
+  
+  Keyword Arguments:
+      result {dict} -- dict that is updated (default: {None})
+  
+  Returns:
+      Dict[str, str] -- Result dict with NAME@VERSION as key and license as value
   """
-  # get the root dependencies
-  root_deps = [(name, dep.get('version')) for name, dep in package_lock_dependencies.items()]
-
-  for dep in package_lock_dependencies.values():
-    version, requires, dependencies = [dep.get(k, None) for k in ('version', 'requires', 'dependencies')]
-    if dependencies:
-      deps = flatten_package_lock_dependencies(dependencies)
-      root_deps += deps
-
-  return set(root_deps)
-
-
-def add_nested_dependencies(dependency, package_lock_tree, parent):
-  for name, version_request in dependency.get('requires', {}).items():
-    node = AnyNode(name=name, version_request=version_request, parent=parent, dependencies=dependency.get('dependencies'))
-
-    dep = None
-    p = node
-    names = []
-    while p.parent:
-      if dep is None and p.dependencies and p.dependencies.get(name):
-        dep = p.dependencies.get(name)
-      p = p.parent
-      names.append(p.name)
-
-    # check the root
-    if dep is None and p.dependencies and p.dependencies.get(name):
-      dep = p.dependencies.get(name)
-
-    node.version = dep.get('version')
-
-    names = names[:-1]  # let's forget about top level
-
-    # if I'm not already in a tree
-    if name not in names:
-      if dep:
-        add_nested_dependencies(dep, package_lock_tree, node)
-
-
-def get_dependency_tree(package_json, package_lock_tree):
-  root = AnyNode(name=package_json.get('name', 'package.json'), dependencies=package_lock_tree,
-                 version=package_json.get('version'))
-
-  # load root dependencies from package.json
-  for dep_name in package_json.get('dependencies', {}).keys():
-    dependency = package_lock_tree[dep_name]
-    version = dependency.get("version")
-    parent = AnyNode(name=dep_name, version=version, parent=root, dependencies=dependency.get('dependencies'))
-    add_nested_dependencies(dependency, package_lock_tree, parent=parent)
-
-
-
-  return root
-
+  if not json_element:
+    return None
+  if not result:
+    result = {}
+  name = json_element.get('name', 'project_name')
+  version = json_element.get('version', 'project_version')
+  license = json_element.get('license', None)
+  if not license:
+    for license_data in json_element.get('licenses', []):
+      if type(license_data) is dict:
+        license_type = license_data.get('type', None)
+        if not license:
+          license = license_type
+        else:
+          license += ' AND ' + license_type
+  result[f'{name}@{version}'] = license
+  for dependency in json_element.get('dependencies', {}).values():
+    parse_licenses(dependency, result)
+  return result
 
 class NpmRunner:
   """
@@ -87,61 +70,25 @@ class NpmRunner:
     self.directory = directory
     self.verbose = True
     self.package_json_path = path.join(directory, 'package.json')
-    self.package_lock_path = path.join(directory, 'package-lock.json')
-
-  @staticmethod
-  def fetch_licenses(all_dependencies):
-    license_map = {}
-
-    urls = [f'{NPM_HOST}/{dependency}/{version}' for dependency, version in all_dependencies]
-
-    with yaspin(text="Fetching license info from npm ...") as sp:
-      async def fetch(session, url):
-        async with session.get(url) as resp:
-          return await resp.text()
-          # Catch HTTP errors/exceptions here
-
-      async def fetch_concurrent(urls):
-        loop = asyncio.get_event_loop()
-        async with aiohttp.ClientSession() as session:
-          tasks = []
-          for u in urls:
-            tasks.append(loop.create_task(fetch(session, u)))
-
-          for result in asyncio.as_completed(tasks):
-            try:
-              page = json.loads(await result)
-              license_map[f"{page['name']}@{page['version']}"] = page.get('license', 'Unknown')
-            except JSONDecodeError:
-              # TODO - investiage why does such a thing happen
-              pass
-
-      asyncio.run(fetch_concurrent(urls))
-
-    return license_map
 
   def check(self):
     with open(self.package_json_path) as package_json_file:
       package_json = json.load(package_json_file)
       project_name = package_json.get('name', 'package.json')
 
-    with open(self.package_lock_path) as package_lock_file:
-      package_lock = json.load(package_lock_file)
-      all_dependencies = package_lock['dependencies']
-
     if self.verbose:
       print("===========")
       print(f"Initiated License.sh check for NPM project {project_name} located at {self.directory}")
       print("===========")
+      
 
     with yaspin(text="Analysing dependencies ...") as sp:
-      dep_tree = get_dependency_tree(package_json, all_dependencies)
-      flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
-    license_map = NpmRunner.fetch_licenses(flat_dependencies)
+      result = subprocess.run(['npm', 'list', '--json', '--long', '--prefix', self.directory], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+      json_data = json.loads(result.stdout)
+      dep_tree = parse(json_data)
+      license_map = parse_licenses(json_data)
 
     for node in PreOrderIter(dep_tree):
-      delattr(node, 'dependencies')
-      hasattr(node, 'version_request') and delattr(node, 'version_request')
       node.license = license_map.get(f'{node.name}@{node.version}', None)
 
     return dep_tree, license_map
