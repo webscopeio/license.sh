@@ -1,7 +1,9 @@
 import asyncio
 import json
+import subprocess
 from json import JSONDecodeError
 from os import path
+
 
 import aiohttp as aiohttp
 import urllib3
@@ -77,6 +79,13 @@ def get_dependency_tree(package_json, package_lock_tree):
   return root
 
 
+def fetch_license(dep):
+  dependency, version = dep
+  result = subprocess.run(['npm', 'info', f'{dependency}@{version}', '--json'], stdout=subprocess.PIPE)
+  info = json.loads(result.stdout)
+  return 3
+
+
 class NpmRunner:
   """
   This class checks for dependencies in NPM projects and fetches license info
@@ -93,27 +102,27 @@ class NpmRunner:
   def fetch_licenses(all_dependencies):
     license_map = {}
 
-    urls = [f'{NPM_HOST}/{dependency}/{version}' for dependency, version in all_dependencies]
+    urls = [(f'{NPM_HOST}/{dependency}/', version) for dependency, version in all_dependencies]
 
     with yaspin(text="Fetching license info from npm ...") as sp:
-      async def fetch(session, url):
+      async def fetch(session, url, version):
         async with session.get(url) as resp:
-          return await resp.text()
+          return await resp.text(), version
           # Catch HTTP errors/exceptions here
 
       async def fetch_concurrent(urls):
         loop = asyncio.get_event_loop()
         async with aiohttp.ClientSession() as session:
           tasks = []
-          for u in urls:
-            tasks.append(loop.create_task(fetch(session, u)))
+          for url, version in urls:
+            tasks.append(loop.create_task(fetch(session, url, version)))
 
           for result in asyncio.as_completed(tasks):
             try:
-              page = json.loads(await result)
-              license_map[f"{page['name']}@{page['version']}"] = page.get('license', 'Unknown')
+              output, version = await result
+              page = json.loads(output)
+              license_map[f"{page['name']}@{version}"] = page.get('license', 'Unknown')
             except JSONDecodeError:
-              # TODO - investiage why does such a thing happen
               pass
 
       asyncio.run(fetch_concurrent(urls))
