@@ -42,7 +42,7 @@ def parse_licenses(json_element, result = None) -> Dict[str, str]:
   """
   if not json_element:
     return None
-  if not result:
+  if result is None:
     result = {}
   name = json_element.get('name', 'project_name')
   version = json_element.get('version', 'project_version')
@@ -55,7 +55,8 @@ def parse_licenses(json_element, result = None) -> Dict[str, str]:
           license = license_type
         else:
           license += ' AND ' + license_type
-  result[f'{name}@{version}'] = license
+  if license is not None:
+    result[f'{name}@{version}'] = license
   for dependency in json_element.get('dependencies', {}).values():
     parse_licenses(dependency, result)
   return result

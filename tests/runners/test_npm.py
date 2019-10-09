@@ -188,26 +188,28 @@ class ParserTestCase(unittest.TestCase):
     "@babel/core2": {
       "name": "@babel/core2",
       "version": "1.2.3",
+      "license": "MIT",
       "dependencies": {
-      "@babel/nocore": {
-        "name": "@babel/nocore",
-        "version": "1.2.3",
-        "licenses": "[Circular]"
+        "@babel/nocore": {
+          "name": "@babel/nocore",
+          "version": "1.2.3",
+          "licenses": "[Circular]"
+        }
       }
     },
     "@babel/nocore": {
-        "name": "@babel/nocore",
-        "version": "1.2.3",
-        "licenses": [
-          {
-            "type": "MIT"
-          }
-        ]
-      }
+      "name": "@babel/nocore",
+      "version": "1.2.3",
+      "licenses": [
+        {
+          "type": "MIT"
+        }
+      ]
     }
   }
 }'''
     license_map = parse_licenses(json.loads(tree_text2))
+    self.assertEqual(license_map['@babel/core2@1.2.3'], 'MIT')
     self.assertEqual(license_map['@babel/nocore@1.2.3'], 'MIT')
 
   def test_reverse_circular_licenses_tree(self):
