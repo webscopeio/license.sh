@@ -1,4 +1,8 @@
+import license_expression
 from anytree import PreOrderIter, LevelOrderIter, AsciiStyle, RenderTree
+from license_expression import Licensing, LicenseSymbol
+
+licensing = Licensing()
 
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
@@ -8,10 +12,40 @@ RESET = "\033[0;0m"
 BOLD = "\033[;1m"
 REVERSE = "\033[;7m"
 
-
 def flatten_dependency_tree(tree):
   # remove the root node
   return set([(node.name, node.version) for node in PreOrderIter(tree) if tree is not node])
+
+
+def is_license_ok(license_text, whitelist):
+  """
+  Identifies whether license is compliant with the whitelist
+  :param license_text: string or licensing object
+  :param whitelist: list of strings to compare with
+  :return:
+  True - if license is compliant.
+  False - if it's not compliant.
+  None - if there is a parsing error.
+  """
+  try:
+    license = licensing.parse(license_text)
+  except:
+    return None
+
+  if license is None:
+    return None
+
+  if license.isliteral:
+    return license.key in whitelist
+
+  operator = license.operator.strip()
+
+  fn = {
+    'OR': any,
+    'AND': all,
+  }[operator]
+
+  return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
 
 
 def annotate_dep_tree(tree, whitelist: [str]):
@@ -23,7 +57,7 @@ def annotate_dep_tree(tree, whitelist: [str]):
   :return:
   """
   for node in PreOrderIter(tree):
-    node.license_problem = node.license not in whitelist
+    node.license_problem = not is_license_ok(node.license, whitelist)
 
   for node in list(LevelOrderIter(tree))[::-1]:
     node.subtree_problem = False if node.is_leaf \
