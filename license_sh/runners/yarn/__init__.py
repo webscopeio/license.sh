@@ -44,6 +44,7 @@ def get_yarn_lock_json(pathToYarn: str) -> Dict:
   subprocess.run([
     'yarn',
     'install',
+    '--frozen-lockfile',
     '--cwd',
     PARSE_YARN_LOCK_PATH],
     stdout=subprocess.PIPE,
