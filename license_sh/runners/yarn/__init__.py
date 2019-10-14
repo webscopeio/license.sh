@@ -75,10 +75,7 @@ def parse_yarn_lock(json_element: Dict) -> Dict[str, str]:
   Returns:
       Dict[str, str] -- Parsed yarn lock into package dict
   """
-  package_map = {}
-  for (key, dependency) in json_element.get('object', {}).items():
-    package_map[key] = dependency.get('version', None)
-  return package_map
+  return {key: dependency.get('version', None) for key, dependency in json_element.get('object', {}).items()}
 
 def get_name(name: str) -> str:
   """Get package name from package name + required version
@@ -94,10 +91,8 @@ def get_name(name: str) -> str:
   Returns:
       str -- Name of the package without required version
   """
-  parsedName, signName, *rest = name.split('@')
-  if name.startswith('@'):
-    return '@' + signName
-  return parsedName
+  *name_arr_with_optional_at_sign, version = name.split('@')
+  return '@'.join(name_arr_with_optional_at_sign)
 
 def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
   """Parse yarn list json dependencies and add them locked version
@@ -229,9 +224,8 @@ def add_nested_dependencies(dependency: Dict, parent: AnyNode) -> None:
 
     names = names[:-1]  # let's forget about top level
     # If I'm not already in a tree
-    if node.name not in names:
-      if dep:
-        add_nested_dependencies(dep, node)
+    if node.name not in names and dep:
+      add_nested_dependencies(dep, node)
 
 def get_dependency_tree(flat_tree: Dict, package_json: Dict, package_map: Dict) -> AnyNode:
   """Get dependency tree.
