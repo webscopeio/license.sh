@@ -1,0 +1,97 @@
+{
+  "title": "MIT License",
+  "overview": "One of the most permissive licenses that allows to use the software for any purpose if the notice requirements are fulfilled ",
+  "tags": {
+    "can": [
+      {
+        "title": "Commercial use",
+        "description": "You can use the software for commercial (business) purposes."
+      },
+      {
+        "title": "Distribution",
+        "description": "You can distribute the software or derivate works."
+      },
+      {
+        "title": "Derivative work",
+        "description": "You can modify the software in order to make derivative works."
+      },
+      {
+        "title": "Private use",
+        "description": "You can use the software for personal/private purposes."
+      },
+      {
+        "title": "Provide sublicense",
+        "description": "You can provide/grant sublicense to another party "
+      }
+    ],
+    "cannot": [
+      {
+        "title": "Liability",
+        "description": "You cannot hold the authors or copyright holders liable for any damages"
+      }
+    ],
+    "must": [
+      {
+        "title": "Copyright",
+        "description": "The copyright notice shall be included in all copies or substantial portions of the Software"
+      },
+      {
+        "title": "Permission notice",
+        "description": "The permission notice shall be included in all copies or substantial portions of the Software "
+      }
+    ]
+  },
+  "data": [
+    {
+      "text": "MIT License",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "text": "https://opensource.org/licenses/MIT",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Begin license text",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Copyright <YEAR> <COPYRIGHT HOLDER>",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+      "newline": true,
+      "tags": ["Commercial use", "Distribute", "Derivative work", "Provide sublicense"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+      "newline": true,
+      "tags": ["Copyright", "Permission notice"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "newline": true,
+      "tags": ["Liability"]
+    },
+    {
+      "text": "End license text."
+    }
+  ]
+}
