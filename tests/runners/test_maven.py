@@ -1,10 +1,27 @@
 import unittest
-from license_sh.runners.maven import parse, parse_licenses
+from license_sh.runners.maven import parse_dependency_xml, parse_licenses_xml, get_project_name
 import xml.etree.ElementTree as ET
 
 class ParserTestCase(unittest.TestCase):
+  def test_project_name(self):
+    pom_xml = '''<?xml version="1.0" encoding="UTF-8"?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>link.sharpe</groupId>
+  <artifactId>mavenproject1</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</project>
+'''
+    name = get_project_name(ET.fromstring(pom_xml))
+    self.assertEqual(name, 'mavenproject1')
+
   def test_none_tree(self):
-    tree = parse(None)
+    tree = parse_dependency_xml(None)
     self.assertIsNone(tree)
 
   def test_empty_tree(self):
@@ -12,7 +29,7 @@ class ParserTestCase(unittest.TestCase):
 <license-tree version="0.0.1-SNAPSHOT">
 </license-tree>
     '''
-    tree = parse(ET.fromstring(tree_text))
+    tree = parse_dependency_xml(ET.fromstring(tree_text))
     self.assertTrue(tree)
     self.assertEqual(tree.name, 'license-tree')
     self.assertEqual(tree.version, '0.0.1-SNAPSHOT')
@@ -24,7 +41,7 @@ class ParserTestCase(unittest.TestCase):
 <spring-boot-starter-data-jpa version="2.1.8.RELEASE" />
 </license-tree>
     '''
-    tree = parse(ET.fromstring(tree_text))
+    tree = parse_dependency_xml(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 1)
     self.assertEqual(tree.children[0].name, 'spring-boot-starter-data-jpa')
     self.assertEqual(tree.children[0].version, '2.1.8.RELEASE')
@@ -36,7 +53,7 @@ class ParserTestCase(unittest.TestCase):
   <atmosphere-runtime version="2.4.30.slf4jvaadin1"/>
 </license-tree>
     '''
-    tree = parse(ET.fromstring(tree_text))
+    tree = parse_dependency_xml(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 2)
     self.assertEqual(tree.children[1].name, 'atmosphere-runtime')
     self.assertEqual(tree.children[1].version, '2.4.30.slf4jvaadin1')
@@ -49,7 +66,7 @@ class ParserTestCase(unittest.TestCase):
   </spring-boot-starter-data-jpa>
 </license-tree>
     '''
-    tree = parse(ET.fromstring(tree_text))
+    tree = parse_dependency_xml(ET.fromstring(tree_text))
     self.assertEqual(len(tree.children), 1)
     self.assertEqual(tree.children[0].children[0].name, 'atmosphere-runtime')
     self.assertEqual(tree.children[0].children[0].version, '2.4.30.slf4jvaadin1')
@@ -69,7 +86,7 @@ class ParserTestCase(unittest.TestCase):
   </spring-core>
 </license-tree>
     '''
-    tree = parse(ET.fromstring(tree_text))
+    tree = parse_dependency_xml(ET.fromstring(tree_text))
     self.assertEqual(tree.name, 'license-tree')
     self.assertEqual(tree.version, '0.0.1-SNAPSHOT')
     self.assertEqual(tree.children[0].name, 'spring-boot-starter-data-jpa')
@@ -144,7 +161,7 @@ class ParserTestCase(unittest.TestCase):
 </licenseSummary>
 '''
 
-    license_map = parse_licenses(ET.fromstring(license_text))
+    license_map = parse_licenses_xml(ET.fromstring(license_text))
     self.assertEqual(license_map['antlr@2.7.7'], 'BSD License')
     self.assertEqual(license_map['logback-classic@1.2.3'], 'Eclipse Public License - v 1.0 AND GNU Lesser General Public License') 
     self.assertEqual(license_map['logback-core@1.2.3'], 'Eclipse Public License - v 1.0 AND GNU Lesser General Public License') 
