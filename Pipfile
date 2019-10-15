@@ -4,7 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-black = "*"
 
 [packages]
 anytree = "*"
@@ -14,6 +13,7 @@ PyInquirer = "*"
 urllib3 = "*"
 docopt = "*"
 license-expression = "*"
+black = "*"
 
 [requires]
 python_version = "3.7"
