@@ -113,14 +113,14 @@ def parse_licenses_xml(xml) -> Dict[str, str]:
   """
   license_map = {}
   for dependency in xml.find('dependencies'):
-    name = dependency.find('artifactId').text + '@' + dependency.find('version').text
+    name = '@'.join([dependency.find('artifactId').text, dependency.find('version').text])
     licenses = dependency.find('licenses')
     licenseName = None
     for license in licenses:
       if licenseName is None:
         licenseName = license.find('name').text
       else:
-        licenseName += MULTI_LICENSE_JOIN + license.find('name').text
+        licenseName = MULTI_LICENSE_JOIN.join([licenseName, license.find('name').text)
     license_map[name] = licenseName
 
   return license_map
