@@ -120,7 +120,7 @@ def parse_licenses_xml(xml) -> Dict[str, str]:
       if licenseName is None:
         licenseName = license.find('name').text
       else:
-        licenseName = MULTI_LICENSE_JOIN.join([licenseName, license.find('name').text)
+        licenseName = MULTI_LICENSE_JOIN.join([licenseName, license.find('name').text])
     license_map[name] = licenseName
 
   return license_map
@@ -173,6 +173,6 @@ class MavenRunner:
         print ("Cleaning Error: %s - %s." % (e.filename, e.strerror))
 
     for node in PreOrderIter(dep_tree):
-      node.license = None #license_map.get(node.name + '@' + node.version, None)
+      node.license = license_map.get(node.name + '@' + node.version, None)
 
     return dep_tree, license_map

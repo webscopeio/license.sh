@@ -35,6 +35,11 @@ def is_license_ok(license_text, whitelist):
   if license is None:
     return None
 
+  # TODO: AttributeError: 'LicenseWithExceptionSymbol' object has no attribute 'key'
+  if not hasattr(license, 'key'):
+    print(license)
+    return None
+
   if license.isliteral:
     return license.key in whitelist
 
