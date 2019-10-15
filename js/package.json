@@ -1,0 +1,12 @@
+{
+  "name": "lock_to_json",
+  "version": "1.0.0",
+  "description": "",
+  "main": "locktoJson.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@yarnpkg/lockfile": "1.1.0"
+  }
+}
