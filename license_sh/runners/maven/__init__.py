@@ -173,6 +173,7 @@ class MavenRunner:
         print ("Cleaning Error: %s - %s." % (e.filename, e.strerror))
 
     for node in PreOrderIter(dep_tree):
-      node.license = license_map.get(node.name + '@' + node.version, None)
+      # TODO: AttributeError: 'LicenseWithExceptionSymbol' object has no attribute 'key'
+      node.license = None #license_map.get(node.name + '@' + node.version, None)
 
     return dep_tree, license_map
