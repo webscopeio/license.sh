@@ -109,9 +109,10 @@ class NpmRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, verbose: bool, silent: bool):
         self.directory = directory
-        self.verbose = True
+        self.verbose = verbose
+        self.silent = silent
         self.package_json_path = path.join(directory, "package.json")
         self.package_lock_path = path.join(directory, "package-lock.json")
 
@@ -124,31 +125,29 @@ class NpmRunner:
             for dependency, version in all_dependencies
         ]
 
-        with yaspin(text="Fetching license info from npm ...") as sp:
+        async def fetch(session, url, version):
+            async with session.get(url) as resp:
+                return await resp.text(), version
+                # Catch HTTP errors/exceptions here
 
-            async def fetch(session, url, version):
-                async with session.get(url) as resp:
-                    return await resp.text(), version
-                    # Catch HTTP errors/exceptions here
+        async def fetch_concurrent(urls):
+            loop = asyncio.get_event_loop()
+            async with aiohttp.ClientSession() as session:
+                tasks = []
+                for url, version in urls:
+                    tasks.append(loop.create_task(fetch(session, url, version)))
 
-            async def fetch_concurrent(urls):
-                loop = asyncio.get_event_loop()
-                async with aiohttp.ClientSession() as session:
-                    tasks = []
-                    for url, version in urls:
-                        tasks.append(loop.create_task(fetch(session, url, version)))
+                for result in asyncio.as_completed(tasks):
+                    try:
+                        output, version = await result
+                        page = json.loads(output)
+                        license_map[f"{page['name']}@{version}"] = page.get(
+                            "license", "Unknown"
+                        )
+                    except JSONDecodeError:
+                        pass
 
-                    for result in asyncio.as_completed(tasks):
-                        try:
-                            output, version = await result
-                            page = json.loads(output)
-                            license_map[f"{page['name']}@{version}"] = page.get(
-                                "license", "Unknown"
-                            )
-                        except JSONDecodeError:
-                            pass
-
-            asyncio.run(fetch_concurrent(urls))
+        asyncio.run(fetch_concurrent(urls))
 
         return license_map
 
@@ -161,17 +160,24 @@ class NpmRunner:
             package_lock = json.load(package_lock_file)
             all_dependencies = package_lock["dependencies"]
 
-        if self.verbose:
+        if self.verbose and not self.silent:
             print("===========")
             print(
                 f"Initiated License.sh check for NPM project {project_name} located at {self.directory}"
             )
             print("===========")
 
+
         with yaspin(text="Analysing dependencies ...") as sp:
+            if self.silent:
+                sp.hide()
             dep_tree = get_dependency_tree(package_json, all_dependencies)
             flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
-        license_map = NpmRunner.fetch_licenses(flat_dependencies)
+
+        with yaspin(text="Fetching license info from npm ...") as sp:
+            if self.silent:
+                sp.hide()
+            license_map = NpmRunner.fetch_licenses(flat_dependencies)
 
         for node in PreOrderIter(dep_tree):
             delattr(node, "dependencies")

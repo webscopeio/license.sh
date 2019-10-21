@@ -25,10 +25,10 @@ PYPI_HOST = "https://pypi.org/pypi"
 
 
 class PythonRunner:
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, verbose: bool, silent: bool):
         self.directory = directory
-        self.verbose = True
-
+        self.verbose = verbose
+        self.silent = silent
         self.pipfile_path: str = os.path.join(self.directory, "Pipfile")
         self.pipfile_lock_path: str = os.path.join(self.directory, "Pipfile.lock")
 
@@ -41,50 +41,61 @@ class PythonRunner:
             for dependency, version in all_dependencies
         ]
 
-        with yaspin(text="Fetching license info from pypi ...") as sp:
 
-            async def fetch(session, url):
-                async with session.get(url) as resp:
-                    return await resp.text()
-                    # Catch HTTP errors/exceptions here
+        async def fetch(session, url):
+            async with session.get(url) as resp:
+                return await resp.text()
+                # Catch HTTP errors/exceptions here
 
-            async def fetch_concurrent(urls):
-                loop = asyncio.get_event_loop()
-                async with aiohttp.ClientSession() as session:
-                    tasks = []
-                    for u in urls:
-                        tasks.append(loop.create_task(fetch(session, u)))
+        async def fetch_concurrent(urls):
+            loop = asyncio.get_event_loop()
+            async with aiohttp.ClientSession() as session:
+                tasks = []
+                for u in urls:
+                    tasks.append(loop.create_task(fetch(session, u)))
 
-                    for result in asyncio.as_completed(tasks):
-                        try:
-                            page = json.loads(await result)
-                            info = page.get("info", {})
-                            license_map[
-                                f"{info.get('name')}@{info.get('version')}"
-                            ] = info.get("license", "Unknown")
-                        except JSONDecodeError:
-                            # TODO - investiage why does such a thing happen
-                            pass
+                for result in asyncio.as_completed(tasks):
+                    try:
+                        page = json.loads(await result)
+                        info = page.get("info", {})
+                        license_map[
+                            f"{info.get('name')}@{info.get('version')}"
+                        ] = info.get("license", "Unknown")
+                    except JSONDecodeError:
+                        # TODO - investiage why does such a thing happen
+                        pass
 
             asyncio.run(fetch_concurrent(urls))
 
         return license_map
 
     def check(self):
-        print(f"Checking {self.directory}")
+        if self.verbose and not self.silent:
+            print("===========")
+            print(
+                f"Initiated License.sh check for pipenv project located at {self.directory}"
+            )
+            print("===========")
 
-        result = subprocess.run(
-            ["pipdeptree", "--json-tree", "--local-only"], stdout=subprocess.PIPE
-        )
-        dep_tree = json.loads(result.stdout)
+        with yaspin(text="Analysing dependencies ...") as sp:
+            if self.silent:
+                sp.hide()
+            result = subprocess.run(
+                ["pipdeptree", "--json-tree", "--local-only"], stdout=subprocess.PIPE
+            )
+            dep_tree = json.loads(result.stdout)
 
-        root = AnyNode(name="root", version="")
+            root = AnyNode(name="root", version="")
 
-        for dep in dep_tree:
-            add_nested_dependencies(dep, root)
+            for dep in dep_tree:
+                add_nested_dependencies(dep, root)
 
-        all_dependencies = flatten_dependency_tree(root)
-        license_map = PythonRunner.fetch_licenses(all_dependencies)
+            all_dependencies = flatten_dependency_tree(root)
+
+        with yaspin(text="Fetching license info from pypi ...") as sp:
+            if self.silent:
+                sp.hide()
+            license_map = PythonRunner.fetch_licenses(all_dependencies)
 
         for node in PreOrderIter(root):
             node.license = license_map.get(f"{node.name}@{node.version}", None)
