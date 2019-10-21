@@ -33,7 +33,7 @@ if __name__ == '__main__':
   path = arguments['<path>'] or '.'
   output = arguments['--output']
   tree = arguments['--tree']
-
+  silent = output == 'json'
   # docopt guarantees that output variable contains either console or json
   Reporter = {
     'console': ConsoleReporter,
@@ -46,15 +46,15 @@ if __name__ == '__main__':
   license_map = {}
 
   if ProjectType.PYTHON_PIPENV in project_types:
-    runner = PythonRunner(path)
+    runner = PythonRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.NPM in project_types:
-    runner = NpmRunner(path)
+    runner = NpmRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.YARN in project_types:
-    runner = YarnRunner(path)
+    runner = YarnRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
