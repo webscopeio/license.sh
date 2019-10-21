@@ -11,8 +11,6 @@ Options:
   -h --help                           Show this screen.
   -o <reporter> --output <reporter>   Output [default: console].
   -t --tree                           Show full dependency tree.
-  -s --silent                         Don't progress output
-  --verbose                           Verbose output
   --version                           Show version.
 """
 from license_sh.config import LICENSE_WHITELIST
@@ -35,9 +33,7 @@ if __name__ == '__main__':
   path = arguments['<path>'] or '.'
   output = arguments['--output']
   tree = arguments['--tree']
-  silent = arguments['--silent']
-  verbose = arguments['--verbose']
-
+  silent = output == 'json'
   # docopt guarantees that output variable contains either console or json
   Reporter = {
     'console': ConsoleReporter,
@@ -50,15 +46,15 @@ if __name__ == '__main__':
   license_map = {}
 
   if ProjectType.PYTHON_PIPENV in project_types:
-    runner = PythonRunner(path, verbose, silent)
+    runner = PythonRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.NPM in project_types:
-    runner = NpmRunner(path, verbose, silent)
+    runner = NpmRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.YARN in project_types:
-    runner = YarnRunner(path, verbose, silent)
+    runner = YarnRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)

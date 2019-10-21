@@ -109,9 +109,8 @@ class NpmRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str, verbose: bool, silent: bool):
+    def __init__(self, directory: str, silent: bool):
         self.directory = directory
-        self.verbose = verbose
         self.silent = silent
         self.package_json_path = path.join(directory, "package.json")
         self.package_lock_path = path.join(directory, "package-lock.json")
@@ -159,8 +158,7 @@ class NpmRunner:
         with open(self.package_lock_path) as package_lock_file:
             package_lock = json.load(package_lock_file)
             all_dependencies = package_lock["dependencies"]
-
-        if self.verbose and not self.silent:
+        if not self.silent:
             print("===========")
             print(
                 f"Initiated License.sh check for NPM project {project_name} located at {self.directory}"

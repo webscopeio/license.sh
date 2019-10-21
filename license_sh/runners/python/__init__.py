@@ -25,9 +25,8 @@ PYPI_HOST = "https://pypi.org/pypi"
 
 
 class PythonRunner:
-    def __init__(self, directory: str, verbose: bool, silent: bool):
+    def __init__(self, directory: str, silent: bool):
         self.directory = directory
-        self.verbose = verbose
         self.silent = silent
         self.pipfile_path: str = os.path.join(self.directory, "Pipfile")
         self.pipfile_lock_path: str = os.path.join(self.directory, "Pipfile.lock")
@@ -69,7 +68,7 @@ class PythonRunner:
         return license_map
 
     def check(self):
-        if self.verbose and not self.silent:
+        if not self.silent:
             print("===========")
             print(
                 f"Initiated License.sh check for pipenv project located at {self.directory}"

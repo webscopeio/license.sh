@@ -293,9 +293,8 @@ class YarnRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str, verbose: bool, silent: bool):
+    def __init__(self, directory: str, silent: bool):
         self.directory = directory
-        self.verbose = verbose
         self.silent = silent
         self.package_json_path = path.join(directory, "package.json")
         self.yarn_lock_path = path.join(directory, "yarn.lock")
@@ -305,7 +304,7 @@ class YarnRunner:
             package_json = json.load(package_json_file)
             project_name = package_json.get("name", "project_name")
 
-        if self.verbose and not self.silent:
+        if not self.silent:
             print("===========")
             print(
                 f"Initiated License.sh check for YARN project {project_name} located at {self.directory}"
