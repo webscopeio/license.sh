@@ -6,7 +6,7 @@ from license_sh.helpers import flatten_dependency_tree, annotate_dep_tree
 
 
 def get_tree():
-  """
+    """
   Please always re-generate this comment when changing the tree.
   You can use `print(RenderTree(tree))`
 
@@ -26,84 +26,160 @@ def get_tree():
 
   print(RenderTree(tree, style=AsciiStyle()))
   """
-  tree = AnyNode(name='Name', version='', license='MIT')
-  # first level
-  package1 = AnyNode(name='@company/package1', parent=tree, version="1.1.1", license="MIT")
-  package4 = AnyNode(name='package4', parent=tree, version="4.4.4", license="MIT")
+    tree = AnyNode(name="Name", version="", license="MIT")
+    # first level
+    package1 = AnyNode(
+        name="@company/package1", parent=tree, version="1.1.1", license="MIT"
+    )
+    package4 = AnyNode(name="package4", parent=tree, version="4.4.4", license="MIT")
 
-  package2 = AnyNode(name='package2', parent=package1, version="2.2.2", license="MIT")
-  AnyNode(name='package5', parent=package2, version="5.5.5", license="MIT")
-  AnyNode(name='package7', parent=package2, version="7.7.7", license="MIT")
+    package2 = AnyNode(name="package2", parent=package1, version="2.2.2", license="MIT")
+    AnyNode(name="package5", parent=package2, version="5.5.5", license="MIT")
+    AnyNode(name="package7", parent=package2, version="7.7.7", license="MIT")
 
-  package3 = AnyNode(name='package3', parent=package1, version="3.3.3", license="MIT")
-  AnyNode(name='package7', parent=package3, version="7.7.6", license="GPL")
+    package3 = AnyNode(name="package3", parent=package1, version="3.3.3", license="MIT")
+    AnyNode(name="package7", parent=package3, version="7.7.6", license="GPL")
 
-  AnyNode(name='package4', parent=package1, version="4.4.4", license="MIT")
+    AnyNode(name="package4", parent=package1, version="4.4.4", license="MIT")
 
-  package5 = AnyNode(name='package5', parent=package1, version="5.5.5", license="MIT")
-  AnyNode(name='package6', parent=package5, version="6.6.6", license="GPL")
+    package5 = AnyNode(name="package5", parent=package1, version="5.5.5", license="MIT")
+    AnyNode(name="package6", parent=package5, version="6.6.6", license="GPL")
 
-  AnyNode(name='package6', parent=package4, version="6.6.6", license="GPL")
-  return tree
+    AnyNode(name="package6", parent=package4, version="6.6.6", license="GPL")
+    return tree
 
 
 class NpmRunnerTestCase(unittest.TestCase):
-  def test_dependency_tree_is_flattened(self):
-    tree = get_tree()
-    dependencies = flatten_dependency_tree(tree)
-    self.assertSetEqual(dependencies, {
-      ("@company/package1", "1.1.1"),
-      ("package2", "2.2.2"),
-      ("package3", "3.3.3"),
-      ("package4", "4.4.4"),
-      ("package5", "5.5.5"),
-      ("package6", "6.6.6"),
-      ("package7", "7.7.6"),
-      ("package7", "7.7.7"),
-    })
+    def test_dependency_tree_is_flattened(self):
+        tree = get_tree()
+        dependencies = flatten_dependency_tree(tree)
+        self.assertSetEqual(
+            dependencies,
+            {
+                ("@company/package1", "1.1.1"),
+                ("package2", "2.2.2"),
+                ("package3", "3.3.3"),
+                ("package4", "4.4.4"),
+                ("package5", "5.5.5"),
+                ("package6", "6.6.6"),
+                ("package7", "7.7.6"),
+                ("package7", "7.7.7"),
+            },
+        )
 
-  def test_annotate_dependency_tree(self):
-    tree = get_tree()
+    def test_annotate_dependency_tree(self):
+        tree = get_tree()
 
-    whitelist = ['MIT', 'Apache-2.0']
-    annotated_tree = annotate_dep_tree(tree, whitelist)
+        whitelist = ["MIT", "Apache-2.0"]
+        annotated_tree = annotate_dep_tree(tree, whitelist)
 
-    expected_tree = AnyNode(name='Name', version='', license='MIT', license_problem=False, subtree_problem=True)
-    # first level
-    package1 = AnyNode(
-      name='@company/package1',
-      parent=expected_tree,
-      version="1.1.1",
-      license="MIT",
-      license_problem=False,
-      subtree_problem=True
-    )
-    package4 = AnyNode(
-      name='package4',
-      parent=expected_tree,
-      version="4.4.4",
-      license="MIT",
-      license_problem=False,
-      subtree_problem=True
-    )
+        expected_tree = AnyNode(
+            name="Name",
+            version="",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=True,
+        )
+        # first level
+        package1 = AnyNode(
+            name="@company/package1",
+            parent=expected_tree,
+            version="1.1.1",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=True,
+        )
+        package4 = AnyNode(
+            name="package4",
+            parent=expected_tree,
+            version="4.4.4",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=True,
+        )
 
-    package2 = AnyNode(name='package2', parent=package1, version="2.2.2", license="MIT", license_problem=False, subtree_problem=False)
-    AnyNode(name='package5', parent=package2, version="5.5.5", license="MIT", license_problem=False, subtree_problem=False)
-    AnyNode(name='package7', parent=package2, version="7.7.7", license="MIT", license_problem=False, subtree_problem=False)
+        package2 = AnyNode(
+            name="package2",
+            parent=package1,
+            version="2.2.2",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=False,
+        )
+        AnyNode(
+            name="package5",
+            parent=package2,
+            version="5.5.5",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=False,
+        )
+        AnyNode(
+            name="package7",
+            parent=package2,
+            version="7.7.7",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=False,
+        )
 
-    package3 = AnyNode(name='package3', parent=package1, version="3.3.3", license="MIT", license_problem=False, subtree_problem=True)
-    AnyNode(name='package7', parent=package3, version="7.7.6", license="GPL", license_problem=True, subtree_problem=False)
+        package3 = AnyNode(
+            name="package3",
+            parent=package1,
+            version="3.3.3",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=True,
+        )
+        AnyNode(
+            name="package7",
+            parent=package3,
+            version="7.7.6",
+            license="GPL",
+            license_problem=True,
+            subtree_problem=False,
+        )
 
-    AnyNode(name='package4', parent=package1, version="4.4.4", license="MIT", license_problem=False, subtree_problem=False)
+        AnyNode(
+            name="package4",
+            parent=package1,
+            version="4.4.4",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=False,
+        )
 
-    package5 = AnyNode(name='package5', parent=package1, version="5.5.5", license="MIT", license_problem=False, subtree_problem=True)
-    AnyNode(name='package6', parent=package5, version="6.6.6", license="GPL", license_problem=True, subtree_problem=False)
+        package5 = AnyNode(
+            name="package5",
+            parent=package1,
+            version="5.5.5",
+            license="MIT",
+            license_problem=False,
+            subtree_problem=True,
+        )
+        AnyNode(
+            name="package6",
+            parent=package5,
+            version="6.6.6",
+            license="GPL",
+            license_problem=True,
+            subtree_problem=False,
+        )
 
-    AnyNode(name='package6', parent=package4, version="6.6.6", license="GPL", license_problem=True, subtree_problem=False)
+        AnyNode(
+            name="package6",
+            parent=package4,
+            version="6.6.6",
+            license="GPL",
+            license_problem=True,
+            subtree_problem=False,
+        )
 
-    exporter = DictExporter()
-    self.assertDictEqual(exporter.export(expected_tree), exporter.export(annotated_tree))
+        exporter = DictExporter()
+        self.assertDictEqual(
+            exporter.export(expected_tree), exporter.export(annotated_tree)
+        )
 
 
-if __name__ == '__main__':
-  unittest.main()
+if __name__ == "__main__":
+    unittest.main()
