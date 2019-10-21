@@ -41,7 +41,6 @@ class PythonRunner:
             for dependency, version in all_dependencies
         ]
 
-
         async def fetch(session, url):
             async with session.get(url) as resp:
                 return await resp.text()

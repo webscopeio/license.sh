@@ -167,7 +167,6 @@ class NpmRunner:
             )
             print("===========")
 
-
         with yaspin(text="Analysing dependencies ...") as sp:
             if self.silent:
                 sp.hide()
