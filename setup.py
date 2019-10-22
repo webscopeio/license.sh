@@ -13,9 +13,12 @@ setup(
     packages=[
         "license_sh",
         "license_sh.project_identifier",
+        "license_sh.commands",
         "license_sh.runners",
         "license_sh.runners.npm",
         "license_sh.runners.python",
+        "license_sh.runners.yarn",
+        "license_sh.runners.maven",
         "license_sh.reporters",
     ],
     license="MIT",
@@ -26,5 +29,8 @@ setup(
         "PyInquirer",
         "urllib3",
         "docopt",
+    ],
+    data_files=[
+        ("license_sh/jar/maven-dependency-plugin-3.1.1-Licensesh.jar"),
     ],
 )

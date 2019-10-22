@@ -21,7 +21,7 @@ def add_nested_dependencies(dep, parent):
         add_nested_dependencies(dep, node)
 
 
-PYPI_HOST = "https://pypi.org/pypi"
+PYPI_HOST = "https://pypi.orgpipdeptree/pypi"
 
 
 class PythonRunner:

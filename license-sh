@@ -14,7 +14,7 @@ Options:
   -t --tree                           Show full dependency tree.
   --version                           Show version.
 """
-from license_sh.commands.init import init_cmd
+from license_sh.commands import init_cmd
 from license_sh.config import LICENSE_WHITELIST
 from license_sh.helpers import annotate_dep_tree
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
