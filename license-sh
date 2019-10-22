@@ -28,6 +28,7 @@ from license_sh.project_identifier import get_project_types, ProjectType
 from license_sh.runners.npm import NpmRunner
 from license_sh.runners.yarn import YarnRunner
 from license_sh.runners.python import PythonRunner
+from license_sh.runners.maven import MavenRunner
 
 if __name__ == '__main__':
   arguments = docopt(__doc__, version=VERSION)
@@ -41,6 +42,8 @@ if __name__ == '__main__':
     init_cmd()
     exit(0)
 
+  silent = output == 'json'
+
   # docopt guarantees that output variable contains either console or json
   Reporter = {
     'console': ConsoleReporter,
@@ -53,16 +56,21 @@ if __name__ == '__main__':
   license_map = {}
 
   if ProjectType.PYTHON_PIPENV in project_types:
-    runner = PythonRunner(path)
+    runner = PythonRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.NPM in project_types:
-    runner = NpmRunner(path)
+    runner = NpmRunner(path, silent)
+    dep_tree, license_map = runner.check()
+
+  if ProjectType.MAVEN in project_types:
+    runner = MavenRunner(path)
     dep_tree, license_map = runner.check()
 
   if ProjectType.YARN in project_types:
-    runner = YarnRunner(path)
+    runner = YarnRunner(path, silent)
     dep_tree, license_map = runner.check()
+
 
   annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
   Reporter.output(annotated_dep_tree, [], license_map, LICENSE_WHITELIST, tree=tree)
