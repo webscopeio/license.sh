@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "52de2d57c2b9a6c3da096b28f3ada31981a92bfa043bfbdcf2246829c37d55b9"
+            "sha256": "401ffeb4e2abd21b93fdbe4fb78d0562f88da0b948b44f8ec3b88bc48cbb75ff"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -104,11 +104,11 @@
         },
         "license-expression": {
             "hashes": [
-                "sha256:40f2c6422ba55800c548b7354151dac25c9926fabf0394ba179121255733558d",
-                "sha256:ce730e6f159f713106b361ce66f852ba6de77ca2f76984fc575de7d51758f722"
+                "sha256:5928605d416268ef7e203ca21a5020f96707f0858aa7c18eab8dcaa5b2683d1d",
+                "sha256:8aaa455c5b97c4f2174090178b19792b2a1c620e80591aafd4e0a99b713f9e8d"
             ],
             "index": "pypi",
-            "version": "==0.999"
+            "version": "==1.0"
         },
         "multidict": {
             "hashes": [
@@ -144,6 +144,15 @@
             ],
             "version": "==4.5.2"
         },
+        "pipdeptree": {
+            "hashes": [
+                "sha256:78942d3e6a88af1cea41e04d1c29ff5fbf4dda438aa8d8938ed88db22871cca3",
+                "sha256:98178657b9c952be6d49e639bcf39bc8d0e1b93781b4c518a99e6599852d46e5",
+                "sha256:f54a2388cfe3cbaa08f4702ee8957f0f3f0d6ff65899833ea57f12f2fc4ae0c1"
+            ],
+            "index": "pypi",
+            "version": "==0.13.2"
+        },
         "prompt-toolkit": {
             "hashes": [
                 "sha256:7281b5199235adaef6980942840c43753e4ab20dfe41338da634fb41c194f9d8",
@@ -169,6 +178,8 @@
         "regex": {
             "hashes": [
                 "sha256:1e9f9bc44ca195baf0040b1938e6801d2f3409661c15fe57f8164c678cfc663f",
+                "sha256:2079f83ac094b436a8078988e38af44286c67eb5a259becfc563e8a81cb34a11",
+                "sha256:43dbcc90e1bd42d905abc8dac75a64768d4b621c9e01adfcd8a57df1af65793e",
                 "sha256:587b62d48ca359d2d4f02d486f1f0aa9a20fbaf23a9d4198c4bed72ab2f6c849",
                 "sha256:835ccdcdc612821edf132c20aef3eaaecfb884c9454fdc480d5887562594ac61",
                 "sha256:93f6c9da57e704e128d90736430c5c59dd733327882b371b0cae8833106c2a21",
