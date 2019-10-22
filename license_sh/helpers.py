@@ -12,13 +12,16 @@ RESET = "\033[0;0m"
 BOLD = "\033[;1m"
 REVERSE = "\033[;7m"
 
+
 def flatten_dependency_tree(tree):
-  # remove the root node
-  return set([(node.name, node.version) for node in PreOrderIter(tree) if tree is not node])
+    # remove the root node
+    return set(
+        [(node.name, node.version) for node in PreOrderIter(tree) if tree is not node]
+    )
 
 
 def is_license_ok(license_text, whitelist):
-  """
+    """
   Identifies whether license is compliant with the whitelist
   :param license_text: string or licensing object
   :param whitelist: list of strings to compare with
@@ -27,40 +30,42 @@ def is_license_ok(license_text, whitelist):
   False - if it's not compliant.
   None - if there is a parsing error.
   """
-  try:
-    license = licensing.parse(license_text)
-  except:
-    return None
+    try:
+        license = licensing.parse(license_text)
+    except:
+        return None
 
-  if license is None:
-    return None
+    if license is None:
+        return None
 
-  if license.isliteral:
-    return license.key in whitelist
+    if license.isliteral:
+        return license.key in whitelist
 
-  operator = license.operator.strip()
+    operator = license.operator.strip()
 
-  fn = {
-    'OR': any,
-    'AND': all,
-  }[operator]
+    fn = {"OR": any, "AND": all}[operator]
 
-  return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
+    return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
 
 
 def annotate_dep_tree(tree, whitelist: [str]):
-  """
+    """
   An idea of this function is to go through elements from the bottom -> up and
   mark subtree_problem if any of the children has a license_problem or a subtree_problem
   :param tree:
   :param whitelist:
   :return:
   """
-  for node in PreOrderIter(tree):
-    node.license_problem = not is_license_ok(node.license, whitelist)
+    for node in PreOrderIter(tree):
+        node.license_problem = not is_license_ok(node.license, whitelist)
 
-  for node in list(LevelOrderIter(tree))[::-1]:
-    node.subtree_problem = False if node.is_leaf \
-      else any(map(lambda x: x.subtree_problem or x.license_problem, node.children))
+    for node in list(LevelOrderIter(tree))[::-1]:
+        node.subtree_problem = (
+            False
+            if node.is_leaf
+            else any(
+                map(lambda x: x.subtree_problem or x.license_problem, node.children)
+            )
+        )
 
-  return tree
+    return tree

@@ -13,6 +13,7 @@ This documents guides you on how to contribute to this project.
 4. Run 
    - license audit of license.sh `pipenv run ./license.sh` or
    - unit tests `pipenv run python -m unittest`
+   - run style formater `black .`
    - open documentation with `docsify serve ./docs`
 3. Read [Architecture](architecture.md) section.
 
