@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name="License.sh",
-    version="1.0.0",
+    version="1.0.2",
     description="Verify software licenses of your open source software",
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
@@ -29,8 +29,7 @@ setup(
         "PyInquirer",
         "urllib3",
         "docopt",
-    ],
-    data_files=[
-        ("license_sh/jar/maven-dependency-plugin-3.1.1-Licensesh.jar"),
+        "license-expression",
+        "pipdeptree"
     ],
 )
