@@ -6,6 +6,7 @@ from anytree import AnyNode, PreOrderIter
 from typing import Dict, List
 from yaspin import yaspin
 from pathlib import Path
+from contextlib import nullcontext
 
 PARSE_YARN_LOCK_PATH = path.join(Path(__file__).parent, "..", "..", "..", "js")
 PARSE_YARN_LOCK_SCRIPT = path.join(PARSE_YARN_LOCK_PATH, "parseYarnLock.js")
@@ -311,9 +312,11 @@ class YarnRunner:
             )
             print("===========")
 
-        with yaspin(text="Analysing dependencies ...") as sp:
-            if self.silent:
-                sp.hide()
+        with (
+            yaspin(text="Analysing dependencies ...")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
             package_map = parse_yarn_lock(get_yarn_lock_json(self.directory))
             flat_tree = get_flat_tree(
                 get_yarn_list_json(self.directory).get("data", {}).get("trees", []),
