@@ -189,7 +189,11 @@ class MavenRunner:
             )
             print("===========")
 
-        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
+        with (
+            yaspin(text="Analysing dependencies ...")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
             dep_tree = parse_dependency_xml(get_dependency_tree_xml(self.directory))
             license_map = parse_licenses_xml(get_license_xml_file(self.directory))
 

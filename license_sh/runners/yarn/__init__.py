@@ -312,7 +312,11 @@ class YarnRunner:
             )
             print("===========")
 
-        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
+        with (
+            yaspin(text="Analysing dependencies ...")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
             package_map = parse_yarn_lock(get_yarn_lock_json(self.directory))
             flat_tree = get_flat_tree(
                 get_yarn_list_json(self.directory).get("data", {}).get("trees", []),

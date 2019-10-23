@@ -76,7 +76,11 @@ class PythonRunner:
             )
             print("===========")
 
-        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
+        with (
+            yaspin(text="Analysing dependencies ...")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
             result = subprocess.run(
                 ["pipdeptree", "--json-tree", "--local-only"], stdout=subprocess.PIPE
             )
@@ -89,7 +93,11 @@ class PythonRunner:
 
             all_dependencies = flatten_dependency_tree(root)
 
-        with (yaspin(text="Fetching license info from pypi ...") if not self.silent else nullcontext()) as sp:
+        with (
+            yaspin(text="Fetching license info from pypi ...")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
             license_map = PythonRunner.fetch_licenses(all_dependencies)
 
         for node in PreOrderIter(root):
