@@ -174,9 +174,10 @@ class MavenRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str):
+    def __init__(self, directory: str, silent: bool):
         self.directory = directory
         self.verbose = True
+        self.silent = silent
 
     def check(self):
         project_name = get_project_name(get_project_pom_xml(self.directory))
@@ -188,11 +189,11 @@ class MavenRunner:
             )
             print("===========")
 
-        with yaspin(text="Analysing dependencies ...") as sp:
+        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
             dep_tree = parse_dependency_xml(get_dependency_tree_xml(self.directory))
             license_map = parse_licenses_xml(get_license_xml_file(self.directory))
 
-        with yaspin(text="Cleaning ...") as sp:
+        with (yaspin(text="Cleaning ...") if not self.silent else nullcontext()) as sp:
             try:
                 shutil.rmtree(TEST_DIR)
             except OSError as e:

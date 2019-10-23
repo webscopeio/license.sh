@@ -64,7 +64,7 @@ if __name__ == '__main__':
     dep_tree, license_map = runner.check()
 
   if ProjectType.MAVEN in project_types:
-    runner = MavenRunner(path)
+    runner = MavenRunner(path, silent)
     dep_tree, license_map = runner.check()
 
   if ProjectType.YARN in project_types:

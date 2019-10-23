@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 from json import JSONDecodeError
+from contextlib import nullcontext
 
 import aiohttp
 from anytree import AnyNode, PreOrderIter
@@ -75,9 +76,7 @@ class PythonRunner:
             )
             print("===========")
 
-        with yaspin(text="Analysing dependencies ...") as sp:
-            if self.silent:
-                sp.hide()
+        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
             result = subprocess.run(
                 ["pipdeptree", "--json-tree", "--local-only"], stdout=subprocess.PIPE
             )
@@ -90,9 +89,7 @@ class PythonRunner:
 
             all_dependencies = flatten_dependency_tree(root)
 
-        with yaspin(text="Fetching license info from pypi ...") as sp:
-            if self.silent:
-                sp.hide()
+        with (yaspin(text="Fetching license info from pypi ...") if not self.silent else nullcontext()) as sp:
             license_map = PythonRunner.fetch_licenses(all_dependencies)
 
         for node in PreOrderIter(root):

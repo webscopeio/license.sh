@@ -3,7 +3,7 @@ import json
 import subprocess
 from json import JSONDecodeError
 from os import path
-
+from contextlib import nullcontext
 
 import aiohttp as aiohttp
 import urllib3
@@ -165,15 +165,12 @@ class NpmRunner:
             )
             print("===========")
 
-        with yaspin(text="Analysing dependencies ...") as sp:
-            if self.silent:
-                sp.hide()
+
+        with (yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext()) as sp:
             dep_tree = get_dependency_tree(package_json, all_dependencies)
             flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
 
-        with yaspin(text="Fetching license info from npm ...") as sp:
-            if self.silent:
-                sp.hide()
+        with (yaspin(text="Fetching license info from npm ...") if not self.silent else nullcontext()) as sp:
             license_map = NpmRunner.fetch_licenses(flat_dependencies)
 
         for node in PreOrderIter(dep_tree):
