@@ -1,5 +1,5 @@
 import license_expression
-from anytree import PreOrderIter, LevelOrderIter, AsciiStyle, RenderTree
+from anytree import PreOrderIter, LevelOrderIter, AsciiStyle, RenderTree, AnyNode
 from license_expression import Licensing, LicenseSymbol
 
 licensing = Licensing()
@@ -66,6 +66,26 @@ def annotate_dep_tree(tree, whitelist: [str]):
             else any(
                 map(lambda x: x.subtree_problem or x.license_problem, node.children)
             )
+        )
+
+    return tree
+
+
+def filter_dep_tree(tree: AnyNode) -> AnyNode:
+    """Filter dependency tree.
+    
+    Leave only nodes with license problem of itself or children 
+    
+    Arguments:
+        tree {AnyNode} -- Tree to filter
+    
+    Returns:
+        AnyNode -- Filtered tree
+    """
+    for node in LevelOrderIter(tree):
+        node.children = filter(
+            lambda subnode: subnode.subtree_problem or subnode.license_problem,
+            node.children,
         )
 
     return tree
