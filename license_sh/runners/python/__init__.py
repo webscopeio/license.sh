@@ -64,7 +64,7 @@ class PythonRunner:
                         # TODO - investiage why does such a thing happen
                         pass
 
-            asyncio.run(fetch_concurrent(urls))
+        asyncio.run(fetch_concurrent(urls))
 
         return license_map
 
