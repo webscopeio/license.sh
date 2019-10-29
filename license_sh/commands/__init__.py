@@ -1,10 +1,19 @@
 import json
 import os
+from importlib import resources
 
 from license_sh.project_identifier import get_project_types
 
+from license_sh.runners.yarn import js
+
 
 def init_cmd():
+    with resources.path(js, "package.json") as path:
+        with open(path) as file:
+            print(file.read())
+
+    exit(0)
+
     root_dir = "."
     config = {"projects": {}}
     projects = config["projects"]
