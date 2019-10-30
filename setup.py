@@ -39,6 +39,6 @@ setup(
         "urllib3",
         "docopt",
         "license-expression",
-        "pipdeptree"
+        "pipdeptree",
     ],
 )
