@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name="license_sh",
-    version="1.0.3",
+    version="1.0.4",
     description="Verify software licenses of your open source software",
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
@@ -25,6 +25,8 @@ setup(
     package_data={
         "license_sh": [
             "runners/yarn/js/package.json",
+            "runners/yarn/js/yarn.lock",
+            "runners/yarn/js/parseYarnLock.js",
             "runners/maven/maven-dependency-plugin-3.1.1-Licensesh.jar",
         ]
     },
@@ -36,5 +38,7 @@ setup(
         "PyInquirer",
         "urllib3",
         "docopt",
+        "license-expression",
+        "pipdeptree"
     ],
 )
