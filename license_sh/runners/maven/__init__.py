@@ -80,22 +80,21 @@ def get_license_xml_file(directory: str) -> ET.ElementTree:
       [xml] -- XML representation of maven licenses xml
     """
     with tempfile.TemporaryDirectory() as dirpath:
-        with tempfile.NamedTemporaryFile() as tmpfile:
-            subprocess.run(
-                [
-                    "mvn",
-                    "license:download-licenses",
-                    f"-DlicensesOutputDirectory={dirpath}",
-                    "-DskipDownloadLicenses=true",
-                    f"-DlicensesOutputFile={tmpfile.name}",
-                    "-f",
-                    directory,
-                ],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-
-        return ET.parse(tmpfile.name).getroot()
+        fname = path.join(dirpath, "licenses.tmp")
+        subprocess.run(
+            [
+                "mvn",
+                "license:download-licenses",
+                f"-DlicensesOutputDirectory={dirpath}",
+                "-DskipDownloadLicenses=true",
+                f"-DlicensesOutputFile={fname}",
+                "-f",
+                directory,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        return ET.parse(fname).getroot()
     return None
 
 
@@ -148,15 +147,15 @@ def parse_licenses_xml(xml) -> Dict[str, str]:
             [dependency.find("artifactId").text, dependency.find("version").text]
         )
         licenses = dependency.find("licenses")
-        licenseName = None
+        license_name = None
         for license in licenses:
-            if licenseName is None:
-                licenseName = license.find("name").text
+            if license_name is None:
+                license_name = license.find("name").text
             else:
-                licenseName = MULTI_LICENSE_JOIN.join(
-                    [licenseName, license.find("name").text]
+                license_name = "({})".format(
+                    " AND ".join([license_name, license.find("name").text])
                 )
-        license_map[name] = licenseName
+        license_map[name] = license_name
 
     return license_map
 
@@ -211,7 +210,6 @@ class MavenRunner:
             license_map = parse_licenses_xml(get_license_xml_file(self.directory))
 
         for node in PreOrderIter(dep_tree):
-            # TODO: AttributeError: 'LicenseWithExceptionSymbol' object has no attribute 'key'
-            node.license = None  # license_map.get(node.name + '@' + node.version, None)
+            node.license = license_map.get(f"{node.name}@{node.version}", "")
 
         return dep_tree, license_map
