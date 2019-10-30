@@ -170,11 +170,11 @@ class ParserTestCase(unittest.TestCase):
         self.assertEqual(license_map["antlr@2.7.7"], "BSD License")
         self.assertEqual(
             license_map["logback-classic@1.2.3"],
-            "Eclipse Public License - v 1.0 AND GNU Lesser General Public License",
+            "(Eclipse Public License - v 1.0 AND GNU Lesser General Public License)",
         )
         self.assertEqual(
             license_map["logback-core@1.2.3"],
-            "Eclipse Public License - v 1.0 AND GNU Lesser General Public License",
+            "(Eclipse Public License - v 1.0 AND GNU Lesser General Public License)",
         )
 
 

@@ -39,7 +39,7 @@ def is_license_ok(license_text, whitelist):
         return None
 
     if license.isliteral:
-        return license.key in whitelist
+        return license.render() in whitelist
 
     operator = license.operator.strip()
 

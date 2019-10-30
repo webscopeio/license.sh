@@ -1,11 +1,16 @@
-from os import path, getcwd
+import tempfile
+from contextlib import nullcontext
+from os import path
 import xml.etree.ElementTree as ET
 import subprocess
+
 from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
-import shutil
 from typing import Dict
 from pathlib import Path
+from importlib import resources
+
+from license_sh.runners import maven
 
 DEPENDENCY_JAR = path.join(
     Path(__file__).parent,
@@ -19,71 +24,78 @@ GROUP_ID = "org.apache.maven.plugins"
 ARTIFACT_ID = "maven-dependency-plugin"
 VERSION = "3.1.1-Licensesh"
 MULTI_LICENSE_JOIN = " AND "
-TEST_DIR = path.join(getcwd(), ".license-shTestDir")
-DEPENDENCIES_FILE = path.join(TEST_DIR, "dependencies.txt")
-LICENSE_FILE = path.join(TEST_DIR, "licenses.xml")
 
 
 def get_dependency_tree_xml(directory: str):
     """Get maven dependency tree as xml
   
-  Arguments:
+    Arguments:
       directory {str} -- path to maven project
   
-  Returns:
+    Returns:
       [xml] -- XML representation of maven dependency tree
-  """
-    subprocess.run(
-        [
-            "mvn",
-            "install:install-file",
-            f"-Dfile={DEPENDENCY_JAR}",
-            f"-DgroupId={GROUP_ID}",
-            f"-DartifactId={ARTIFACT_ID}",
-            f"-Dversion={VERSION}",
-            f"-Dpackaging=jar",
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    subprocess.run(
-        [
-            "mvn",
-            f"{GROUP_ID}:{ARTIFACT_ID}:{VERSION}:tree",
-            f"-DoutputType=xml",
-            f"-DoutputFile={DEPENDENCIES_FILE}",
-            "-f",
-            directory,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    return ET.parse(DEPENDENCIES_FILE).getroot()
+    """
+    with resources.path(
+        maven, "maven-dependency-plugin-3.1.1-Licensesh.jar"
+    ) as maven_path:
+        subprocess.run(
+            [
+                "mvn",
+                "install:install-file",
+                f"-Dfile={maven_path}",
+                f"-DgroupId={GROUP_ID}",
+                f"-DartifactId={ARTIFACT_ID}",
+                f"-Dversion={VERSION}",
+                f"-Dpackaging=jar",
+            ],
+            # stdout=subprocess.PIPE,
+            # stderr=subprocess.PIPE,
+        )
+
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        subprocess.run(
+            [
+                "mvn",
+                f"{GROUP_ID}:{ARTIFACT_ID}:{VERSION}:tree",
+                f"-DoutputType=xml",
+                f"-DoutputFile={tmpfile.name}",
+                "-f",
+                directory,
+            ],
+            # stdout=subprocess.PIPE,
+            # stderr=subprocess.PIPE,
+        )
+        return ET.parse(tmpfile).getroot()
+
+    return None
 
 
-def get_license_xml_file(directory: str):
+def get_license_xml_file(directory: str) -> ET.ElementTree:
     """Get maven xml licenses
-  
-  Arguments:
+
+    Arguments:
       directory {str} -- path to maven project
-  
-  Returns:
+
+    Returns:
       [xml] -- XML representation of maven licenses xml
-  """
-    subprocess.run(
-        [
-            "mvn",
-            "license:download-licenses",
-            f"-DlicensesOutputDirectory={TEST_DIR}",
-            "-DskipDownloadLicenses=true",
-            f"-DlicensesOutputFile={LICENSE_FILE}",
-            "-f",
-            directory,
-        ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    return ET.parse(LICENSE_FILE).getroot()
+    """
+    with tempfile.TemporaryDirectory() as dirpath:
+        fname = path.join(dirpath, "licenses.tmp")
+        subprocess.run(
+            [
+                "mvn",
+                "license:download-licenses",
+                f"-DlicensesOutputDirectory={dirpath}",
+                "-DskipDownloadLicenses=true",
+                f"-DlicensesOutputFile={fname}",
+                "-f",
+                directory,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        return ET.parse(fname).getroot()
+    return None
 
 
 def get_project_name(pom_xml) -> str:
@@ -135,15 +147,15 @@ def parse_licenses_xml(xml) -> Dict[str, str]:
             [dependency.find("artifactId").text, dependency.find("version").text]
         )
         licenses = dependency.find("licenses")
-        licenseName = None
+        license_name = None
         for license in licenses:
-            if licenseName is None:
-                licenseName = license.find("name").text
+            if license_name is None:
+                license_name = license.find("name").text
             else:
-                licenseName = MULTI_LICENSE_JOIN.join(
-                    [licenseName, license.find("name").text]
+                license_name = "({})".format(
+                    " AND ".join([license_name, license.find("name").text])
                 )
-        license_map[name] = licenseName
+        license_map[name] = license_name
 
     return license_map
 
@@ -197,14 +209,7 @@ class MavenRunner:
             dep_tree = parse_dependency_xml(get_dependency_tree_xml(self.directory))
             license_map = parse_licenses_xml(get_license_xml_file(self.directory))
 
-        with (yaspin(text="Cleaning ...") if not self.silent else nullcontext()) as sp:
-            try:
-                shutil.rmtree(TEST_DIR)
-            except OSError as e:
-                print("Cleaning Error: %s - %s." % (e.filename, e.strerror))
-
         for node in PreOrderIter(dep_tree):
-            # TODO: AttributeError: 'LicenseWithExceptionSymbol' object has no attribute 'key'
-            node.license = None  # license_map.get(node.name + '@' + node.version, None)
+            node.license = license_map.get(f"{node.name}@{node.version}", "")
 
         return dep_tree, license_map
