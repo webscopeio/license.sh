@@ -1,26 +1,24 @@
 import json
 import subprocess
-import os
 from os import path
 from anytree import AnyNode, PreOrderIter
 from typing import Dict, List
 from yaspin import yaspin
-from pathlib import Path
 from contextlib import nullcontext
 
-PARSE_YARN_LOCK_PATH = path.join(Path(__file__).parent, "..", "..", "..", "js")
-PARSE_YARN_LOCK_SCRIPT = path.join(PARSE_YARN_LOCK_PATH, "parseYarnLock.js")
+from importlib import resources
+from license_sh.runners.yarn import js
 
 
 def get_yarn_list_json(pathToYarn: str) -> Dict:
     """Get result of 'yarn list --json --silent --no-progress' as json
-  
-  Arguments:
-      path {str} -- Path to yarn project
-  
-  Returns:
-      Dict -- Parsed json of command result
-  """
+
+    Arguments:
+        path {str} -- Path to yarn project
+
+    Returns:
+        Dict -- Parsed json of command result
+    """
     return json.loads(
         (
             subprocess.run(
@@ -42,45 +40,54 @@ def get_yarn_list_json(pathToYarn: str) -> Dict:
 
 def get_yarn_lock_json(pathToYarn: str) -> Dict:
     """Get yarn lock file as json
-  
-  Arguments:
+
+    Arguments:
       path {str} -- Path to yarn project
-  
-  Returns:
+
+    Returns:
       Dict -- Parsed yarn lock json
-  """
-    # install script dependency
-    subprocess.run(
-        ["yarn", "install", "--frozen-lockfile", "--cwd", PARSE_YARN_LOCK_PATH],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    # run yarn lock parser
-    return json.loads(
+    """
+
+    with resources.path(js, ".") as js_path:
+        # install script dependency
         subprocess.run(
-            ["node", PARSE_YARN_LOCK_SCRIPT, path.join(pathToYarn, "yarn.lock")],
+            ["yarn", "install", "--frozen-lockfile", "--cwd", js_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-        ).stdout
-    )
+        )
+
+        # run yarn lock parser
+        res = json.loads(
+            subprocess.run(
+                [
+                    "node",
+                    path.join(js_path, "parseYarnLock.js"),
+                    path.join(pathToYarn, "yarn.lock"),
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            ).stdout
+        )
+
+        return res
 
 
 def parse_yarn_lock(json_element: Dict) -> Dict[str, str]:
     """Parse yarn lock json into dict where
-  keys are package name + required version and value is locked version
-  Example:
-    {
-      "package@1.2.3": "1.2.3",
-      "utilsPackage@^1.2.3": "1.5.0",
-      "renderPackage@~1.1.1": "1.1.1"
-    }
-  
-  Arguments:
-      json_element {Dict} -- Root element of json yarn lock
-  
-  Returns:
-      Dict[str, str] -- Parsed yarn lock into package dict
-  """
+    keys are package name + required version and value is locked version
+    Example:
+      {
+        "package@1.2.3": "1.2.3",
+        "utilsPackage@^1.2.3": "1.5.0",
+        "renderPackage@~1.1.1": "1.1.1"
+      }
+
+    Arguments:
+        json_element {Dict} -- Root element of json yarn lock
+
+    Returns:
+        Dict[str, str] -- Parsed yarn lock into package dict
+    """
     return {
         key: dependency.get("version", None)
         for key, dependency in json_element.get("object", {}).items()
@@ -90,17 +97,17 @@ def parse_yarn_lock(json_element: Dict) -> Dict[str, str]:
 def get_name(name: str) -> str:
     """Get package name from package name + required version
 
-  Example:
+    Example:
 
-  package@1.2.3 -> package
-  @bubolia/package@2.2.2 -> @bubolia/package
-  
-  Arguments:
-      name {str} -- Package name to parse name from
-  
-  Returns:
-      str -- Name of the package without required version
-  """
+    package@1.2.3 -> package
+    @bubolia/package@2.2.2 -> @bubolia/package
+
+    Arguments:
+        name {str} -- Package name to parse name from
+
+    Returns:
+        str -- Name of the package without required version
+    """
     *name_arr_with_optional_at_sign, version = name.split("@")
     return "@".join(name_arr_with_optional_at_sign)
 
@@ -117,21 +124,21 @@ def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
         "utils@1.2.3": {
           "name": "utils",
           "version": "1.2.3",
-          dependencies: {} 
+          dependencies: {}
         }
-      } 
+      }
     },
     "helper@3.2.1": {
       "name": "helper",
       "version": "3.2.1",
-      dependencies: {} 
+      dependencies: {}
     }
   }
-  
+
   Arguments:
       dependencies {List} -- List of Dicts that represent yarn list.
       package_map {Dict[str, str]} -- Dict to resolve locked versions of packages
-  
+
   Returns:
       Dict -- Dict representation of yarn flat tree.
   """
@@ -153,13 +160,13 @@ def get_node_from_dependency(dependency: Dict, parent: AnyNode) -> AnyNode:
    {
       "name": "utils",
       "version": "1.2.3",
-      "dependencies": {} 
+      "dependencies": {}
     }
-  
+
   Arguments:
       dependency {Dict} -- Dict representation of dependency
       parent {AnyNode} -- Parent node
-  
+
   Returns:
       AnyNode -- Parsed node or None if not valid dependency
   """
@@ -179,11 +186,11 @@ def find_full_dependency(dependencies: Dict, name: str) -> Dict:
     """Find full dependency in dependencies dict
 
   Full dependency mean dependency that has childs specified
-  
+
   Arguments:
       dependencies {Dict} -- Dict representation of dependencies, key as name, value as dependency
       name {str} -- Name of node to find
-  
+
   Returns:
       Dict -- Found dependency or None
   """
@@ -205,9 +212,9 @@ def add_nested_dependencies(dependency: Dict, parent: AnyNode) -> None:
    {
       "name": "utils",
       "version": "1.2.3",
-      "dependencies": {} 
+      "dependencies": {}
     }
-  
+
   Arguments:
       dependency {Dict} -- Dict representation of dependency
       parent {AnyNode} -- Parent node
@@ -247,12 +254,12 @@ def get_dependency_tree(
     flat_tree: Dict, package_json: Dict, package_map: Dict
 ) -> AnyNode:
     """Get dependency tree.
-  
+
   Arguments:
       flat_tree {Dict} -- Yarn flat tree
       package_json {Dict} -- package.json of yarn project
       package_map {Dict} -- package_map with locked versions
-  
+
   Returns:
       AnyNode -- Dependency tree
   """
@@ -290,9 +297,9 @@ def get_dependency_tree(
 
 class YarnRunner:
     """
-  This class checks for dependencies in Yarn projects and fetches license info
-  for each of the packages (including transitive dependencies)
-  """
+    This class checks for dependencies in Yarn projects and fetches license info
+    for each of the packages (including transitive dependencies)
+    """
 
     def __init__(self, directory: str, silent: bool):
         self.directory = directory
@@ -326,7 +333,7 @@ class YarnRunner:
 
             license_map = {}  # TODO: Add license map
 
-        for node in PreOrderIter(dep_tree):
-            node.license = license_map.get(f"{node.name}@{node.version}", None)
+            for node in PreOrderIter(dep_tree):
+                node.license = license_map.get(f"{node.name}@{node.version}", None)
 
         return dep_tree, license_map

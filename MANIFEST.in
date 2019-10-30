@@ -1,0 +1,2 @@
+include license_sh/runners/maven/maven-dependency-plugin-3.1.1-Licensesh.jar
+include license_sh/runners/yarn/js/package.json

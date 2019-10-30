@@ -30,48 +30,46 @@ from license_sh.runners.yarn import YarnRunner
 from license_sh.runners.python import PythonRunner
 from license_sh.runners.maven import MavenRunner
 
-if __name__ == '__main__':
-  arguments = docopt(__doc__, version=VERSION)
+if __name__ == "__main__":
+    arguments = docopt(__doc__, version=VERSION)
 
-  init = arguments['init']
-  path = arguments['<path>'] or '.'
-  output = arguments['--output']
-  tree = arguments['--tree']
+    init = arguments["init"]
+    path = arguments["<path>"] or "."
+    output = arguments["--output"]
+    tree = arguments["--tree"]
 
-  if init:
-    init_cmd()
-    exit(0)
+    if init:
+        init_cmd()
+        exit(0)
 
-  silent = output == 'json'
+    silent = output == "json"
 
-  # docopt guarantees that output variable contains either console or json
-  Reporter = {
-    'console': ConsoleReporter,
-    'json': JSONConsoleReporter,
-  }[output]
+    # docopt guarantees that output variable contains either console or json
+    Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
-  project_types = get_project_types(path)
+    project_types = get_project_types(path)
 
-  dep_tree = None
-  license_map = {}
+    dep_tree = None
+    license_map = {}
 
-  if ProjectType.PYTHON_PIPENV in project_types:
-    runner = PythonRunner(path, silent)
-    dep_tree, license_map = runner.check()
+    if ProjectType.PYTHON_PIPENV in project_types:
+        runner = PythonRunner(path, silent)
+        dep_tree, license_map = runner.check()
 
-  if ProjectType.NPM in project_types:
-    runner = NpmRunner(path, silent)
-    dep_tree, license_map = runner.check()
+    if ProjectType.NPM in project_types:
+        runner = NpmRunner(path, silent)
+        dep_tree, license_map = runner.check()
 
-  if ProjectType.MAVEN in project_types:
-    runner = MavenRunner(path, silent)
-    dep_tree, license_map = runner.check()
+    if ProjectType.MAVEN in project_types:
+        runner = MavenRunner(path, silent)
+        dep_tree, license_map = runner.check()
 
-  if ProjectType.YARN in project_types:
-    runner = YarnRunner(path, silent)
-    dep_tree, license_map = runner.check()
+    if ProjectType.YARN in project_types:
+        runner = YarnRunner(path, silent)
+        dep_tree, license_map = runner.check()
 
-
-  annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
-  filtered_dep_tree = annotated_dep_tree if tree else filter_dep_tree(annotated_dep_tree)
-  Reporter.output(filtered_dep_tree)
+    annotated_dep_tree = annotate_dep_tree(dep_tree, whitelist=LICENSE_WHITELIST)
+    filtered_dep_tree = (
+        annotated_dep_tree if tree else filter_dep_tree(annotated_dep_tree)
+    )
+    Reporter.output(filtered_dep_tree)
