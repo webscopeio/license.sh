@@ -73,3 +73,6 @@ if __name__ == "__main__":
         annotated_dep_tree if tree else filter_dep_tree(annotated_dep_tree)
     )
     Reporter.output(filtered_dep_tree)
+
+    has_issues: bool = filtered_dep_tree.height > 0
+    exit(1 if has_issues else 0)
