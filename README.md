@@ -1,6 +1,12 @@
 ![License.sh logo](https://license-sh.now.sh/static/images/license-logo-dark.png)
 
-License compliance tool for your software
+The goal of this repository is to create a simple utility that you can simply run in your repository to check compliance of your 3rd party dependencies.
+
+https://webscopeio.github.io/license.sh/#/
+
+License compliance tool for your software.
+We're currently in **Beta phase**, please feel free to help us with providing bugreports & submitting PRs.
+
 
 # Usage
 
@@ -8,6 +14,18 @@ Run the following command inside your repository.
 ```bash
 license-sh
 ```
+
+![Screenshot](https://github.com/webscopeio/license.sh/blob/master/docs/img/screenshot.png?raw=true)
+
+# Supported Lanaguages & Package managers
+
+- Javascript
+  - NPM
+  - Yarn
+- Python
+  - pipenv
+- Java
+  - maven
 
 
 
@@ -33,6 +51,6 @@ $ pipenv run ./license-sh <path_to_test_project>
 
 ## Packaging
 
-Run `python3 setup.py sdist`.
-It will generate `.tar.gz` file in `dist/` directory which you can
-install with `pip install <file.tar.gz>` 
+1) Run `python3 setup.py sdist`.
+2) It will generate `.tar.gz` file in `dist/` directory which you can
+3) install with `pip install <file.tar.gz>` 
