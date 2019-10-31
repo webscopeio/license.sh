@@ -1,5 +1,6 @@
-![License.sh logo](https://github.com/webscopeio/license.sh/blob/master/docs/img/screenshot.png?raw=true)
-
+<p align="center">
+ <img src="https://github.com/webscopeio/license.sh/blob/master/docs/img/logo.png?raw=true" />
+</p>
 
 The goal of this repository is to create a simple utility that you can simply run in your repository to check compliance of your 3rd party dependencies.
 
