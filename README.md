@@ -2,6 +2,11 @@
  <img src="https://github.com/webscopeio/license.sh/blob/master/docs/img/logo.png?raw=true" />
 </p>
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CircleCI](https://circleci.com/gh/webscopeio/license.sh.svg?style=svg)](https://circleci.com/gh/webscopeio/license.sh)
+
+
+
 The goal of this repository is to create a simple utility that you can simply run in your repository to check compliance of your 3rd party dependencies.
 
 https://webscopeio.github.io/license.sh/#/
