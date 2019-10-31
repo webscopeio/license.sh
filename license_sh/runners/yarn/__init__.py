@@ -8,7 +8,7 @@ from contextlib import nullcontext
 
 from importlib import resources
 
-from license_sh.runners.npm import NpmRunner
+from license_sh.runners.runners_shared import fetch_npm_licenses
 from license_sh.runners.yarn import js
 
 
@@ -334,7 +334,7 @@ class YarnRunner:
             dep_tree = get_dependency_tree(flat_tree, package_json, package_map)
 
             flat_dependencies = [s.split("@") for s in flat_tree.keys()]
-            license_map = NpmRunner.fetch_licenses(flat_dependencies)
+            license_map = fetch_npm_licenses(flat_dependencies)
 
             for node in PreOrderIter(dep_tree):
                 node.license = license_map.get(f"{node.name}@{node.version}", None)
