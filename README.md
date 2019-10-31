@@ -9,6 +9,10 @@ https://webscopeio.github.io/license.sh/#/
 License compliance tool for your software.
 We're currently in **Beta phase**, please feel free to help us with providing bugreports & submitting PRs.
 
+# Installation
+
+1. 🐍 Install pip https://pip.pypa.io/en/stable/installing/
+2. 💻 `pip install license-sh`
 
 # Usage
 
