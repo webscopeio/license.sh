@@ -4,7 +4,10 @@ License compliance tool for your software
 
 # Usage
 
-Run `license-sh` inside your repository.
+Run the following command inside your repository.
+```bash
+license-sh
+```
 
 
 
@@ -17,6 +20,8 @@ You need to set-up a repository and install dependencies using pipenv.
 $ git clone git@github.com:webscopeio/license.sh.git
 # install pipenv
 $ pipenv install
+# run the project
+$ pipenv run ./license-sh <path_to_test_project>
 ```
 
 ## Running tests
