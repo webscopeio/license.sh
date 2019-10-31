@@ -20,7 +20,7 @@ from license_sh.helpers import annotate_dep_tree, filter_dep_tree
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
 from license_sh.reporters.JSONConsoleReporter import JSONConsoleReporter
 
-VERSION = "1.0.4"
+VERSION = "1.0.5"
 
 from docopt import docopt
 

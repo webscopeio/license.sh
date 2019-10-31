@@ -51,6 +51,8 @@ $ pipenv run ./license-sh <path_to_test_project>
 
 ## Packaging
 
-1) Run `python3 setup.py sdist`.
+Read https://packaging.python.org/tutorials/packaging-projects/
+
+1. Run `python3 setup.py sdist bdist_wheel`.
 2) It will generate `.tar.gz` file in `dist/` directory which you can
 3) install with `pip install <file.tar.gz>` 

@@ -1,27 +1,27 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+import setuptools
 
-setup(
-    name="license_sh",
-    version="1.0.4",
-    description="Verify software licenses of your open source software",
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
+    name="license-sh",
+    version="1.0.5",
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
-    url="https://license.sh",
+    description="Verify software licenses of your open source software",
     scripts=["license-sh"],
-    packages=[
-        "license_sh",
-        "license_sh.project_identifier",
-        "license_sh.runners",
-        "license_sh.runners.npm",
-        "license_sh.runners.yarn",
-        "license_sh.runners.yarn.js",
-        "license_sh.runners.maven",
-        "license_sh.runners.python",
-        "license_sh.reporters",
-        "license_sh.commands",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/webscopeio/license.sh",
+    packages=setuptools.find_packages(),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
     ],
+    python_requires=">=3.6",
     package_data={
         "license_sh": [
             "runners/yarn/js/package.json",
