@@ -35,15 +35,9 @@ def get_dependency_tree_xml(directory: str):
     Returns:
       [xml] -- XML representation of maven dependency tree
     """
-    with resources.path(
-        maven, "pom.xml"
-    ) as maven_path:
+    with resources.path(maven, "pom.xml") as maven_path:
         subprocess.run(
-            [
-                "mvn",
-                "install",
-                f"-f={maven_path}",
-            ],
+            ["mvn", "install", f"-f={maven_path}"],
             stdout=subprocess.PIPE,
             # stderr=subprocess.PIPE,
         )
