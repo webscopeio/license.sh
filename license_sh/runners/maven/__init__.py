@@ -36,6 +36,18 @@ def get_dependency_tree_xml(directory: str):
       [xml] -- XML representation of maven dependency tree
     """
     with resources.path(
+        maven, "pom.xml"
+    ) as maven_path:
+        subprocess.run(
+            [
+                "mvn",
+                "install",
+                f"-f={maven_path}",
+            ],
+            stdout=subprocess.PIPE,
+            # stderr=subprocess.PIPE,
+        )
+    with resources.path(
         maven, "maven-dependency-plugin-3.1.1-Licensesh.jar"
     ) as maven_path:
         subprocess.run(
@@ -48,7 +60,7 @@ def get_dependency_tree_xml(directory: str):
                 f"-Dversion={VERSION}",
                 f"-Dpackaging=jar",
             ],
-            # stdout=subprocess.PIPE,
+            stdout=subprocess.PIPE,
             # stderr=subprocess.PIPE,
         )
 
@@ -62,7 +74,7 @@ def get_dependency_tree_xml(directory: str):
                 "-f",
                 directory,
             ],
-            # stdout=subprocess.PIPE,
+            stdout=subprocess.PIPE,
             # stderr=subprocess.PIPE,
         )
         return ET.parse(tmpfile).getroot()
@@ -188,13 +200,12 @@ class MavenRunner:
 
     def __init__(self, directory: str, silent: bool):
         self.directory = directory
-        self.verbose = True
         self.silent = silent
 
     def check(self):
         project_name = get_project_name(get_project_pom_xml(self.directory))
 
-        if self.verbose:
+        if not self.silent:
             print("===========")
             print(
                 f"Initiated License.sh check for Maven project {project_name} located at {self.directory}"
@@ -202,11 +213,18 @@ class MavenRunner:
             print("===========")
 
         with (
+            yaspin(text="Getting dependency tree... (First run might take a while)")
+            if not self.silent
+            else nullcontext()
+        ) as sp:
+            xml_tree = get_dependency_tree_xml(self.directory)
+
+        with (
             yaspin(text="Analysing dependencies ...")
             if not self.silent
             else nullcontext()
         ) as sp:
-            dep_tree = parse_dependency_xml(get_dependency_tree_xml(self.directory))
+            dep_tree = parse_dependency_xml(xml_tree)
             license_map = parse_licenses_xml(get_license_xml_file(self.directory))
 
         for node in PreOrderIter(dep_tree):
