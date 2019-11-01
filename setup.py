@@ -28,6 +28,7 @@ setuptools.setup(
             "runners/yarn/js/yarn.lock",
             "runners/yarn/js/parseYarnLock.js",
             "runners/maven/maven-dependency-plugin-3.1.1-Licensesh.jar",
+            "runners/maven/pom.xml",
         ]
     },
     license="MIT",
