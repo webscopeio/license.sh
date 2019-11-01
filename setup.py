@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="license-sh",
-    version="1.0.5",
+    version="1.0.6",
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
     description="Verify software licenses of your open source software",
