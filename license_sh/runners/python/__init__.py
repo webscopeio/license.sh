@@ -26,11 +26,12 @@ PYPI_HOST = "https://pypi.org/pypi"
 
 
 class PythonRunner:
-    def __init__(self, directory: str, silent: bool):
+    def __init__(self, directory: str, silent: bool, debug: bool):
         self.directory = directory
         self.silent = silent
         self.pipfile_path: str = os.path.join(self.directory, "Pipfile")
         self.pipfile_lock_path: str = os.path.join(self.directory, "Pipfile.lock")
+        self.debug = debug
 
     @staticmethod
     def fetch_licenses(all_dependencies):
@@ -82,7 +83,8 @@ class PythonRunner:
             else nullcontext()
         ) as sp:
             result = subprocess.run(
-                ["pipdeptree", "--json-tree", "--local-only"], stdout=subprocess.PIPE
+                ["pipdeptree", "--json-tree", "--local-only"],
+                capture_output=not self.debug,
             )
             dep_tree = json.loads(result.stdout)
 

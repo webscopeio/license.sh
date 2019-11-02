@@ -12,6 +12,7 @@ Options:
   -h --help                           Show this screen.
   -o <reporter> --output <reporter>   Output [default: console].
   -t --tree                           Show full dependency tree.
+  -d --debug                          Debug mode
   --version                           Show version.
 """
 from typing import List, Set, Tuple
@@ -56,6 +57,7 @@ if __name__ == "__main__":
     path = arguments["<path>"] or "."
     output = arguments["--output"]
     tree = arguments["--tree"]
+    debug = arguments["--debug"]
 
     config = get_config(path)
 
@@ -74,19 +76,19 @@ if __name__ == "__main__":
     license_map = {}
 
     if ProjectType.PYTHON_PIPENV in project_types:
-        runner = PythonRunner(path, silent)
+        runner = PythonRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
 
     if ProjectType.NPM in project_types:
-        runner = NpmRunner(path, silent)
+        runner = NpmRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
 
     if ProjectType.MAVEN in project_types:
-        runner = MavenRunner(path, silent)
+        runner = MavenRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
 
     if ProjectType.YARN in project_types:
-        runner = YarnRunner(path, silent)
+        runner = YarnRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
 
     filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
