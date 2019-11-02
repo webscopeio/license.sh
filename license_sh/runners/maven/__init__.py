@@ -26,7 +26,7 @@ VERSION = "3.1.1-Licensesh"
 MULTI_LICENSE_JOIN = " AND "
 
 
-def get_dependency_tree_xml(directory: str):
+def get_dependency_tree_xml(directory: str, debug=False):
     """Get maven dependency tree as xml
   
     Arguments:
@@ -35,12 +35,9 @@ def get_dependency_tree_xml(directory: str):
     Returns:
       [xml] -- XML representation of maven dependency tree
     """
+
     with resources.path(maven, "pom.xml") as maven_path:
-        subprocess.run(
-            ["mvn", "install", f"-f={maven_path}"],
-            stdout=subprocess.PIPE,
-            # stderr=subprocess.PIPE,
-        )
+        subprocess.run(["mvn", "install", f"-f={maven_path}"], capture_output=not debug)
     with resources.path(
         maven, "maven-dependency-plugin-3.1.1-Licensesh.jar"
     ) as maven_path:
@@ -54,8 +51,7 @@ def get_dependency_tree_xml(directory: str):
                 f"-Dversion={VERSION}",
                 f"-Dpackaging=jar",
             ],
-            stdout=subprocess.PIPE,
-            # stderr=subprocess.PIPE,
+            capture_output=not debug,
         )
 
     with tempfile.NamedTemporaryFile() as tmpfile:
@@ -68,15 +64,14 @@ def get_dependency_tree_xml(directory: str):
                 "-f",
                 directory,
             ],
-            stdout=subprocess.PIPE,
-            # stderr=subprocess.PIPE,
+            capture_output=not debug,
         )
         return ET.parse(tmpfile).getroot()
 
     return None
 
 
-def get_license_xml_file(directory: str) -> ET.ElementTree:
+def get_license_xml_file(directory: str, debug: bool) -> ET.ElementTree:
     """Get maven xml licenses
 
     Arguments:
@@ -97,8 +92,7 @@ def get_license_xml_file(directory: str) -> ET.ElementTree:
                 "-f",
                 directory,
             ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=not debug,
         )
         return ET.parse(fname).getroot()
     return None
@@ -192,9 +186,10 @@ class MavenRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str, silent: bool):
+    def __init__(self, directory: str, silent: bool, debug: bool):
         self.directory = directory
         self.silent = silent
+        self.debug = debug
 
     def check(self):
         project_name = get_project_name(get_project_pom_xml(self.directory))
@@ -211,7 +206,7 @@ class MavenRunner:
             if not self.silent
             else nullcontext()
         ) as sp:
-            xml_tree = get_dependency_tree_xml(self.directory)
+            xml_tree = get_dependency_tree_xml(self.directory, self.debug)
 
         with (
             yaspin(text="Analysing dependencies ...")
@@ -219,7 +214,9 @@ class MavenRunner:
             else nullcontext()
         ) as sp:
             dep_tree = parse_dependency_xml(xml_tree)
-            license_map = parse_licenses_xml(get_license_xml_file(self.directory))
+            license_map = parse_licenses_xml(
+                get_license_xml_file(self.directory, self.debug)
+            )
 
         for node in PreOrderIter(dep_tree):
             node.license = license_map.get(f"{node.name}@{node.version}", "")

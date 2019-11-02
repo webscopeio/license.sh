@@ -104,11 +104,12 @@ class NpmRunner:
   for each of the packages (including transitive dependencies)
   """
 
-    def __init__(self, directory: str, silent: bool):
+    def __init__(self, directory: str, silent: bool, debug: bool):
         self.directory = directory
         self.silent = silent
         self.package_json_path = path.join(directory, "package.json")
         self.package_lock_path = path.join(directory, "package-lock.json")
+        self.debug = debug
 
     def check(self):
         with open(self.package_json_path) as package_json_file:
