@@ -1,27 +1,12 @@
 {
-  "preset": "enterprise",
-  "whitelist": [
-    "GPL-2"
-  ],
-  "blacklist": [
-    "Apache"
-  ],
-  "ignored": [
-
-  ],
   "projects": [
     {
-      "directory": "/Users/janvorcak/WebstormProjects/license-sh-shell",
-      "type": "python"
-    },
-    {
-      "directory": "/Users/janvorcak/WebstormProjects/managed-services/frontend",
-      "type": "npm",
-      "skip": true
-    },
-    {
-      "directory": "./examples/npm-0",
-      "type": "npm"
+      "directory": ".",
+      "type": "python_pipenv"
     }
+  ],
+  "whitelist": [
+    "MIT",
+    "Apache-2.0"
   ]
 }
