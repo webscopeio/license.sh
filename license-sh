@@ -116,9 +116,9 @@ if __name__ == "__main__":
             ]
             answers = prompt(questions)
             if answers["whitelist"]:
-                config = get_config(path)
-
                 whitelist_licenses(path, answers["whitelist"])
+
+                config = get_config(path)
                 filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
                     dep_tree, config.get("whitelist", [])
                 )
