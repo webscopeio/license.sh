@@ -65,7 +65,7 @@ if __name__ == "__main__":
         config_cmd(path, config)
         exit(0)
 
-    silent = output == "json"
+    silent = output == "json" or debug
 
     # docopt guarantees that output variable contains either console or json
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
