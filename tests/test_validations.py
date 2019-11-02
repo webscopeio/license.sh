@@ -14,7 +14,13 @@ class LicenseValidationsTestCase(unittest.TestCase):
     def test_license_in_comma_separated_expression(self):
         whitelist = ["MIT", "Apache-2.0"]
         # license.sh doesn't support commas, we support SPDX syntax
-        self.assertEqual(is_license_ok("MIT, Apache 2.0", whitelist), None)
+        self.assertEqual(is_license_ok("MIT, Apache 2.0", whitelist), False)
+
+    def test_unparsable_expression(self):
+        whitelist = ["MIT", "The Apache Software License, Version 2.0"]
+        self.assertEqual(
+            is_license_ok("The Apache Software License, Version 2.0", whitelist), True
+        )
 
     def test_and_license_expression(self):
         whitelist = ["MIT", "Apache-2.0"]
