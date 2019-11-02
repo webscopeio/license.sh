@@ -26,7 +26,7 @@ Run the following command inside your repository.
 license-sh
 ```
 
-![Screenshot](https://github.com/webscopeio/license.sh/blob/master/docs/img/screenshot.png?raw=true)
+![Screenshot](https://github.com/webscopeio/license.sh/blob/master/docs/img/preview.gif?raw=true)
 
 # Supported Lanaguages & Package managers
 
