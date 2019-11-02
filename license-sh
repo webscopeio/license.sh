@@ -2,7 +2,7 @@
 """License.sh
 
 Usage:
-  license-sh.py init
+  license-sh.py config
   license-sh.py [options]
   license-sh.py <path> [options]
   license-sh.py (-h | --help)
@@ -19,7 +19,7 @@ from typing import List, Set, Tuple
 from PyInquirer import prompt
 from anytree import AnyNode
 
-from license_sh.commands import init_cmd
+from license_sh.commands import config_cmd
 from license_sh.config import whitelist_licenses, get_config
 from license_sh.helpers import annotate_dep_tree, filter_dep_tree
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
@@ -52,15 +52,15 @@ def print_dependency_tree_with_licenses(
 if __name__ == "__main__":
     arguments = docopt(__doc__, version=__version__)
 
-    init = arguments["init"]
+    config_mode = arguments["config"]
     path = arguments["<path>"] or "."
     output = arguments["--output"]
     tree = arguments["--tree"]
 
     config = get_config(path)
 
-    if init:
-        init_cmd(path, config)
+    if config_mode:
+        config_cmd(path, config)
         exit(0)
 
     silent = output == "json"

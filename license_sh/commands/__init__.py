@@ -8,7 +8,7 @@ from license_sh.config import write_config
 from license_sh.project_identifier import get_project_types
 
 
-def init_cmd(path, config):
+def config_cmd(path, config):
     projects = config.get("projects", [])
     whitelist = config.get("whitelist", [])
 
