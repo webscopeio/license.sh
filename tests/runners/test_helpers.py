@@ -1,6 +1,6 @@
 import unittest
 
-from anytree import AnyNode, AsciiStyle, RenderTree
+from anytree import AnyNode
 from anytree.exporter import DictExporter
 from license_sh.helpers import flatten_dependency_tree, annotate_dep_tree
 
@@ -67,11 +67,18 @@ class NpmRunnerTestCase(unittest.TestCase):
             },
         )
 
+    def test_bad_licenses_identified(self):
+        tree = get_tree()
+
+        whitelist = ["MIT", "Apache-2.0"]
+        _, unknown_licenses = annotate_dep_tree(tree, whitelist)
+        self.assertSetEqual(set({"GPL"}), unknown_licenses)
+
     def test_annotate_dependency_tree(self):
         tree = get_tree()
 
         whitelist = ["MIT", "Apache-2.0"]
-        annotated_tree = annotate_dep_tree(tree, whitelist)
+        annotated_tree, _ = annotate_dep_tree(tree, whitelist)
 
         expected_tree = AnyNode(
             name="Name",

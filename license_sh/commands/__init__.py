@@ -1,19 +1,79 @@
 import json
 import os
+from typing import Tuple
 
+from PyInquirer import Separator, prompt
+
+from license_sh.config import write_config
 from license_sh.project_identifier import get_project_types
 
 
-def init_cmd():
-    root_dir = "."
-    config = {"projects": {}}
-    projects = config["projects"]
-    for dir_name, subdir_list, file_list in os.walk(root_dir, followlinks=False):
+def init_cmd(path, config):
+    projects = config.get("projects", [])
+    whitelist = config.get("whitelist", [])
+
+    choices = []
+    for dir_name, subdir_list, file_list in os.walk(path, followlinks=False):
         project_types = get_project_types(dir_name)
         if project_types:
-            projects[dir_name] = list(map(lambda x: x.value, project_types))
+            choices.append(Separator(f"== Path: {dir_name} =="))
+            for project_type in project_types:
+                choices.append(
+                    {
+                        "name": f"{project_type.value} project",
+                        "value": {"directory": dir_name, "type": project_type.value},
+                    }
+                )
 
-    with open(".license-sh", "w+") as file:
-        file.write(json.dumps(config, sort_keys=True, indent=2))
+    default_licenses = [
+        "MIT",
+        "Apache-2.0",
+        "BSD",
+        "GPL-2.0",
+        "GPL-3.0",
+        "LGPL-3.0",
+        "VSPL",
+        "MPL-2.0",
+        "FreeBSD",
+        "Zlib",
+        "AFL",
+        "X11",
+        "JSON",
+    ]
 
-    print("Successfully generated .license-sh file")
+    questions = [
+        {
+            "type": "confirm",
+            "message": "Do you want to modify project paths to be watched by this tool?",
+            "name": "change_projects",
+            "default": False,
+            "when": lambda x: len(projects) > 0,
+        },
+        {
+            "type": "checkbox",
+            "qmark": "📦",
+            "message": "Select projects to watch",
+            "name": "projects",
+            "choices": choices,
+            "when": lambda x: len(projects) == 0 or x.get("change_projects"),
+        },
+        {
+            "type": "checkbox",
+            "qmark": "📋",
+            "message": "Select licenses which are OK to be used for your project",
+            "name": "whitelist",
+            "choices": [
+                {"name": license, "checked": license in whitelist}
+                for license in default_licenses
+            ],
+        },
+    ]
+    answers = prompt(questions)
+
+    if "projects" in answers:
+        config["projects"] = answers["projects"]
+    if "whitelist" in answers:
+        config["whitelist"] = answers["whitelist"]
+
+    if write_config(path, config):
+        print("Successfully generated .license-sh file")

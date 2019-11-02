@@ -1,6 +1,7 @@
-import license_expression
-from anytree import PreOrderIter, LevelOrderIter, AsciiStyle, RenderTree, AnyNode
-from license_expression import Licensing, LicenseSymbol
+from typing import Tuple, Set
+
+from anytree import PreOrderIter, LevelOrderIter, AnyNode
+from license_expression import Licensing
 
 licensing = Licensing()
 
@@ -48,16 +49,20 @@ def is_license_ok(license_text, whitelist):
     return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
 
 
-def annotate_dep_tree(tree, whitelist: [str]):
+def annotate_dep_tree(tree, whitelist: [str]) -> Tuple[AnyNode, Set[str]]:
     """
   An idea of this function is to go through elements from the bottom -> up and
   mark subtree_problem if any of the children has a license_problem or a subtree_problem
   :param tree:
   :param whitelist:
-  :return:
+  :return: list of licenses not found in a whitelist
   """
+
+    licenses_not_found = set()
     for node in PreOrderIter(tree):
         node.license_problem = not is_license_ok(node.license, whitelist)
+        if node.license_problem and node.license:
+            licenses_not_found.add(node.license)
 
     for node in list(LevelOrderIter(tree))[::-1]:
         node.subtree_problem = (
@@ -68,7 +73,7 @@ def annotate_dep_tree(tree, whitelist: [str]):
             )
         )
 
-    return tree
+    return tree, licenses_not_found
 
 
 def filter_dep_tree(tree: AnyNode) -> AnyNode:
