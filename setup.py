@@ -1,13 +1,13 @@
 #!/usr/bin/env python
-
 import setuptools
+from version import __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="license-sh",
-    version="1.0.6",
+    version=__version__,
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
     description="Verify software licenses of your open source software",
