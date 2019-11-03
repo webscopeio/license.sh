@@ -2,7 +2,7 @@ import json
 import subprocess
 from os import path
 from anytree import AnyNode, PreOrderIter
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from yaspin import yaspin
 from contextlib import nullcontext
 
@@ -98,6 +98,7 @@ def parse_yarn_lock(json_element: Dict) -> Dict[str, str]:
 
 def get_name(name: str) -> str:
     """Get package name from package name + required version
+    @deprecated
 
     Example:
 
@@ -112,6 +113,11 @@ def get_name(name: str) -> str:
     """
     *name_arr_with_optional_at_sign, version = name.split("@")
     return "@".join(name_arr_with_optional_at_sign)
+
+
+def get_name_and_version(name: str) -> Tuple[str, str]:
+    *name_arr_with_optional_at_sign, version = name.split("@")
+    return "@".join(name_arr_with_optional_at_sign), version
 
 
 def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
@@ -334,7 +340,7 @@ class YarnRunner:
             )
             dep_tree = get_dependency_tree(flat_tree, package_json, package_map)
 
-            flat_dependencies = [s.split("@") for s in flat_tree.keys()]
+            flat_dependencies = [get_name_and_version(s) for s in flat_tree.keys()]
             license_map = fetch_npm_licenses(flat_dependencies)
 
             for node in PreOrderIter(dep_tree):

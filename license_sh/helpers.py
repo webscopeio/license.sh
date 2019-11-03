@@ -62,7 +62,7 @@ def annotate_dep_tree(tree, whitelist: [str]) -> Tuple[AnyNode, Set[str]]:
     for node in PreOrderIter(tree):
         node.license_problem = not is_license_ok(node.license, whitelist)
         if node.license_problem and node.license:
-            licenses_not_found.add(node.license)
+            licenses_not_found.add(str(node.license))
 
     for node in list(LevelOrderIter(tree))[::-1]:
         node.subtree_problem = (
