@@ -2,11 +2,11 @@
 """License.sh
 
 Usage:
-  license-sh.py config
-  license-sh.py [options]
-  license-sh.py <path> [options]
-  license-sh.py (-h | --help)
-  license-sh.py --version
+  license-sh config
+  license-sh [options]
+  license-sh <path> [options]
+  license-sh (-h | --help)
+  license-sh --version
 
 Options:
   -h --help                           Show this screen.
