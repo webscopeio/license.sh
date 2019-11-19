@@ -76,4 +76,4 @@ def config_cmd(path, config):
         config["whitelist"] = answers["whitelist"]
 
     if write_config(path, config):
-        print("Successfully generated .license-sh file")
+        print("Successfully generated .license-sh.json file")
