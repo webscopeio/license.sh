@@ -39,6 +39,7 @@ def config_cmd(path, config):
         "AFL",
         "X11",
         "JSON",
+        "Python-2.0",
     ]
 
     questions = [

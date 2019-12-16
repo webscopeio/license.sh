@@ -1,6 +1,6 @@
 import unittest
 
-from license_sh.helpers import is_license_ok
+from license_sh.helpers import is_license_ok, normalize_license_expression
 
 
 class LicenseValidationsTestCase(unittest.TestCase):
@@ -53,6 +53,16 @@ class LicenseValidationsTestCase(unittest.TestCase):
         whitelist = ["MIT"]
         self.assertEqual(
             is_license_ok("(BSD-2-Clause OR MIT OR Apache-2.0)", whitelist), True
+        )
+
+    def test_license_simple_expression_normalized(self):
+        license_expression = "Apache-2"
+        self.assertEqual("Apache-2.0", normalize_license_expression(license_expression))
+
+    def test_license_complex_expression_normalized(self):
+        license_expression = "(mit or Apache-2)"
+        self.assertEqual(
+            "(MIT OR Apache-2.0)", normalize_license_expression(license_expression)
         )
 
 
