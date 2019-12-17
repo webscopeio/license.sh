@@ -36,10 +36,10 @@ setuptools.setup(
         "anytree",
         "yaspin",
         "aiohttp",
-        "PyInquirer",
         "urllib3",
         "docopt",
         "license-expression",
         "pipdeptree",
+        "questionary",
     ],
 )
