@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "401ffeb4e2abd21b93fdbe4fb78d0562f88da0b948b44f8ec3b88bc48cbb75ff"
+            "sha256": "4476e6aac37cf703e6c0b0816da100d6359b92465a8c3485155a0d3a71865492"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -150,25 +150,19 @@
         },
         "prompt-toolkit": {
             "hashes": [
-                "sha256:7281b5199235adaef6980942840c43753e4ab20dfe41338da634fb41c194f9d8",
-                "sha256:82c7f8e07d7a0411ff5367a5a8ff520f0112b9179f3e599ee8ad2ad9b943d911",
-                "sha256:cc66413b1b4b17021675d9f2d15d57e640b06ddfd99bb724c73484126d22622f"
+                "sha256:46642344ce457641f28fc9d1c9ca939b63dadf8df128b86f1b9860e59c73a5e4",
+                "sha256:e7f8af9e3d70f514373bf41aa51bc33af12a6db3f71461ea47fea985defb2c31",
+                "sha256:f15af68f66e664eaa559d4ac8a928111eebd5feda0c11738b5998045224829db"
             ],
-            "version": "==1.0.14"
+            "version": "==2.0.10"
         },
-        "pygments": {
+        "questionary": {
             "hashes": [
-                "sha256:2a3fe295e54a20164a9df49c75fa58526d3be48e14aceba6d6b1e8ac0bfd6f1b",
-                "sha256:98c8aa5a9f778fcd1026a17361ddaf7330d1b7c62ae97c3bb0ae73e0b9b6b0fe"
-            ],
-            "version": "==2.5.2"
-        },
-        "pyinquirer": {
-            "hashes": [
-                "sha256:c9a92d68d7727fbd886a7908c08fd9e9773e5dc211bf5cbf836ba90d366dee51"
+                "sha256:7d4f98c9e5a1c0cd7e45a2c13959d5df9de3f55cb208d7b0265e4dd53dede584",
+                "sha256:87ffc9dab940ec962c54fe2eec3a4eecb10f7cfa91994fc94c839476f4099154"
             ],
             "index": "pypi",
-            "version": "==1.0.3"
+            "version": "==1.4.0"
         },
         "regex": {
             "hashes": [
