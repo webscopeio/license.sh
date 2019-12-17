@@ -50,6 +50,8 @@ def get_tree():
 
 
 class NpmRunnerTestCase(unittest.TestCase):
+    maxDiff = None
+
     def test_dependency_tree_is_flattened(self):
         tree = get_tree()
         dependencies = flatten_dependency_tree(tree)
@@ -86,6 +88,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=True,
+            license_normalized="MIT",
         )
         # first level
         package1 = AnyNode(
@@ -95,6 +98,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=True,
+            license_normalized="MIT",
         )
         package4 = AnyNode(
             name="package4",
@@ -103,6 +107,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=True,
+            license_normalized="MIT",
         )
 
         package2 = AnyNode(
@@ -112,6 +117,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=False,
+            license_normalized="MIT",
         )
         AnyNode(
             name="package5",
@@ -120,6 +126,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=False,
+            license_normalized="MIT",
         )
         AnyNode(
             name="package7",
@@ -128,6 +135,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=False,
+            license_normalized="MIT",
         )
 
         package3 = AnyNode(
@@ -137,6 +145,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=True,
+            license_normalized="MIT",
         )
         AnyNode(
             name="package7",
@@ -145,6 +154,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="GPL",
             license_problem=True,
             subtree_problem=False,
+            license_normalized="GPL",
         )
 
         AnyNode(
@@ -154,6 +164,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=False,
+            license_normalized="MIT",
         )
 
         package5 = AnyNode(
@@ -163,6 +174,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="MIT",
             license_problem=False,
             subtree_problem=True,
+            license_normalized="MIT",
         )
         AnyNode(
             name="package6",
@@ -171,6 +183,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="GPL",
             license_problem=True,
             subtree_problem=False,
+            license_normalized="GPL",
         )
 
         AnyNode(
@@ -180,6 +193,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             license="GPL",
             license_problem=True,
             subtree_problem=False,
+            license_normalized="GPL",
         )
 
         exporter = DictExporter()
