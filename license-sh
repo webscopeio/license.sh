@@ -36,6 +36,11 @@ from license_sh.runners.yarn import YarnRunner
 from license_sh.runners.python import PythonRunner
 from license_sh.runners.maven import MavenRunner
 
+try:
+    from license_sh_private.licenses import COMMERCIAL_LICENSES as WHITELIST
+except ImportError:
+    WHITELIST = []
+
 
 def print_dependency_tree_with_licenses(
     dep_tree: AnyNode, whitelist: List[str]
@@ -60,6 +65,7 @@ if __name__ == "__main__":
     debug = arguments["--debug"]
 
     config = get_config(path)
+    WHITELIST += config.get("whitelist", [])
 
     if config_mode:
         config_cmd(path, config)
@@ -92,7 +98,7 @@ if __name__ == "__main__":
         dep_tree, license_map = runner.check()
 
     filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
-        dep_tree, config.get("whitelist", [])
+        dep_tree, WHITELIST
     )
 
     if licenses_not_found and output != "json":
