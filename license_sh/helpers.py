@@ -6,7 +6,10 @@ from license_expression import Licensing
 try:
     from license_sh_private.normalizer import normalize
 except ImportError:
-    normalize = lambda x: x
+
+    def normalize(license_expression):
+        return license_expression, False
+
 
 licensing = Licensing()
 

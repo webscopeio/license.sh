@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "33dd30b024ba45fd558c2126a515ace36ce811944a5ef054ae3d2355e3cae1dc"
+            "sha256": "401ffeb4e2abd21b93fdbe4fb78d0562f88da0b948b44f8ec3b88bc48cbb75ff"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -110,9 +110,6 @@
             ],
             "index": "pypi",
             "version": "==1.2"
-        },
-        "license-sh-private": {
-            "path": "./../../PycharmProjects/license-sh-normalizer/dist/license-sh-private-1.0.0.tar.gz"
         },
         "multidict": {
             "hashes": [
