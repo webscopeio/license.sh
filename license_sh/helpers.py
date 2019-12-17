@@ -45,8 +45,6 @@ def is_license_ok(license_text, whitelist):
         return None
 
     if license.isliteral:
-        # normalized_license, normalized = normalize(license.render())
-        # return normalized_license in whitelist
         return license.render() in whitelist
 
     operator = license.operator.strip()

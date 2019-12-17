@@ -15,7 +15,6 @@ docopt = "*"
 license-expression = "*"
 black = "*"
 pipdeptree = "*"
-license-sh-private = {path = "./../../PycharmProjects/license-sh-normalizer/dist/license-sh-private-1.0.0.tar.gz"}
 
 [requires]
 python_version = "3.7"
