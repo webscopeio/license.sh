@@ -1,2 +1,5 @@
+include LICENSE.md README.md
 include license_sh/runners/maven/maven-dependency-plugin-3.1.1-Licensesh.jar
 include license_sh/runners/yarn/js/package.json
+recursive-include docs *.md
+recursive-include tests *.py
