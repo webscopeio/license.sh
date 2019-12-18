@@ -9,12 +9,12 @@ verify_ssl = true
 anytree = "*"
 yaspin = "*"
 aiohttp = "*"
-PyInquirer = "*"
 urllib3 = "*"
 docopt = "*"
 license-expression = "*"
 black = "*"
 pipdeptree = "*"
+questionary = "*"
 
 [requires]
 python_version = "3.7"

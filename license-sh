@@ -17,7 +17,8 @@ Options:
 """
 from typing import List, Set, Tuple
 
-from PyInquirer import prompt
+import questionary
+
 from anytree import AnyNode
 
 from license_sh.commands import config_cmd
@@ -102,29 +103,17 @@ if __name__ == "__main__":
     )
 
     if licenses_not_found and output != "json":
-        questions = [
-            {
-                "type": "confirm",
-                "message": "Do you want to add some of the licenses to your whitelist?",
-                "name": "continue",
-                "default": True,
-            }
-        ]
+        manual_add: bool = questionary.confirm(
+            "Do you want to add some of the licenses to your whitelist?"
+        ).ask()
 
-        answers = prompt(questions)
-        if answers["continue"]:
-            questions = [
-                {
-                    "type": "checkbox",
-                    "qmark": "📋",
-                    "message": "Whitelist licenses",
-                    "name": "whitelist",
-                    "choices": [{"name": license} for license in licenses_not_found],
-                }
-            ]
-            answers = prompt(questions)
-            if answers["whitelist"]:
-                whitelist_licenses(path, answers["whitelist"])
+        if manual_add:
+            license_whitelist = questionary.checkbox(
+                "📋 Which licenses do you want to whitelist?",
+                choices=[{"name": license} for license in licenses_not_found],
+            ).ask()
+            if license_whitelist:
+                whitelist_licenses(path, license_whitelist)
 
                 config = get_config(path)
                 filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(

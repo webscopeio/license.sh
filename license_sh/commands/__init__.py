@@ -1,8 +1,6 @@
-import json
 import os
-from typing import Tuple
 
-from PyInquirer import Separator, prompt
+import questionary
 
 from license_sh.config import write_config
 from license_sh.project_identifier import get_project_types
@@ -16,7 +14,7 @@ def config_cmd(path, config):
     for dir_name, subdir_list, file_list in os.walk(path, followlinks=False):
         project_types = get_project_types(dir_name)
         if project_types:
-            choices.append(Separator(f"== Path: {dir_name} =="))
+            choices.append(questionary.Separator(f"== Path: {dir_name} =="))
             for project_type in project_types:
                 choices.append(
                     {
@@ -68,7 +66,7 @@ def config_cmd(path, config):
             ],
         },
     ]
-    answers = prompt(questions)
+    answers = questionary.prompt(questions)
 
     if "projects" in answers:
         config["projects"] = answers["projects"]
