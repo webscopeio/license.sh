@@ -73,14 +73,14 @@ class NpmRunnerTestCase(unittest.TestCase):
         tree = get_tree()
 
         whitelist = ["MIT", "Apache-2.0"]
-        _, unknown_licenses = annotate_dep_tree(tree, whitelist)
+        _, unknown_licenses = annotate_dep_tree(tree, whitelist, [])
         self.assertSetEqual(set({"GPL"}), unknown_licenses)
 
     def test_annotate_dependency_tree(self):
         tree = get_tree()
 
         whitelist = ["MIT", "Apache-2.0"]
-        annotated_tree, _ = annotate_dep_tree(tree, whitelist)
+        annotated_tree, _ = annotate_dep_tree(tree, whitelist, [])
 
         expected_tree = AnyNode(
             name="Name",

@@ -44,10 +44,10 @@ except ImportError:
 
 
 def print_dependency_tree_with_licenses(
-    dep_tree: AnyNode, whitelist: List[str]
+    dep_tree: AnyNode, whitelist: List[str], ignored_packages: List[str]
 ) -> Tuple[AnyNode, Set[str]]:
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
-        dep_tree, whitelist=whitelist
+        dep_tree, whitelist=whitelist, ignored_packages=ignored_packages
     )
     filtered_dependency_tree = (
         annotated_dep_tree if tree else filter_dep_tree(annotated_dep_tree)
@@ -66,6 +66,13 @@ if __name__ == "__main__":
     debug = arguments["--debug"]
 
     config = get_config(path)
+
+    # TODO test this data transformation
+    config_ignored_packages = config.get("ignored_packages", {})
+    ignored_packages_map = {
+        e.value: config_ignored_packages.get(e.value, {}) for e in ProjectType
+    }
+
     WHITELIST += config.get("whitelist", [])
 
     if config_mode:
@@ -85,21 +92,25 @@ if __name__ == "__main__":
     if ProjectType.PYTHON_PIPENV in project_types:
         runner = PythonRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
+        ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
     if ProjectType.NPM in project_types:
         runner = NpmRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
+        ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
     if ProjectType.MAVEN in project_types:
         runner = MavenRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
+        ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
     if ProjectType.YARN in project_types:
         runner = YarnRunner(path, silent, debug)
         dep_tree, license_map = runner.check()
+        ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
     filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
-        dep_tree, WHITELIST
+        dep_tree, WHITELIST, ignored_packages
     )
 
     if licenses_not_found and output != "json":

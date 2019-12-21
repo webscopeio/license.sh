@@ -78,12 +78,15 @@ def normalize_license_expression(license_text):
     )
 
 
-def annotate_dep_tree(tree, whitelist: [str]) -> Tuple[AnyNode, Set[str]]:
+def annotate_dep_tree(
+    tree, whitelist: [str], ignored_packages: [str]
+) -> Tuple[AnyNode, Set[str]]:
     """
   An idea of this function is to go through elements from the bottom -> up and
   mark subtree_problem if any of the children has a license_problem or a subtree_problem
   :param tree:
   :param whitelist:
+  :param ignored_packages:
   :return: list of licenses not found in a whitelist
   """
 
@@ -92,7 +95,10 @@ def annotate_dep_tree(tree, whitelist: [str]) -> Tuple[AnyNode, Set[str]]:
 
     licenses_not_found = set()
     for node in PreOrderIter(tree):
-        node.license_problem = not is_license_ok(node.license_normalized, whitelist)
+        node.license_problem = (
+            not is_license_ok(node.license_normalized, whitelist)
+            and node.name not in ignored_packages
+        )
         if node.license_problem and node.license:
             licenses_not_found.add(str(node.license_normalized))
 
