@@ -15,7 +15,6 @@ Options:
   -d --debug                          Debug mode
   --version                           Show version.
 """
-from typing import List, Set, Tuple
 
 import questionary
 
@@ -23,7 +22,7 @@ from anytree import AnyNode
 
 from license_sh.commands import config_cmd
 from license_sh.config import whitelist_licenses, get_config
-from license_sh.helpers import annotate_dep_tree, filter_dep_tree
+from license_sh.helpers import get_dependency_tree_with_licenses
 from license_sh.reporters.ConsoleReporter import ConsoleReporter
 from license_sh.reporters.JSONConsoleReporter import JSONConsoleReporter
 
@@ -41,20 +40,6 @@ try:
     from license_sh_private.licenses import COMMERCIAL_LICENSES as WHITELIST
 except ImportError:
     WHITELIST = []
-
-
-def print_dependency_tree_with_licenses(
-    dep_tree: AnyNode, whitelist: List[str], ignored_packages: List[str]
-) -> Tuple[AnyNode, Set[str]]:
-    annotated_dep_tree, unknown_licenses = annotate_dep_tree(
-        dep_tree, whitelist=whitelist, ignored_packages=ignored_packages
-    )
-    filtered_dependency_tree = (
-        annotated_dep_tree if tree else filter_dep_tree(annotated_dep_tree)
-    )
-    Reporter.output(filtered_dependency_tree)
-    return filtered_dependency_tree, unknown_licenses
-
 
 if __name__ == "__main__":
     arguments = docopt(__doc__, version=__version__)
@@ -85,6 +70,7 @@ if __name__ == "__main__":
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
     project_types = get_project_types(path)
+    ignored_packages = []
 
     dep_tree = None
     license_map = {}
@@ -109,9 +95,11 @@ if __name__ == "__main__":
         dep_tree, license_map = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
-    filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
-        dep_tree, WHITELIST, ignored_packages
+    filtered_dep_tree, licenses_not_found = get_dependency_tree_with_licenses(
+        dep_tree, WHITELIST, ignored_packages, get_full_tree=tree
     )
+
+    Reporter.output(filtered_dep_tree)
 
     if licenses_not_found and output != "json":
         manual_add: bool = questionary.confirm(
@@ -127,7 +115,7 @@ if __name__ == "__main__":
                 whitelist_licenses(path, license_whitelist)
 
                 config = get_config(path)
-                filtered_dep_tree, licenses_not_found = print_dependency_tree_with_licenses(
+                filtered_dep_tree, licenses_not_found = get_dependency_tree_with_licenses(
                     dep_tree, config.get("whitelist", [])
                 )
 
