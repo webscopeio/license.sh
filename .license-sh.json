@@ -6,6 +6,13 @@
     }
   ],
   "whitelist": [
+    "Apache 2.0",
+    "PSF",
+    "BSD License",
+    "MPL 2.0",
+    "BSD",
+    "Python Software Foundation License",
+    "Apache 2",
     "MIT"
   ]
 }
