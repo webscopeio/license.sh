@@ -11,8 +11,13 @@ from ..runners.npm import NpmRunner
 from ..runners.python import PythonRunner
 from ..runners.yarn import YarnRunner
 
+try:
+    from license_sh_private.licenses import COMMERCIAL_LICENSES as WHITELIST
+except ImportError:
+    WHITELIST = []
 
-def run_license_sh(whitelist, arguments):
+
+def run_license_sh(arguments):
 
     config_mode = arguments["config"]
     path = arguments["<path>"] or "."
@@ -27,7 +32,7 @@ def run_license_sh(whitelist, arguments):
         e.value: config_ignored_packages.get(e.value, {}) for e in ProjectType
     }
 
-    whitelist += config.get("whitelist", [])
+    whitelist = WHITELIST + config.get("whitelist", [])
 
     if config_mode:
         config_cmd(path, config)
