@@ -16,9 +16,9 @@ Options:
   --version                           Show version.
 """
 from docopt import docopt
-from license_sh.version import __version__
+from .version import __version__
 
-from license_sh.commands.run_license_sh import run_license_sh
+from .commands.run_license_sh import run_license_sh
 
 arguments = docopt(__doc__, version=__version__)
 run_license_sh(arguments)
