@@ -88,7 +88,10 @@ def run_license_sh(arguments):
                 whitelist_licenses(path, license_whitelist)
 
                 config = get_config(path)
-                filtered_dep_tree, licenses_not_found = get_dependency_tree_with_licenses(
+                (
+                    filtered_dep_tree,
+                    licenses_not_found,
+                ) = get_dependency_tree_with_licenses(
                     dep_tree,
                     config.get("whitelist", []),
                     ignored_packages=ignored_packages,
