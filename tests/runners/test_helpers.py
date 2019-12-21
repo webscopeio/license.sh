@@ -201,6 +201,23 @@ class NpmRunnerTestCase(unittest.TestCase):
             exporter.export(expected_tree), exporter.export(annotated_tree)
         )
 
+    def test_bad_licenses_identified_are_ignored_by_package_whitelist(self):
+        tree = get_tree()
+        ignored_packages = ["package7", "package6"]
+
+        whitelist = ["MIT", "Apache-2.0"]
+        _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
+        self.assertSetEqual(set(), unknown_licenses)
+
+    def test_bad_licenses_identified__one_package_ignored_by_package_whitelist(self):
+        tree = get_tree()
+        ignored_packages = ["package7"]
+
+        # package 6 still has the "bad" GPL license
+        whitelist = ["MIT", "Apache-2.0"]
+        _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
+        self.assertSetEqual(set({"GPL"}), unknown_licenses)
+
 
 if __name__ == "__main__":
     unittest.main()

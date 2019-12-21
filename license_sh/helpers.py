@@ -1,4 +1,4 @@
-from typing import Tuple, Set
+from typing import Tuple, Set, List
 
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from license_expression import Licensing
@@ -132,3 +132,26 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
         )
 
     return tree
+
+
+def get_dependency_tree_with_licenses(
+    dep_tree: AnyNode,
+    whitelist: List[str],
+    ignored_packages: List[str],
+    get_full_tree: bool,
+) -> Tuple[AnyNode, Set[str]]:
+    """
+    Constructs the annotated dependency tree that is later given to a reporter.
+    :param dep_tree: Dependency tree without licesnes
+    :param whitelist: Whitelist of licenses
+    :param ignored_packages: Packages where bad licenses should be ignored
+    :param get_full_tree: Determines whether we should display the whole tree or just the problematic parts.
+    :return:
+    """
+    annotated_dep_tree, unknown_licenses = annotate_dep_tree(
+        dep_tree, whitelist=whitelist, ignored_packages=ignored_packages
+    )
+    filtered_dependency_tree = (
+        annotated_dep_tree if get_full_tree else filter_dep_tree(annotated_dep_tree)
+    )
+    return filtered_dependency_tree, unknown_licenses
