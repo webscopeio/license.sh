@@ -10,7 +10,7 @@ setuptools.setup(
     version=__version__,
     author="Jan Vorcak",
     author_email="vorcak@webscope.io",
-    description="Verify software licenses of your open source software",
+    description="License checker - verify software licenses of your open source software",
     scripts=["license-sh"],
     long_description=long_description,
     long_description_content_type="text/markdown",
