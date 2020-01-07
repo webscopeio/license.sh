@@ -1,3 +1,5 @@
+Check licenses of your software.
+
 <p align="center">
  <img src="https://github.com/webscopeio/license.sh/blob/master/docs/img/logo.png?raw=true" />
 </p>
