@@ -220,7 +220,7 @@ class NpmRunnerTestCase(unittest.TestCase):
 
     def test_is_license_ok_simple(self):
         self.assertEqual(is_license_ok("MIT", ["MIT"]), True)
-    
+
     def test_is_license_ok_negative(self):
         self.assertEqual(is_license_ok("MIT", [""]), False)
 
@@ -228,7 +228,19 @@ class NpmRunnerTestCase(unittest.TestCase):
         self.assertEqual(is_license_ok("MIT AND Zlib", ["MIT", "Zlib"]), True)
 
     def test_is_license_ok_json(self):
-        self.assertEqual(is_license_ok({'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}, ["{'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}"]), True)
+        self.assertEqual(
+            is_license_ok(
+                {
+                    "type": "MIT",
+                    "url": "https://github.com/thlorenz/bunyan-format/blob/master/LICENSE",
+                },
+                [
+                    "{'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}"
+                ],
+            ),
+            True,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
