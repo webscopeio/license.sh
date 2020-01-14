@@ -34,6 +34,7 @@ def fetch_npm_licenses(all_dependencies):
             tasks = []
             for url, version in urls:
                 tasks.append(loop.create_task(fetch(session, url, version)))
+
             for result in asyncio.as_completed(tasks):
                 try:
                     output, version = await result
