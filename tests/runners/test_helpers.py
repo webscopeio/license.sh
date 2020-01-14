@@ -2,7 +2,7 @@ import unittest
 
 from anytree import AnyNode
 from anytree.exporter import DictExporter
-from license_sh.helpers import flatten_dependency_tree, annotate_dep_tree
+from license_sh.helpers import flatten_dependency_tree, annotate_dep_tree, is_license_ok
 
 
 def get_tree():
@@ -218,6 +218,17 @@ class NpmRunnerTestCase(unittest.TestCase):
         _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
         self.assertSetEqual(set({"GPL"}), unknown_licenses)
 
+    def test_is_license_ok_simple(self):
+        self.assertEqual(is_license_ok("MIT", ["MIT"]), True)
+    
+    def test_is_license_ok_negative(self):
+        self.assertEqual(is_license_ok("MIT", [""]), False)
+
+    def test_is_license_ok_brackets(self):
+        self.assertEqual(is_license_ok("MIT AND Zlib", ["MIT", "Zlib"]), True)
+
+    def test_is_license_ok_json(self):
+        self.assertEqual(is_license_ok({'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}, ["{'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}"]), True)
 
 if __name__ == "__main__":
     unittest.main()
