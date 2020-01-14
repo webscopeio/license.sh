@@ -22,6 +22,7 @@ RESET = "\033[0;0m"
 BOLD = "\033[;1m"
 REVERSE = "\033[;7m"
 
+
 def get_npm_license_from_licenses_array(licenses_array):
     """
     Extract licenses name from licenses array and join them with AND
@@ -40,12 +41,13 @@ def get_npm_license_from_licenses_array(licenses_array):
 
     license_name = UNKNOWN
     for license_item in licenses_array:
-        license_item_type = license_item.get('type', UNKNOWN)
+        license_item_type = license_item.get("type", UNKNOWN)
         if license_name != UNKNOWN:
             license_name = f"{license_name} AND {license_item_type}"
         else:
             license_name = license_item_type
     return license_name
+
 
 def extract_npm_license(json_data, version: str):
     """
