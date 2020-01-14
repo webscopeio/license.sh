@@ -7,6 +7,7 @@ from license_sh.helpers import (
     flatten_dependency_tree,
     annotate_dep_tree,
     extract_npm_license,
+    get_npm_license_from_licenses_array,
     UNKNOWN
 )
 
@@ -243,6 +244,54 @@ class NpmRunnerTestCase(unittest.TestCase):
         name = extract_npm_license(data, 'Unknown')
         self.assertEqual(name, "MIT")
 
+    def test_extract_npm_licenses_global_single(self):
+        data = json.loads('''{
+            "name": "name",
+            "licenses": [{"type":"MIT"}]
+        }''')
+        name = extract_npm_license(data, 'Unknown')
+        self.assertEqual(name, "MIT")
+
+    def test_extract_npm_licenses_global_multiple(self):
+        data = json.loads('''{
+            "name": "name",
+            "licenses": [{"type":"MIT"}, {"type":"Apache"}]
+        }''')
+        name = extract_npm_license(data, 'Unknown')
+        self.assertEqual(name, "MIT AND Apache")
+
+    def test_extract_npm_licenses_global_empty(self):
+        data = json.loads('''{
+            "name": "name",
+            "licenses": []
+        }''')
+        name = extract_npm_license(data, 'Unknown')
+        self.assertEqual(name, UNKNOWN)
+
+    def test_extract_npm_licenses_specific_version_simple(self):
+        data = json.loads('''{
+            "name": "name",
+             "versions": {
+                "1.0.0": {
+                    "licenses": [{"type":"MIT"}]
+                }
+            }
+        }''')
+        name = extract_npm_license(data, "1.0.0")
+        self.assertEqual(name, "MIT")
+
+    def test_extract_npm_licenses_specific_version_multiple(self):
+        data = json.loads('''{
+            "name": "name",
+             "versions": {
+                "1.0.0": {
+                    "licenses": [{"type":"MIT"}, {"type":"Apache"}]
+                }
+            }
+        }''')
+        name = extract_npm_license(data, "1.0.0")
+        self.assertEqual(name, "MIT AND Apache")
+
     def test_extract_npm_license_from_versions(self):
         data = json.loads('''{
             "name": "name",
@@ -296,6 +345,25 @@ class NpmRunnerTestCase(unittest.TestCase):
         }''')
         name = extract_npm_license(data, "1.0.0")
         self.assertEqual(name, UNKNOWN)
+
+    def test_get_npm_license_from_licenses_array_None(self):
+        name = get_npm_license_from_licenses_array(None)
+        self.assertEqual(name, None)
+
+    def test_get_npm_license_from_licenses_array_None(self):
+        data = json.loads('''{
+             "licenses": [{"type":"MIT"}, {"type":"Apache"}]
+        }''')
+        name = get_npm_license_from_licenses_array(data.get('licenses'))
+        self.assertEqual(name, "MIT AND Apache")
+
+    def test_get_npm_license_from_licenses_empty(self):
+        data = json.loads('''{
+             "licenses": [{}]
+        }''')
+        name = get_npm_license_from_licenses_array(data.get('licenses'))
+        self.assertEqual(name, UNKNOWN)
+
 
 
 if __name__ == "__main__":
