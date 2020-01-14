@@ -1,9 +1,9 @@
 import json
 import asyncio
 import aiohttp as aiohttp
+from license_sh.helpers import extract_npm_license
 
 NPM_HOST = "https://registry.npmjs.org"
-UNKNOWN = "Unknown"
 
 
 def fetch_npm_licenses(all_dependencies):
@@ -13,15 +13,6 @@ def fetch_npm_licenses(all_dependencies):
         (f"{NPM_HOST}/{dependency}/", version)
         for dependency, version in all_dependencies
     ]
-
-    def get_license(page, version):
-        # Extract package license from npm json data
-        license_name = page.get("license", UNKNOWN)
-        if license_name == UNKNOWN:
-            license_name = (
-                page.get("versions", {}).get(version, {}).get("license", UNKNOWN)
-            )
-        return license_name
 
     async def fetch(session, url, version):
         async with session.get(url) as resp:
@@ -39,7 +30,7 @@ def fetch_npm_licenses(all_dependencies):
                 try:
                     output, version = await result
                     page = json.loads(output)
-                    license_map[f"{page['name']}@{version}"] = get_license(
+                    license_map[f"{page['name']}@{version}"] = extract_npm_license(
                         page, version
                     )
 

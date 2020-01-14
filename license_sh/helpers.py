@@ -12,6 +12,7 @@ except ImportError:
 
 
 licensing = Licensing()
+UNKNOWN = "Unknown"
 
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
@@ -20,6 +21,27 @@ GREEN = "\033[0;32m"
 RESET = "\033[0;0m"
 BOLD = "\033[;1m"
 REVERSE = "\033[;7m"
+
+
+def extract_npm_license(json_data, version: str):
+    """
+    Extract license name from npm package data json 
+
+    Arguments:
+        json_data {json} -- json data to parse license from
+        version {str} -- version of the package
+
+    Returns:
+        str --  name on the license or Unknown if not found
+    """
+    if not json_data:
+        return None
+    license_name = json_data.get("license", UNKNOWN)
+    if license_name == UNKNOWN:
+        license_name = (
+            json_data.get("versions", {}).get(version, {}).get("license", UNKNOWN)
+        )
+    return license_name
 
 
 def flatten_dependency_tree(tree):
