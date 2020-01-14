@@ -35,7 +35,48 @@ Example:
       "type": "python_pipenv"
     }
   ],
+  "ignored_packages": {
+    "python_pipenv": [
+      "PyInquirer",
+      "setuptools"
+    ],
+    "npm": [],
+    "maven": [],
+    "yarn": []
+  },
   "whitelist": [
     "MIT"
   ]
 ```
+* ### Projects
+```
+  "projects": [
+    {
+      "directory": ".",
+      "type": "python_pipenv"
+    }
+  ],
+```
+Projects property is use to set paths and types of the projects. This can be dynamically generated.
+
+* ### Ignore packages
+```
+  "ignored_packages": {
+    "python_pipenv": [
+      "PyInquirer",
+      "setuptools"
+    ],
+    "npm": [],
+    "maven": [],
+    "yarn": []
+  }
+```
+You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error
+
+* ### Whitelist
+```
+  "whitelist": [
+    "MIT"
+  ]
+```
+Whitelist is a list of green licenses that shouldn't throw an error if found.
