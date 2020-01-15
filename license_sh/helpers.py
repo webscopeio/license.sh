@@ -12,6 +12,7 @@ except ImportError:
 
 
 licensing = Licensing()
+UNKNOWN = "Unknown"
 
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
@@ -20,6 +21,60 @@ GREEN = "\033[0;32m"
 RESET = "\033[0;0m"
 BOLD = "\033[;1m"
 REVERSE = "\033[;7m"
+
+
+def get_npm_license_from_licenses_array(licenses_array):
+    """
+    Extract licenses name from licenses array and join them with AND
+
+     "licenses": [{"type":"MIT"}, {"type":"Apache"}]
+
+    Arguments:
+        json_data {json} -- json data to parse license from
+        version {str} -- version of the package
+
+    Returns:
+        str --  name on the license or Unknown if not found
+    """
+    if not licenses_array:
+        return None
+
+    license_name = UNKNOWN
+    for license_item in licenses_array:
+        license_item_type = license_item.get("type", UNKNOWN)
+        if license_name != UNKNOWN:
+            license_name = f"{license_name} AND {license_item_type}"
+        else:
+            license_name = license_item_type
+    return license_name
+
+
+def extract_npm_license(json_data, version: str):
+    """
+    Extract license name from npm package data json 
+
+    Arguments:
+        json_data {json} -- json data to parse license from
+        version {str} -- version of the package
+
+    Returns:
+        str --  name on the license or Unknown if not found
+    """
+    if not json_data:
+        return None
+    licenses_array = json_data.get("licenses")
+    if licenses_array:
+        return get_npm_license_from_licenses_array(licenses_array)
+
+    license_name = json_data.get("license")
+    if license_name:
+        return license_name
+
+    version_data = json_data.get("versions", {}).get(version, {})
+    licenses_array = version_data.get("licenses")
+    if licenses_array:
+        return get_npm_license_from_licenses_array(licenses_array)
+    return version_data.get("license", UNKNOWN)
 
 
 def flatten_dependency_tree(tree):
