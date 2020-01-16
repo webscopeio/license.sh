@@ -6,6 +6,7 @@ from anytree.exporter import DictExporter
 from license_sh.helpers import (
     flatten_dependency_tree,
     annotate_dep_tree,
+    is_license_ok,
     extract_npm_license,
     get_npm_license_from_licenses_array,
     UNKNOWN,
@@ -224,6 +225,29 @@ class NpmRunnerTestCase(unittest.TestCase):
         whitelist = ["MIT", "Apache-2.0"]
         _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
         self.assertSetEqual(set({"GPL"}), unknown_licenses)
+
+    def test_is_license_ok_simple(self):
+        self.assertEqual(is_license_ok("MIT", ["MIT"]), True)
+
+    def test_is_license_ok_negative(self):
+        self.assertEqual(is_license_ok("MIT", [""]), False)
+
+    def test_is_license_ok_brackets(self):
+        self.assertEqual(is_license_ok("MIT AND Zlib", ["MIT", "Zlib"]), True)
+
+    def test_is_license_ok_json(self):
+        self.assertEqual(
+            is_license_ok(
+                {
+                    "type": "MIT",
+                    "url": "https://github.com/thlorenz/bunyan-format/blob/master/LICENSE",
+                },
+                [
+                    "{'type': 'MIT', 'url': 'https://github.com/thlorenz/bunyan-format/blob/master/LICENSE'}"
+                ],
+            ),
+            True,
+        )
 
     def test_extract_npm_license_None_data(self):
         name = extract_npm_license(None, None)

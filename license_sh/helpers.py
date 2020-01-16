@@ -97,7 +97,7 @@ def is_license_ok(license_text, whitelist):
     try:
         license = licensing.parse(license_text)
     except:
-        return license_text in whitelist
+        return f"{license_text}" in whitelist
 
     if license is None:
         return None
