@@ -211,7 +211,5 @@ def get_dependency_tree_with_licenses(
     )
     filtered_dependency_tree = filter_dep_tree(annotated_dep_tree)
     has_issues = filtered_dependency_tree.height > 0
-    dependency_tree = (
-        annotated_dep_tree if get_full_tree else filtered_dependency_tree
-    )
-    return dependency_tree, unknown_licenses, has_issues 
+    dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
+    return dependency_tree, unknown_licenses, has_issues

@@ -68,7 +68,11 @@ def run_license_sh(arguments):
         dep_tree, license_map = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.YARN.value]
 
-    filtered_dep_tree, licenses_not_found, has_issues = get_dependency_tree_with_licenses(
+    (
+        filtered_dep_tree,
+        licenses_not_found,
+        has_issues,
+    ) = get_dependency_tree_with_licenses(
         dep_tree, whitelist, ignored_packages=ignored_packages, get_full_tree=tree
     )
 
