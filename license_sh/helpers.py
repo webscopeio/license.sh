@@ -1,6 +1,8 @@
 from typing import Tuple, Set, List
 
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
+from anytree.exporter import DictExporter
+from anytree.importer import DictImporter
 from license_expression import Licensing
 
 try:
@@ -180,13 +182,14 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
     Returns:
         AnyNode -- Filtered tree
     """
-    for node in LevelOrderIter(tree):
+    treeCopy = DictImporter().import_(DictExporter().export(tree))
+    for node in LevelOrderIter(treeCopy):
         node.children = filter(
             lambda subnode: subnode.subtree_problem or subnode.license_problem,
             node.children,
         )
 
-    return tree
+    return treeCopy
 
 
 def get_dependency_tree_with_licenses(
@@ -206,7 +209,9 @@ def get_dependency_tree_with_licenses(
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
         dep_tree, whitelist=whitelist, ignored_packages=ignored_packages
     )
-    filtered_dependency_tree = (
-        annotated_dep_tree if get_full_tree else filter_dep_tree(annotated_dep_tree)
+    filtered_dependency_tree = filter_dep_tree(annotated_dep_tree)
+    has_issues = filtered_dependency_tree.height > 0
+    dependency_tree = (
+        annotated_dep_tree if get_full_tree else filtered_dependency_tree
     )
-    return filtered_dependency_tree, unknown_licenses
+    return dependency_tree, unknown_licenses, has_issues 
