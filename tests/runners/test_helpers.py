@@ -271,6 +271,16 @@ class NpmRunnerTestCase(unittest.TestCase):
         )
         name = extract_npm_license(data, "Unknown")
         self.assertEqual(name, "MIT")
+        
+    def test_extract_npm_licenses_global_single_string(self):
+        data = json.loads(
+            """{
+            "name": "name",
+            "licenses": ["MIT"]
+        }"""
+        )
+        name = extract_npm_license(data, "Unknown")
+        self.assertEqual(name, "MIT")
 
     def test_extract_npm_licenses_global_single(self):
         data = json.loads(
@@ -415,7 +425,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         )
         name = get_npm_license_from_licenses_array(data.get("licenses"))
         self.assertEqual(name, UNKNOWN)
-
+        
 
 if __name__ == "__main__":
     unittest.main()
