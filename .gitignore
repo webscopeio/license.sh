@@ -6,3 +6,5 @@ examples
 **/node_modules/**
 **/target/**
 **/dist/**
+**/build/**
+**/license_sh.egg-info/**

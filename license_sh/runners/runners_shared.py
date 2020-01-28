@@ -30,9 +30,10 @@ def fetch_npm_licenses(all_dependencies):
                 try:
                     output, version = await result
                     page = json.loads(output)
-                    license_map[f"{page['name']}@{version}"] = extract_npm_license(
-                        page, version
-                    )
+                    if ("name") in page:
+                        license_map[f"{page['name']}@{version}"] = extract_npm_license(
+                            page, version
+                        )
 
                 except json.JSONDecodeError:
                     pass

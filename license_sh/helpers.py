@@ -43,7 +43,11 @@ def get_npm_license_from_licenses_array(licenses_array):
 
     license_name = UNKNOWN
     for license_item in licenses_array:
-        license_item_type = license_item.get("type", UNKNOWN)
+        license_item_type = (
+            license_item.get("type", UNKNOWN)
+            if type(license_item) is dict
+            else f"{license_item}"
+        )
         if license_name != UNKNOWN:
             license_name = f"{license_name} AND {license_item_type}"
         else:
