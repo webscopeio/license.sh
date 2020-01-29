@@ -118,7 +118,11 @@ class NpmRunner:
 
         with open(self.package_lock_path) as package_lock_file:
             package_lock = json.load(package_lock_file)
-            all_dependencies = package_lock["dependencies"]
+            all_dependencies = (
+                package_lock["dependencies"]
+                if "dependencies" is package_lock
+                else dict()
+            )
         if not self.silent:
             print("===========")
             print(
