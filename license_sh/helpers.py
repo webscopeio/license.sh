@@ -74,7 +74,11 @@ def extract_npm_license(json_data, version: str):
 
     license_name = json_data.get("license")
     if license_name:
-        return license_name.get('type') if type(license_name) is dict else f"{license_name}"
+        return (
+            license_name.get("type")
+            if type(license_name) is dict
+            else f"{license_name}"
+        )
 
     version_data = json_data.get("versions", {}).get(version, {})
     licenses_array = version_data.get("licenses")
