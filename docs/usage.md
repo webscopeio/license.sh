@@ -20,6 +20,15 @@ Options:
   --version                           Show version.
 ```
 
+## Prerequisites
+
+Depends on the project you want to test.
+
+Yarn - `yarn` and `node`
+Maven - `maven` and `java`
+Python - `python`
+Npm - `npm`
+
 ## Configuration
 
 Stored inside `.license-sh.json` in the root of the project.
