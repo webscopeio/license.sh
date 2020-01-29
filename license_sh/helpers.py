@@ -156,7 +156,6 @@ def annotate_dep_tree(
   """
 
     for node in PreOrderIter(tree):
-        # print(node.name, node.license)
         node.license_normalized = normalize_license_expression(node.license)
 
     licenses_not_found = set()
