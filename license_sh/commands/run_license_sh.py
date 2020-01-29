@@ -21,11 +21,12 @@ def run_license_sh(arguments):
 
     config_mode = arguments["config"]
     path = arguments["<path>"] or "."
+    configPath = arguments["--config"]
     output = arguments["--output"]
     tree = arguments["--tree"]
     debug = arguments["--debug"]
 
-    config = get_config(path)
+    config = get_config(configPath if configPath else path)
 
     config_ignored_packages = config.get("ignored_packages", {})
     ignored_packages_map = {
