@@ -120,7 +120,7 @@ class NpmRunner:
             package_lock = json.load(package_lock_file)
             all_dependencies = (
                 package_lock["dependencies"]
-                if "dependencies" is package_lock
+                if "dependencies" in package_lock
                 else dict()
             )
         if not self.silent:
