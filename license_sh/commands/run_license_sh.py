@@ -95,7 +95,7 @@ def run_license_sh(arguments):
                 (
                     filtered_dep_tree,
                     licenses_not_found,
-                    has_issues
+                    has_issues,
                 ) = get_dependency_tree_with_licenses(
                     dep_tree,
                     config.get("whitelist", []),
