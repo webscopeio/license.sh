@@ -96,11 +96,13 @@ def run_license_sh(arguments):
                 (
                     filtered_dep_tree,
                     licenses_not_found,
+                    has_issues,
                 ) = get_dependency_tree_with_licenses(
                     dep_tree,
                     config.get("whitelist", []),
                     ignored_packages=ignored_packages,
                     get_full_tree=tree,
                 )
+                Reporter.output(filtered_dep_tree)
 
     exit(1 if has_issues else 0)
