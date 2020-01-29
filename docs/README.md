@@ -50,5 +50,7 @@ form]() and we will let you know once we add support for them.
   * Yarn
 * Python :snake:
   * pipenv
+* Java
+  * Maven
   
 
