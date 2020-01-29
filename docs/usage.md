@@ -26,7 +26,7 @@ Depends on the project you want to test.
 
 Yarn - `yarn` and `node`
 Maven - `maven` and `java`
-Python - `python`
+Pipenv - `python`
 Npm - `npm`
 
 ## Configuration
