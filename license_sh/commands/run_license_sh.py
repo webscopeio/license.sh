@@ -26,7 +26,8 @@ def run_license_sh(arguments):
     tree = arguments["--tree"]
     debug = arguments["--debug"]
 
-    config = get_config(configPath if configPath else path)
+    path_to_config = configPath if configPath else path
+    config = get_config(path_to_config)
 
     config_ignored_packages = config.get("ignored_packages", {})
     ignored_packages_map = {
@@ -90,7 +91,7 @@ def run_license_sh(arguments):
                 choices=[{"name": license} for license in licenses_not_found],
             ).ask()
             if license_whitelist:
-                whitelist_licenses(path, license_whitelist)
+                whitelist_licenses(path_to_config, license_whitelist)
 
                 config = get_config(path)
                 (
