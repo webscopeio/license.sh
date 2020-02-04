@@ -2,10 +2,16 @@ import json
 from os import path
 from typing import List
 
-DEFAULT_CONFIG_NAME = '.license-sh.json'
+DEFAULT_CONFIG_NAME = ".license-sh.json"
+
 
 def get_config_path(path_to_config: str):
-    return path_to_config if path.isfile(path_to_config) else path.join(path_to_config, DEFAULT_CONFIG_NAME) 
+    return (
+        path_to_config
+        if path.isfile(path_to_config)
+        else path.join(path_to_config, DEFAULT_CONFIG_NAME)
+    )
+
 
 def get_config(path_to_config: str):
     config_path = get_config_path(path_to_config)
