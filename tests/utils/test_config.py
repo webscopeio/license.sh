@@ -25,6 +25,12 @@ class ConfigRunnerTestCase(unittest.TestCase):
     ignored_packages_map = get_ignored_packages(ignored_packages)
     self.assertEqual(ignored_packages_map.get(ProjectType.YARN.value), [])
 
+  def test_get_ignored_packages_non_str(self):
+    ignored_packages = dict()
+    ignored_packages[ProjectType.YARN.value] = [1, 'test'] 
+    ignored_packages_map = get_ignored_packages(ignored_packages)
+    self.assertEqual(ignored_packages_map.get(ProjectType.YARN.value), ['test'])
+
   def test_get_ignored_packages_simple(self):
     yarn_ignored = ['test']
     npm_ignored = ['bubo']
