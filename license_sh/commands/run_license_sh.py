@@ -57,22 +57,22 @@ def run_license_sh(arguments):
 
     if ProjectType.PYTHON_PIPENV in project_types:
         runner = PythonRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
+        dep_tree = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
 
     if ProjectType.NPM in project_types:
         runner = NpmRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
+        dep_tree = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.NPM.value]
 
     if ProjectType.MAVEN in project_types:
         runner = MavenRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
+        dep_tree = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.MAVEN.value]
 
     if ProjectType.YARN in project_types:
         runner = YarnRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
+        dep_tree = runner.check()
         ignored_packages = ignored_packages_map[ProjectType.YARN.value]
 
     (

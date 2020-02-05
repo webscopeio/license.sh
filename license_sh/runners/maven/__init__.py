@@ -221,4 +221,4 @@ class MavenRunner:
         for node in PreOrderIter(dep_tree):
             node.license = license_map.get(f"{node.name}@{node.version}", "")
 
-        return dep_tree, license_map
+        return dep_tree
