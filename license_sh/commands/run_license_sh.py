@@ -48,6 +48,11 @@ def run_license_sh(arguments):
     project_types = get_project_types(path)
     ignored_packages = []
 
+    if len(project_types) is 0:
+        project_list = [e.value for e in ProjectType]
+        print(f'None of currently supported projects found {project_list}')
+        exit(2)
+
     dep_tree = None
 
     if ProjectType.PYTHON_PIPENV in project_types:
