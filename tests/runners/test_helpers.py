@@ -249,7 +249,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             ),
             True,
         )
-    
+
     def test_parse_license_complex(self):
         self.assertEqual(parse_license("MIT and APACHE"), ["MIT", "APACHE"])
 
