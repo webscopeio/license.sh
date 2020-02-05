@@ -93,6 +93,31 @@ def flatten_dependency_tree(tree):
         [(node.name, node.version) for node in PreOrderIter(tree) if tree is not node]
     )
 
+def parse_license(license_text: str) -> list:
+    """Parse license, if complex, then break it into simple parts
+    
+    Arguments:
+        license_text {str} -- license str to be parsed
+    
+    Returns:
+        list -- List of licenses parsed from gived license str
+    """
+    try:
+        license = licensing.parse(license_text)
+    except:
+        return [f"{license_text}"]
+
+    if license is None:
+        return []
+
+    if license.isliteral:
+        return [license.render()]
+
+    licenses = []
+    for license_arg in license.args:
+        licenses = licenses + parse_license(license_arg)
+
+    return licenses
 
 def is_license_ok(license_text, whitelist):
     """
@@ -165,7 +190,9 @@ def annotate_dep_tree(
             and node.name not in ignored_packages
         )
         if node.license_problem and node.license:
-            licenses_not_found.add(str(node.license_normalized))
+            for license_not_found in parse_license(str(node.license_normalized)):
+                if not license_not_found in whitelist:
+                    licenses_not_found.add(license_not_found)
 
     for node in list(LevelOrderIter(tree))[::-1]:
         node.subtree_problem = (
@@ -175,7 +202,7 @@ def annotate_dep_tree(
                 map(lambda x: x.subtree_problem or x.license_problem, node.children)
             )
         )
-
+    
     return tree, licenses_not_found
 
 
