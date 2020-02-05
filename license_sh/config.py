@@ -45,8 +45,8 @@ def get_ignored_packages(ignored_packages: dict):
     return ignored_packages_map
 
 
-def get_licenses_whitelist(whitelist: list):
-    licenses_whitelist = PRIVATE_LICENCES_WHITELIST
+def get_licenses_whitelist(whitelist: list, private_default: bool = True):
+    licenses_whitelist = PRIVATE_LICENCES_WHITELIST if private_default else []
     if not whitelist:
         return licenses_whitelist
     for whitelisted_license in whitelist:
