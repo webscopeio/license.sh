@@ -11,6 +11,7 @@ from pathlib import Path
 from importlib import resources
 
 from license_sh.runners import maven
+from license_sh.runners.runners_shared import check_maven
 
 DEPENDENCY_JAR = path.join(
     Path(__file__).parent,
@@ -192,6 +193,8 @@ class MavenRunner:
         self.debug = debug
 
     def check(self):
+        check_maven()
+
         project_name = get_project_name(get_project_pom_xml(self.directory))
 
         if not self.silent:
