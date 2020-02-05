@@ -30,6 +30,16 @@ def get_ignored_packages(ignored_packages: dict):
                 ignored_packages_map[project_type].append(ignored_package)
     return ignored_packages_map
 
+def get_licenses_whitelist(whitelist: list):
+    if not whitelist:
+        return []
+    licenses_whitelist = []
+    for whitelisted_license in whitelist:
+        if not isinstance(whitelisted_license, str):
+            print(f"Whitelisted license '{whitelisted_license}' is incorect. Ignoring...")
+        else:
+            licenses_whitelist.append(whitelisted_license)
+    return licenses_whitelist
 
 def get_config_path(path_to_config: str):
     return (
