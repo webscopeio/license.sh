@@ -150,4 +150,4 @@ class NpmRunner:
             hasattr(node, "version_request") and delattr(node, "version_request")
             node.license = license_map.get(f"{node.name}@{node.version}", None)
 
-        return dep_tree, license_map
+        return dep_tree

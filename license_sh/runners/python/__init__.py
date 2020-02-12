@@ -105,4 +105,4 @@ class PythonRunner:
         for node in PreOrderIter(root):
             node.license = license_map.get(f"{node.name}@{node.version}", None)
 
-        return root, license_map
+        return root

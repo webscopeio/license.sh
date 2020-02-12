@@ -1,15 +1,12 @@
 import questionary
-
+import sys
 from . import config_cmd
 from ..config import get_config, get_raw_config, whitelist_licenses
 from ..helpers import get_dependency_tree_with_licenses
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
 from ..reporters.JSONConsoleReporter import JSONConsoleReporter
-from ..runners.maven import MavenRunner
-from ..runners.npm import NpmRunner
-from ..runners.python import PythonRunner
-from ..runners.yarn import YarnRunner
+from ..runners import run_check
 
 
 def run_license_sh(arguments):
@@ -33,30 +30,29 @@ def run_license_sh(arguments):
     # docopt guarantees that output variable contains either console or json
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
-    project_types = get_project_types(path)
     ignored_packages = []
+    project_list = [e.value for e in get_project_types(path)]
 
-    dep_tree = None
+    if len(project_list) == 0:
+        supported_projects = [e.value for e in ProjectType]
+        print(
+            f"None of currently supported projects found. Supported {supported_projects}",
+            file=sys.stderr,
+        )
+        exit(2)
 
-    if ProjectType.PYTHON_PIPENV in project_types:
-        runner = PythonRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
-        ignored_packages = ignored_packages_map[ProjectType.PYTHON_PIPENV.value]
+    if len(project_list) > 1:
+        print(
+            f"Curretly there is no support for multi project/language repositories. Found {project_types}. Only '{project_types[0]}' will be checked.",
+            file=sys.stderr,
+        )
 
-    if ProjectType.NPM in project_types:
-        runner = NpmRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
-        ignored_packages = ignored_packages_map[ProjectType.NPM.value]
-
-    if ProjectType.MAVEN in project_types:
-        runner = MavenRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
-        ignored_packages = ignored_packages_map[ProjectType.MAVEN.value]
-
-    if ProjectType.YARN in project_types:
-        runner = YarnRunner(path, silent, debug)
-        dep_tree, license_map = runner.check()
-        ignored_packages = ignored_packages_map[ProjectType.YARN.value]
+    project_to_check = project_list[0]
+    dep_tree = run_check(project_to_check, path, silent, debug)
+    ignored_packages = ignored_packages_map.get(project_to_check, [])
+    if not dep_tree:
+        print(f"Unexpected issue, couldn't create dependency tree", file=sys.stderr)
+        exit(3)
 
     (
         filtered_dep_tree,
