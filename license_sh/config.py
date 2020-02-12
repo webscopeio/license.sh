@@ -8,6 +8,7 @@ DEFAULT_CONFIG_NAME = ".license-sh.json"
 IGNORED_PACKAGES = "ignored_packages"
 WHITELIST = "whitelist"
 
+
 def get_ignored_packages(ignored_packages: dict):
     ignored_packages_map = {e.value: [] for e in ProjectType}
     if not ignored_packages:
@@ -74,7 +75,7 @@ def get_raw_config(path_to_config: str):
 
 def get_config(path_to_config: str):
     raw_config = get_raw_config(path_to_config)
-    
+
     return (
         get_licenses_whitelist(raw_config.get(WHITELIST, [])),
         get_ignored_packages(raw_config.get(IGNORED_PACKAGES, {})),
