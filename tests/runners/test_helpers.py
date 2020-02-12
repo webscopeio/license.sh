@@ -7,6 +7,7 @@ from license_sh.helpers import (
     flatten_dependency_tree,
     annotate_dep_tree,
     is_license_ok,
+    parse_license,
     extract_npm_license,
     get_npm_license_from_licenses_array,
     UNKNOWN,
@@ -248,6 +249,12 @@ class NpmRunnerTestCase(unittest.TestCase):
             ),
             True,
         )
+
+    def test_parse_license_complex(self):
+        self.assertEqual(parse_license("MIT and APACHE"), ["MIT", "APACHE"])
+
+    def test_parse_license_simple(self):
+        self.assertEqual(parse_license("MIT"), ["MIT"])
 
     def test_extract_npm_license_None_data(self):
         name = extract_npm_license(None, None)
