@@ -1,7 +1,7 @@
 import questionary
 
 from . import config_cmd
-from ..config import get_config, whitelist_licenses
+from ..config import get_config, get_raw_config, whitelist_licenses
 from ..helpers import get_dependency_tree_with_licenses
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
@@ -10,11 +10,6 @@ from ..runners.maven import MavenRunner
 from ..runners.npm import NpmRunner
 from ..runners.python import PythonRunner
 from ..runners.yarn import YarnRunner
-
-try:
-    from license_sh_private.licenses import COMMERCIAL_LICENSES as WHITELIST
-except ImportError:
-    WHITELIST = []
 
 
 def run_license_sh(arguments):
@@ -27,20 +22,13 @@ def run_license_sh(arguments):
     debug = arguments["--debug"]
 
     path_to_config = configPath if configPath else path
-    config = get_config(path_to_config)
-
-    config_ignored_packages = config.get("ignored_packages", {})
-    ignored_packages_map = {
-        e.value: config_ignored_packages.get(e.value, {}) for e in ProjectType
-    }
-
-    whitelist = WHITELIST + config.get("whitelist", [])
 
     if config_mode:
-        config_cmd(path, config)
+        config_cmd(path, get_raw_config(path_to_config))
         exit(0)
 
     silent = output == "json" or debug
+    whitelist, ignored_packages_map = get_config(path_to_config)
 
     # docopt guarantees that output variable contains either console or json
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
@@ -93,14 +81,14 @@ def run_license_sh(arguments):
             if license_whitelist:
                 whitelist_licenses(path_to_config, license_whitelist)
 
-                config = get_config(path)
+                whitelist, ignored_packages = get_config(path_to_config)
                 (
                     filtered_dep_tree,
                     licenses_not_found,
                     has_issues,
                 ) = get_dependency_tree_with_licenses(
                     dep_tree,
-                    config.get("whitelist", []),
+                    whitelist,
                     ignored_packages=ignored_packages,
                     get_full_tree=tree,
                 )
