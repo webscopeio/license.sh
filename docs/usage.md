@@ -17,7 +17,7 @@ Options:
   -o <reporter> --output <reporter>   Output [default: console].
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
-  -c --config <config_path>           Set custom path to config       
+  -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 ```
 
@@ -39,12 +39,6 @@ Generate interactively with `license-sh config` command.
 Example:
 ```
 {
-  "projects": [
-    {
-      "directory": ".",
-      "type": "python_pipenv"
-    }
-  ],
   "ignored_packages": {
     "python_pipenv": [
       "PyInquirer",
@@ -58,16 +52,6 @@ Example:
     "MIT"
   ]
 ```
-* ### Projects
-```
-  "projects": [
-    {
-      "directory": ".",
-      "type": "python_pipenv"
-    }
-  ],
-```
-Projects property is use to set paths and types of the projects. This can be dynamically generated.
 
 * ### Ignore packages
 ```

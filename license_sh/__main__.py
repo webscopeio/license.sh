@@ -13,7 +13,7 @@ Options:
   -o <reporter> --output <reporter>   Output [default: console].
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
-  -c --config <config_path>           Set custom path to config       
+  -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 """
 from docopt import docopt
