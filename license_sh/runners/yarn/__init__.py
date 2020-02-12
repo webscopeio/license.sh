@@ -8,7 +8,7 @@ from contextlib import nullcontext
 
 from importlib import resources
 
-from license_sh.runners.runners_shared import fetch_npm_licenses
+from license_sh.runners.runners_shared import fetch_npm_licenses, check_node, check_yarn
 from license_sh.runners.yarn import js
 
 
@@ -317,6 +317,9 @@ class YarnRunner:
         self.debug = debug
 
     def check(self):
+        check_yarn()
+        check_node()
+
         with open(self.package_json_path) as package_json_file:
             package_json = json.load(package_json_file)
             project_name = package_json.get("name", "project_name")

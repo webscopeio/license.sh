@@ -1,5 +1,6 @@
 import json
 import asyncio
+import subprocess
 import aiohttp as aiohttp
 from license_sh.helpers import extract_npm_license
 
@@ -41,3 +42,31 @@ def fetch_npm_licenses(all_dependencies):
     asyncio.run(fetch_concurrent(urls))
 
     return license_map
+
+
+def check_command(command: list) -> bool:
+    try:
+        subprocess.call(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except OSError:
+        return False
+    return True
+
+
+def check_yarn():
+    if not check_command(["yarn", "--version"]):
+        print(f"Missing prerequisite! Yarn is required")
+        exit(5)
+
+
+def check_node():
+    if not check_command(["node", "--version"]):
+        print(f"Missing prerequisite! Node is required")
+        exit(5)
+
+
+def check_maven():
+    if not check_command(["mvn", "--version"]):
+        print(f"Missing prerequisite! Maven is required")
+        exit(5)
