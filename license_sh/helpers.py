@@ -103,6 +103,8 @@ def parse_license(license_text: str) -> list:
     Returns:
         list -- List of licenses parsed from gived license str
     """
+    if not license_text:
+        return []
     try:
         license = licensing.parse(license_text)
     except:
@@ -184,6 +186,7 @@ def annotate_dep_tree(
 
     for node in PreOrderIter(tree):
         node.license_normalized = normalize_license_expression(node.license)
+        node.licenses = parse_license(node.license_normalized)
 
     licenses_not_found = set()
     for node in PreOrderIter(tree):
@@ -191,8 +194,8 @@ def annotate_dep_tree(
             not is_license_ok(node.license_normalized, whitelist)
             and node.name not in ignored_packages
         )
-        if node.license_problem and node.license:
-            for license_not_found in parse_license(str(node.license_normalized)):
+        if node.license_problem and node.licenses:
+            for license_not_found in node.licenses:
                 if not license_not_found in whitelist:
                     licenses_not_found.add(license_not_found)
 
