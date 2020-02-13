@@ -1,6 +1,8 @@
 from anytree import Node, RenderTree, AnyNode, ContStyle
 from license_sh.helpers import GREEN, RESET, RED, BOLD
 
+UNKNOWN = "Unknown"
+
 
 class ConsoleReporter:
     @staticmethod
@@ -16,6 +18,7 @@ class ConsoleReporter:
                     and node.license_normalized is not None
                     else ""
                 )
+                license_info = node.license if node.license else UNKNOWN
                 print(
-                    f"{pre}{node.name} - {node.version} - {color}{node.license}{RESET}{normalized_info}"
+                    f"{pre}{node.name} - {node.version} - {color}{license_info}{RESET}{normalized_info}"
                 )

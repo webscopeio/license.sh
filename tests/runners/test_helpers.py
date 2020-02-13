@@ -10,7 +10,6 @@ from license_sh.helpers import (
     parse_license,
     extract_npm_license,
     get_npm_license_from_licenses_array,
-    UNKNOWN,
 )
 
 
@@ -339,7 +338,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "Unknown")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_simple(self):
         data = json.loads(
@@ -389,7 +388,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "Unknown")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_licenses_specific_version_simple(self):
         data = json.loads(
@@ -455,7 +454,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_no_version(self):
         data = json.loads(
@@ -469,7 +468,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_no_version_license(self):
         data = json.loads(
@@ -481,7 +480,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_get_npm_license_from_licenses_array_None(self):
         name = get_npm_license_from_licenses_array(None)
@@ -503,7 +502,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = get_npm_license_from_licenses_array(data.get("licenses"))
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
 
 if __name__ == "__main__":

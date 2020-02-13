@@ -14,7 +14,6 @@ except ImportError:
 
 
 licensing = Licensing()
-UNKNOWN = "Unknown"
 
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
@@ -41,14 +40,14 @@ def get_npm_license_from_licenses_array(licenses_array):
     if not licenses_array:
         return None
 
-    license_name = UNKNOWN
+    license_name = None
     for license_item in licenses_array:
         license_item_type = (
-            license_item.get("type", UNKNOWN)
+            license_item.get("type", None)
             if type(license_item) is dict
             else f"{license_item}"
         )
-        if license_name != UNKNOWN:
+        if license_name != None:
             license_name = f"{license_name} AND {license_item_type}"
         else:
             license_name = license_item_type
@@ -84,7 +83,7 @@ def extract_npm_license(json_data, version: str):
     licenses_array = version_data.get("licenses")
     if licenses_array:
         return get_npm_license_from_licenses_array(licenses_array)
-    return version_data.get("license", UNKNOWN)
+    return version_data.get("license", None)
 
 
 def flatten_dependency_tree(tree):
