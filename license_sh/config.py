@@ -8,11 +8,6 @@ DEFAULT_CONFIG_NAME = ".license-sh.json"
 IGNORED_PACKAGES = "ignored_packages"
 WHITELIST = "whitelist"
 
-try:
-    from license_sh_private.licenses import COMMERCIAL_LICENSES as WHITELIST
-except ImportError:
-    PRIVATE_LICENCES_WHITELIST = []
-
 
 def get_ignored_packages(ignored_packages: dict):
     ignored_packages_map = {e.value: [] for e in ProjectType}
@@ -45,8 +40,8 @@ def get_ignored_packages(ignored_packages: dict):
     return ignored_packages_map
 
 
-def get_licenses_whitelist(whitelist: list, private_default: bool = True):
-    licenses_whitelist = PRIVATE_LICENCES_WHITELIST if private_default else []
+def get_licenses_whitelist(whitelist: list):
+    licenses_whitelist = []
     if not whitelist:
         return licenses_whitelist
     for whitelisted_license in whitelist:

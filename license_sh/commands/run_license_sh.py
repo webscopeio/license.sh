@@ -49,6 +49,7 @@ def run_license_sh(arguments):
 
     project_to_check = project_list[0]
     dep_tree = run_check(project_to_check, path, silent, debug)
+    dep_tree.project = project_to_check
     ignored_packages = ignored_packages_map.get(project_to_check, [])
     if not dep_tree:
         print(f"Unexpected issue, couldn't create dependency tree", file=sys.stderr)

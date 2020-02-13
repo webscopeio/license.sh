@@ -45,14 +45,14 @@ class ConfigRunnerTestCase(unittest.TestCase):
         self.assertEqual(ignored_packages_map[ProjectType.MAVEN.value], [])
 
     def test_get_licences_whitelist_none(self):
-        self.assertEqual(get_licenses_whitelist(None, False), [])
+        self.assertEqual(get_licenses_whitelist(None), [])
 
     def test_get_licences_whitelist_empty(self):
-        self.assertEqual(get_licenses_whitelist([], False), [])
+        self.assertEqual(get_licenses_whitelist([]), [])
 
     def test_get_licences_whitelist_non_str(self):
-        self.assertEqual(get_licenses_whitelist([1, "test"], False), ["test"])
+        self.assertEqual(get_licenses_whitelist([1, "test"]), ["test"])
 
     def test_get_licences_whitelist_non_simple(self):
         whitelist = ["MIT", "APACHE", "TEST"]
-        self.assertEqual(get_licenses_whitelist(whitelist, False), whitelist)
+        self.assertEqual(get_licenses_whitelist(whitelist), whitelist)
