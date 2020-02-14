@@ -14,7 +14,6 @@ except ImportError:
 
 
 licensing = Licensing()
-UNKNOWN = "Unknown"
 
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
@@ -41,14 +40,14 @@ def get_npm_license_from_licenses_array(licenses_array):
     if not licenses_array:
         return None
 
-    license_name = UNKNOWN
+    license_name = None
     for license_item in licenses_array:
         license_item_type = (
-            license_item.get("type", UNKNOWN)
+            license_item.get("type", None)
             if type(license_item) is dict
             else f"{license_item}"
         )
-        if license_name != UNKNOWN:
+        if license_name != None:
             license_name = f"{license_name} AND {license_item_type}"
         else:
             license_name = license_item_type
@@ -84,7 +83,7 @@ def extract_npm_license(json_data, version: str):
     licenses_array = version_data.get("licenses")
     if licenses_array:
         return get_npm_license_from_licenses_array(licenses_array)
-    return version_data.get("license", UNKNOWN)
+    return version_data.get("license", None)
 
 
 def flatten_dependency_tree(tree):
@@ -103,6 +102,8 @@ def parse_license(license_text: str) -> list:
     Returns:
         list -- List of licenses parsed from gived license str
     """
+    if not license_text:
+        return []
     try:
         license = licensing.parse(license_text)
     except:
@@ -184,6 +185,7 @@ def annotate_dep_tree(
 
     for node in PreOrderIter(tree):
         node.license_normalized = normalize_license_expression(node.license)
+        node.licenses = parse_license(node.license_normalized)
 
     licenses_not_found = set()
     for node in PreOrderIter(tree):
@@ -191,8 +193,8 @@ def annotate_dep_tree(
             not is_license_ok(node.license_normalized, whitelist)
             and node.name not in ignored_packages
         )
-        if node.license_problem and node.license:
-            for license_not_found in parse_license(str(node.license_normalized)):
+        if node.license_problem and node.licenses:
+            for license_not_found in node.licenses:
                 if not license_not_found in whitelist:
                     licenses_not_found.add(license_not_found)
 

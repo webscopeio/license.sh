@@ -10,7 +10,6 @@ from license_sh.helpers import (
     parse_license,
     extract_npm_license,
     get_npm_license_from_licenses_array,
-    UNKNOWN,
 )
 
 
@@ -20,41 +19,101 @@ def get_tree():
   You can use `print(RenderTree(tree))`
 
   :return:
-  AnyNode(license='MIT', license_problem=False, name='Name', subtree_problem=True, version='')
-  |-- AnyNode(license='MIT', license_problem=False, name='@company/package1', subtree_problem=True, version='1.1.1')
-  |   |-- AnyNode(license='MIT', license_problem=False, name='package2', subtree_problem=False, version='2.2.2')
-  |   |   |-- AnyNode(license='MIT', license_problem=False, name='package5', subtree_problem=False, version='5.5.5')
-  |   |   +-- AnyNode(license='MIT', license_problem=False, name='package7', subtree_problem=False, version='7.7.7')
-  |   |-- AnyNode(license='MIT', license_problem=False, name='package3', subtree_problem=True, version='3.3.3')
-  |   |   +-- AnyNode(license='GPL', license_problem=True, name='package7', subtree_problem=False, version='7.7.6')
-  |   |-- AnyNode(license='MIT', license_problem=False, name='package4', subtree_problem=False, version='4.4.4')
-  |   +-- AnyNode(license='MIT', license_problem=False, name='package5', subtree_problem=True, version='5.5.5')
+  AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='Name', subtree_problem=True, version='')
+  |-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='@company/package1', subtree_problem=True, version='1.1.1')
+  |   |-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package2', subtree_problem=False, version='2.2.2')
+  |   |   |-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package5', subtree_problem=False, version='5.5.5')
+  |   |   +-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package7', subtree_problem=False, version='7.7.7')
+  |   |-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package3', subtree_problem=True, version='3.3.3')
+  |   |   +-- AnyNode(license='GPL', licenses=['GPL'], license_problem=True, name='package7', subtree_problem=False, version='7.7.6')
+  |   |-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package4', subtree_problem=False, version='4.4.4')
+  |   +-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package5', subtree_problem=True, version='5.5.5')
   |       +-- AnyNode(license='GPL', license_problem=True, name='package6', subtree_problem=False, version='6.6.6')
-  +-- AnyNode(license='MIT', license_problem=False, name='package4', subtree_problem=True, version='4.4.4')
-      +-- AnyNode(license='GPL', license_problem=True, name='package6', subtree_problem=False, version='6.6.6')
+  +-- AnyNode(license='MIT', licenses=['MIT'], license_problem=False, name='package4', subtree_problem=True, version='4.4.4')
+      +-- AnyNode(license='GPL', licenses=['GPL'], license_problem=True, name='package6', subtree_problem=False, version='6.6.6')
 
   print(RenderTree(tree, style=AsciiStyle()))
   """
-    tree = AnyNode(name="Name", version="", license="MIT")
+    tree = AnyNode(name="Name", version="", license="MIT", licenses=["MIT"])
     # first level
     package1 = AnyNode(
-        name="@company/package1", parent=tree, version="1.1.1", license="MIT"
+        name="@company/package1",
+        parent=tree,
+        version="1.1.1",
+        license="MIT",
+        licenses=["MIT"],
     )
-    package4 = AnyNode(name="package4", parent=tree, version="4.4.4", license="MIT")
+    package4 = AnyNode(
+        name="package4", parent=tree, version="4.4.4", license="MIT", licenses=["MIT"]
+    )
 
-    package2 = AnyNode(name="package2", parent=package1, version="2.2.2", license="MIT")
-    AnyNode(name="package5", parent=package2, version="5.5.5", license="MIT")
-    AnyNode(name="package7", parent=package2, version="7.7.7", license="MIT")
+    package2 = AnyNode(
+        name="package2",
+        parent=package1,
+        version="2.2.2",
+        license="MIT",
+        licenses=["MIT"],
+    )
+    AnyNode(
+        name="package5",
+        parent=package2,
+        version="5.5.5",
+        license="MIT",
+        licenses=["MIT"],
+    )
+    AnyNode(
+        name="package7",
+        parent=package2,
+        version="7.7.7",
+        license="MIT",
+        licenses=["MIT"],
+    )
 
-    package3 = AnyNode(name="package3", parent=package1, version="3.3.3", license="MIT")
-    AnyNode(name="package7", parent=package3, version="7.7.6", license="GPL")
+    package3 = AnyNode(
+        name="package3",
+        parent=package1,
+        version="3.3.3",
+        license="MIT",
+        licenses=["MIT"],
+    )
+    AnyNode(
+        name="package7",
+        parent=package3,
+        version="7.7.6",
+        license="GPL",
+        licenses=["GPL"],
+    )
 
-    AnyNode(name="package4", parent=package1, version="4.4.4", license="MIT")
+    AnyNode(
+        name="package4",
+        parent=package1,
+        version="4.4.4",
+        license="MIT",
+        licenses=["MIT"],
+    )
 
-    package5 = AnyNode(name="package5", parent=package1, version="5.5.5", license="MIT")
-    AnyNode(name="package6", parent=package5, version="6.6.6", license="GPL")
+    package5 = AnyNode(
+        name="package5",
+        parent=package1,
+        version="5.5.5",
+        license="MIT",
+        licenses=["MIT"],
+    )
+    AnyNode(
+        name="package6",
+        parent=package5,
+        version="6.6.6",
+        license="GPL",
+        licenses=["GPL"],
+    )
 
-    AnyNode(name="package6", parent=package4, version="6.6.6", license="GPL")
+    AnyNode(
+        name="package6",
+        parent=package4,
+        version="6.6.6",
+        license="GPL",
+        licenses=["GPL"],
+    )
     return tree
 
 
@@ -95,6 +154,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             name="Name",
             version="",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -105,6 +165,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=expected_tree,
             version="1.1.1",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -114,6 +175,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=expected_tree,
             version="4.4.4",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -124,6 +186,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package1,
             version="2.2.2",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -133,6 +196,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package2,
             version="5.5.5",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -142,6 +206,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package2,
             version="7.7.7",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -152,6 +217,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package1,
             version="3.3.3",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -161,6 +227,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package3,
             version="7.7.6",
             license="GPL",
+            licenses=["GPL"],
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -171,6 +238,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package1,
             version="4.4.4",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -181,6 +249,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package1,
             version="5.5.5",
             license="MIT",
+            licenses=["MIT"],
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -190,6 +259,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package5,
             version="6.6.6",
             license="GPL",
+            licenses=["GPL"],
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -200,6 +270,7 @@ class NpmRunnerTestCase(unittest.TestCase):
             parent=package4,
             version="6.6.6",
             license="GPL",
+            licenses=["GPL"],
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -267,7 +338,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "Unknown")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_simple(self):
         data = json.loads(
@@ -317,7 +388,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "Unknown")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_licenses_specific_version_simple(self):
         data = json.loads(
@@ -383,7 +454,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_no_version(self):
         data = json.loads(
@@ -397,7 +468,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_extract_npm_license_no_version_license(self):
         data = json.loads(
@@ -409,7 +480,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
     def test_get_npm_license_from_licenses_array_None(self):
         name = get_npm_license_from_licenses_array(None)
@@ -431,7 +502,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = get_npm_license_from_licenses_array(data.get("licenses"))
-        self.assertEqual(name, UNKNOWN)
+        self.assertEqual(name, None)
 
 
 if __name__ == "__main__":
