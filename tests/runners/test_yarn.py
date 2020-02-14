@@ -211,7 +211,7 @@ class ConsoleReporterTestCase(unittest.TestCase):
         tree_data = {
             "@babel/helper-create-class-features-plugin@7.5.5": {
                 "name": "@babel/helper-create-class-features-plugin",
-                "version": "1.2.3",
+                "version": "7.5.5",
                 "dependencies": {},
             },
             "plugin@7.5.0": {"name": "plugin", "version": "1.2.3", "dependencies": {}},
@@ -232,9 +232,9 @@ class ConsoleReporterTestCase(unittest.TestCase):
         self.assertEqual(
             tree.children[0].name, "@babel/helper-create-class-features-plugin"
         )
-        self.assertEqual(tree.children[0].version, "1.2.3")
+        self.assertEqual(tree.children[0].version, "7.5.5")
         self.assertEqual(tree.children[1].name, "plugin")
-        self.assertEqual(tree.children[1].version, "1.2.3")
+        self.assertEqual(tree.children[1].version, "7.5.0")
         self.assertEqual(tree.children[2].name, "@license/plugin")
         self.assertEqual(tree.children[2].version, "0.5.5")
 
@@ -250,7 +250,7 @@ class ConsoleReporterTestCase(unittest.TestCase):
         tree_data = {
             "@babel/helper-create-class-features-plugin@7.5.5": {
                 "name": "@babel/helper-create-class-features-plugin",
-                "version": "1.2.3",
+                "version": "7.5.5",
                 "dependencies": {
                     "@license/plugin@0.5.5": {
                         "name": "@license/plugin",
@@ -267,7 +267,7 @@ class ConsoleReporterTestCase(unittest.TestCase):
             },
             "plugin@7.5.0": {
                 "name": "plugin",
-                "version": "1.2.3",
+                "version": "7.5.0",
                 "dependencies": {
                     "shared@0.5.5": {
                         "name": "shared",
@@ -300,7 +300,7 @@ class ConsoleReporterTestCase(unittest.TestCase):
         self.assertEqual(
             tree.children[0].name, "@babel/helper-create-class-features-plugin"
         )
-        self.assertEqual(tree.children[0].version, "1.2.3")
+        self.assertEqual(tree.children[0].version, "7.5.5")
         self.assertEqual(tree.children[0].children[0].name, "@license/plugin")
         self.assertEqual(tree.children[0].children[0].version, "0.5.5")
         self.assertEqual(tree.children[0].children[0].children[0].name, "shared")
@@ -312,7 +312,7 @@ class ConsoleReporterTestCase(unittest.TestCase):
             tree.children[0].children[0].children[0].children[0].version, "0.5.5"
         )
         self.assertEqual(tree.children[1].name, "plugin")
-        self.assertEqual(tree.children[1].version, "1.2.3")
+        self.assertEqual(tree.children[1].version, "7.5.0")
         self.assertEqual(tree.children[1].children[0].name, "shared")
         self.assertEqual(tree.children[1].children[0].version, "0.5.5")
         self.assertEqual(tree.children[1].children[0].children[0].name, "shared_child")
