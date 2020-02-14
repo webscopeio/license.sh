@@ -102,7 +102,7 @@ def parse_license(license_text: str) -> list:
     Returns:
         list -- List of licenses parsed from gived license str
     """
-    if not license_text:
+    if license_text is None:
         return []
     try:
         license = licensing.parse(license_text)
