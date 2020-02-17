@@ -115,11 +115,6 @@ def get_name(name: str) -> str:
     return "@".join(name_arr_with_optional_at_sign)
 
 
-def get_name_and_version(name: str) -> Tuple[str, str]:
-    *name_arr_with_optional_at_sign, version = name.split("@")
-    return "@".join(name_arr_with_optional_at_sign), version
-
-
 def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
     """Parse yarn list json dependencies and add them locked version
 
@@ -288,7 +283,7 @@ def get_dependency_tree(
         # Create first level of nodes based on package.json dependencies
         parent = AnyNode(
             name=dep_name,
-            version=dependency.get("version"),
+            version=resolved_version,
             parent=root,
             dependencies=dependency.get("dependencies"),
         )
@@ -343,7 +338,7 @@ class YarnRunner:
             )
             dep_tree = get_dependency_tree(flat_tree, package_json, package_map)
 
-            flat_dependencies = [get_name_and_version(s) for s in flat_tree.keys()]
+            flat_dependencies = [(get_name(s), v) for s, v in package_map.items()]
             license_map = fetch_npm_licenses(flat_dependencies)
 
             for node in PreOrderIter(dep_tree):
