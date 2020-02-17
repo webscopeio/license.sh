@@ -16,6 +16,7 @@ def run_license_sh(arguments):
     configPath = arguments["--config"]
     output = arguments["--output"]
     tree = arguments["--tree"]
+    project_type = arguments["--project"]
     debug = arguments["--debug"]
 
     path_to_config = configPath if configPath else path
@@ -31,23 +32,38 @@ def run_license_sh(arguments):
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
     ignored_packages = []
+    supported_projects = [e.value for e in ProjectType]
     project_list = [e.value for e in get_project_types(path)]
 
     if len(project_list) == 0:
-        supported_projects = [e.value for e in ProjectType]
         print(
             f"None of currently supported projects found. Supported {supported_projects}",
             file=sys.stderr,
         )
         exit(2)
+    project_to_check = project_type if project_type else project_list[0]
 
-    if len(project_list) > 1:
+    if project_type:
+        if not project_type in supported_projects:
+            print(
+                f"Specified project '{project_type}' is not supported. Supported {supported_projects}",
+                file=sys.stderr,
+            )
+            exit(2)
+
+        if not project_type in project_list:
+            print(
+                f"Specified project '{project_type}' not found in '{path}'. Found {project_list}",
+                file=sys.stderr,
+            )
+            exit(2)
+
+    if not project_type and len(project_list) > 1:
         print(
-            f"Curretly there is no support for multi project/language repositories. Found {project_types}. Only '{project_types[0]}' will be checked.",
+            f"Curretly there is no support for multi project/language repositories. Found {project_list}. Only '{project_list[0]}' will be checked.",
             file=sys.stderr,
         )
 
-    project_to_check = project_list[0]
     dep_tree = run_check(project_to_check, path, silent, debug)
     dep_tree.project = project_to_check
     ignored_packages = ignored_packages_map.get(project_to_check, [])

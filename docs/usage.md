@@ -17,6 +17,7 @@ Options:
   -o <reporter> --output <reporter>   Output [default: console].
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
+  -p --project <project_type>         Run only specific project [yarn | npm | maven | pipenv]
   -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 ```

@@ -5,7 +5,7 @@ from enum import Enum
 
 
 class ProjectType(Enum):
-    PYTHON_PIPENV = "python_pipenv"
+    PYTHON_PIPENV = "pipenv"
     NPM = "npm"
     MAVEN = "maven"
     YARN = "yarn"
