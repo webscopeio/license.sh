@@ -79,8 +79,7 @@ def get_dependency_tree(package_json, package_lock_tree):
     for dep_name in package_json.get("dependencies", {}).keys():
         if not dep_name in package_lock_tree:
             print(
-                f"{dep_name} package not found in package-lock.json",
-                file=sys.stderr,
+                f"{dep_name} package not found in package-lock.json", file=sys.stderr,
             )
             exit(1)
         dependency = package_lock_tree[dep_name]
