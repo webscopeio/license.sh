@@ -1,4 +1,5 @@
 import json
+import sys
 import subprocess
 from os import path
 from contextlib import nullcontext
@@ -76,6 +77,12 @@ def get_dependency_tree(package_json, package_lock_tree):
 
     # load root dependencies from package.json
     for dep_name in package_json.get("dependencies", {}).keys():
+        if not dep_name in package_lock_tree:
+            print(
+                f"{dep_name} package not found in package-lock.json",
+                file=sys.stderr,
+            )
+            exit(1)
         dependency = package_lock_tree[dep_name]
         version = dependency.get("version")
         parent = AnyNode(
