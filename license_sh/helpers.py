@@ -150,12 +150,16 @@ def is_license_ok(license_text, whitelist):
     return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
 
 
-def normalize_license_expression(license_text):
+def normalize_license_expression(license_text_raw):
+    if license_text_raw:
+        data = normalize(f"{license_text_raw}")
+        license_text, normalized = data
+    else:
+        license_text = None
     try:
         license = licensing.parse(license_text)
     except:
-        normalized_license, normalized = normalize(license_text)
-        return normalized_license
+        return license_text
 
     if license is None:
         return None
