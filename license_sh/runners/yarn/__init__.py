@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 from os import path
 from anytree import AnyNode, PreOrderIter
 from typing import Dict, List, Tuple
@@ -277,8 +278,14 @@ def get_dependency_tree(
         resolved_version = package_map.get(
             f"{dep_name}@{dep_version}"
         )  # Resolve locked version of the package
+        full_name = f"{dep_name}@{resolved_version}"
+        if full_name not in flat_tree.keys():
+            print(
+                f"{dep_name} package not found in yarn.lock", file=sys.stderr,
+            )
+            exit(1)
         dependency = flat_tree.get(
-            f"{dep_name}@{resolved_version}"
+            full_name
         )  # Use package full name to get it dependencies
         # Create first level of nodes based on package.json dependencies
         parent = AnyNode(
