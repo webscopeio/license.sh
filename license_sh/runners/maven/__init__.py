@@ -1,4 +1,5 @@
 import tempfile
+import sys
 from contextlib import nullcontext
 from os import path
 import xml.etree.ElementTree as ET
@@ -67,7 +68,13 @@ def get_dependency_tree_xml(directory: str, debug=False):
             ],
             capture_output=not debug,
         )
-        return ET.parse(tmpfile).getroot()
+        try:
+            return ET.parse(tmpfile).getroot()
+        except:
+            print(
+                f"Couldn't get data from maven...", file=sys.stderr,
+            )
+            exit(1)
 
     return None
 
