@@ -41,5 +41,6 @@ def analyze_node_modules(directory: str):
 def add_analyze_to_dep_tree(analyze_dict: dict, dep_tree: AnyNode):
   for node in PreOrderIter(dep_tree):
     node_analyze = analyze_dict[id]
-    node.license_text = node_analyze.data
-    node.license_analyzed = node_analyze.name
+    if node_analyze:
+      node.license_text = node_analyze.data
+      node.license_analyzed = node_analyze.name
