@@ -91,7 +91,7 @@ def extract_npm_license(json_data, version: str):
             else f"{license_name}"
         )
 
-    return None 
+    return None
 
 
 def flatten_dependency_tree(tree):
