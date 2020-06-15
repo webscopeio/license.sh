@@ -4,6 +4,7 @@ from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
 from anytree.importer import DictImporter
 from license_expression import Licensing
+from license_sh.version import __version__
 
 try:
     from license_sh_private.normalizer import normalize
@@ -151,11 +152,9 @@ def is_license_ok(license_text, whitelist):
 
 
 def normalize_license_expression(license_text_raw):
-    if license_text_raw:
-        data = normalize(f"{license_text_raw}")
-        license_text, normalized = data
-    else:
-        license_text = None
+    if license_text_raw is None:
+        return None
+    license_text, normalized = normalize(f"{license_text_raw}")
     try:
         license = licensing.parse(license_text)
     except:
@@ -212,6 +211,23 @@ def annotate_dep_tree(
         )
 
     return tree, licenses_not_found
+
+
+def label_dep_tree(tree: AnyNode, project: str) -> AnyNode:
+    """
+  An idea of this function is to go through elements from the bottom -> up and
+  add parameters
+  :param tree
+  :param project type
+  :return tree
+  """
+    for node in PreOrderIter(tree):
+        node.project = project
+        node.id = get_node_id(node.name, node.version)
+        node.leaf = node.is_leaf
+        node.data_version = __version__
+
+    return tree
 
 
 def filter_dep_tree(tree: AnyNode) -> AnyNode:
