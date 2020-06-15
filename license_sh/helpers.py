@@ -4,6 +4,7 @@ from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
 from anytree.importer import DictImporter
 from license_expression import Licensing
+from license_sh.version import __version__
 
 try:
     from license_sh_private.normalizer import normalize
@@ -212,6 +213,23 @@ def annotate_dep_tree(
     return tree, licenses_not_found
 
 
+def label_dep_tree(tree: AnyNode, project: str) -> AnyNode:
+    """
+  An idea of this function is to go through elements from the bottom -> up and
+  add parameters
+  :param tree
+  :param project type
+  :return tree
+  """
+    for node in PreOrderIter(tree):
+        node.project = project
+        node.id = get_node_id(node)
+        node.leaf = node.is_leaf
+        node.data_version = __version__
+
+    return tree
+
+
 def filter_dep_tree(tree: AnyNode) -> AnyNode:
     """Filter dependency tree.
     
@@ -254,3 +272,14 @@ def get_dependency_tree_with_licenses(
     has_issues = filtered_dependency_tree.height > 0
     dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
     return dependency_tree, unknown_licenses, has_issues
+
+
+def get_node_id(node: AnyNode) -> str:
+    """
+    Get node id from name and version
+    """
+    updated_name = node.name.replace("/", ">")
+    try:
+        return f"{updated_name}:-:{node.version.replace('/', '>')}"
+    except:
+        return updated_name

@@ -2,7 +2,7 @@ import questionary
 import sys
 from . import config_cmd
 from ..config import get_config, get_raw_config, whitelist_licenses
-from ..helpers import get_dependency_tree_with_licenses
+from ..helpers import get_dependency_tree_with_licenses, label_dep_tree
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
 from ..reporters.JSONConsoleReporter import JSONConsoleReporter
@@ -65,7 +65,7 @@ def run_license_sh(arguments):
         )
 
     dep_tree = run_check(project_to_check, path, silent, debug)
-    dep_tree.project = project_to_check
+    label_dep_tree(dep_tree, project_to_check)
     ignored_packages = ignored_packages_map.get(project_to_check, [])
     if not dep_tree:
         print(f"Unexpected issue, couldn't create dependency tree", file=sys.stderr)
