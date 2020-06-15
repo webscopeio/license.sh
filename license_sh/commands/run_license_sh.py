@@ -10,12 +10,12 @@ from ..runners import run_check
 
 
 def run_license_sh(arguments):
-
     config_mode = arguments["config"]
     path = arguments["<path>"] or "."
     configPath = arguments["--config"]
     output = arguments["--output"]
     tree = arguments["--tree"]
+    analyze = arguments["--analyze"]
     project_type = arguments["--project"]
     debug = arguments["--debug"]
 
