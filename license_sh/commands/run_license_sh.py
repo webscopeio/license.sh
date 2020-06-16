@@ -1,6 +1,7 @@
 import questionary
 import sys
 from . import config_cmd
+from license_sh.analyze import run_analyze
 from ..config import get_config, get_raw_config, whitelist_licenses
 from ..helpers import get_dependency_tree_with_licenses, label_dep_tree
 from ..project_identifier import ProjectType, get_project_types
@@ -67,6 +68,15 @@ def run_license_sh(arguments):
     dep_tree = run_check(project_to_check, path, silent, debug)
     label_dep_tree(dep_tree, project_to_check)
     ignored_packages = ignored_packages_map.get(project_to_check, [])
+
+    if analyze:
+        analyzed_tree = run_analyze(project_to_check, path, dep_tree)
+        if not analyzed_tree:
+            print(
+                f"Analyze not suported for '{project_to_check}' project",
+                file=sys.stderr,
+            )
+
     if not dep_tree:
         print(f"Unexpected issue, couldn't create dependency tree", file=sys.stderr)
         exit(3)

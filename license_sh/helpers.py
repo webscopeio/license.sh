@@ -273,8 +273,11 @@ def get_dependency_tree_with_licenses(
     dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
     return dependency_tree, unknown_licenses, has_issues
 
-def get_node_id(node_name: string, node_version: string) -> str:
+
+def get_node_id(node_name: str, node_version: str) -> str:
     """
     Get node id from name and version
     """
-    return f"{node_name.name.replace("/", ">")}:-:{node_version.replace('/', '>')}"
+    id_name = node_name.replace("/", ">")
+    id_version = node_version.replace("/", ">")
+    return f"{id_name}:-:{id_version}"
