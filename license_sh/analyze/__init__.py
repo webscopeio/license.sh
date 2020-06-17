@@ -7,7 +7,7 @@ from ..project_identifier import ProjectType
 ANALYZERS = {
     ProjectType.YARN.value: analyze_yarn,
     ProjectType.NPM.value: analyze_npm,
-    ProjectType.MAVEN.value: analyze_maven
+    ProjectType.MAVEN.value: analyze_maven,
 }
 
 
