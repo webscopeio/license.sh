@@ -23,6 +23,9 @@ ASKALONO_BINARY = {
     "darwin": "askalono.osx",
 }
 
+def get_askalono():
+    return ASKALONO_BINARY[platform]
+
 
 def analyze_node_modules(directory: str) -> List:
     """ Analyze node modules dependencies
@@ -33,7 +36,7 @@ def analyze_node_modules(directory: str) -> List:
   Returns:
       [List]: Result of an node_modules crawling with analyze as List of Dictionaries
   """
-    with resources.path(lib, ASKALONO_BINARY[platform]) as askalono_path:
+    with resources.path(lib, get_askalono()) as askalono_path:
         result = []
         git_ignore_path = os.path.join(directory, GIT_IGNORE)
         git_ignore_path_disabled = os.path.join(directory, GIT_IGNORE_DISABLED)

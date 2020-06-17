@@ -1,11 +1,13 @@
 from .npm import analyze_npm
 from .yarn import analyze_yarn
+from .maven import analyze_maven
 from anytree import AnyNode
 from ..project_identifier import ProjectType
 
 ANALYZERS = {
     ProjectType.YARN.value: analyze_yarn,
     ProjectType.NPM.value: analyze_npm,
+    ProjectType.MAVEN.value: analyze_maven
 }
 
 
