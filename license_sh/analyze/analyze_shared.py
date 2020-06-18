@@ -13,7 +13,7 @@ GIT_IGNORE = ".gitignore"
 GIT_IGNORE_DISABLED = ".gitignore_disabled"
 PACKAGE_JSON = "package.json"
 LICENSE_GLOB = "[lL][iI][cC][eE][nN][sScC][eE]*"
-GLOB=f"{{{LICENSE_GLOB},[Rr][eE][aA][Dd][Mm][eE]*}}"
+GLOB = f"{{{LICENSE_GLOB},[Rr][eE][aA][Dd][Mm][eE]*}}"
 UNKNOWN = "unknown"
 
 ASKALONO_BINARY = {
@@ -24,7 +24,11 @@ ASKALONO_BINARY = {
 }
 
 
-def analyze_node_modules(directory: str) -> List:
+def get_askalono():
+    return ASKALONO_BINARY[platform]
+
+
+def run_askalono(directory: str, glob: str = GLOB) -> List:
     """ Analyze node modules dependencies
 
   Args:
@@ -33,7 +37,7 @@ def analyze_node_modules(directory: str) -> List:
   Returns:
       [List]: Result of an node_modules crawling with analyze as List of Dictionaries
   """
-    with resources.path(lib, ASKALONO_BINARY[platform]) as askalono_path:
+    with resources.path(lib, get_askalono()) as askalono_path:
         result = []
         git_ignore_path = os.path.join(directory, GIT_IGNORE)
         git_ignore_path_disabled = os.path.join(directory, GIT_IGNORE_DISABLED)
@@ -42,7 +46,15 @@ def analyze_node_modules(directory: str) -> List:
             if git_ignore_present:
                 os.rename(git_ignore_path, git_ignore_path_disabled)
             output_str = subprocess.run(
-                [askalono_path, "--format", "json", "crawl", '--glob', GLOB, directory,],
+                [
+                    askalono_path,
+                    "--format",
+                    "json",
+                    "crawl",
+                    "--glob",
+                    glob,
+                    directory,
+                ],
                 stdout=subprocess.PIPE,
             ).stdout.decode("utf-8")
             output_lines = output_str.split("\n")
@@ -68,7 +80,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
       [Dict]: Project id as a key and Dict with license text and analyzed license name
   """
     data_dict = {}
-    license_data = analyze_node_modules(directory)
+    license_data = run_askalono(directory)
     for item in license_data:
         path = os.path.join(*item.get("path").split("/")[0:-1])
         package_file = os.path.join(path, PACKAGE_JSON)
@@ -84,7 +96,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
                 data_dict[get_node_id(project_name, project_version)] = {
                     "data": license_text,
                     "name": license_result.get("license", {}).get("name"),
-                    "file": item.get("path").split("/")[-1]
+                    "file": item.get("path").split("/")[-1],
                 }
     return data_dict
 
@@ -99,7 +111,9 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
     for node in PreOrderIter(dep_tree):
         node_analyze = analyze_dict.get(node.id)
         if node_analyze:
-            if re.match(LICENSE_GLOB, node_analyze.get('file')) or node_analyze.get("name"):
+            if re.match(LICENSE_GLOB, node_analyze.get("file")) or node_analyze.get(
+                "name"
+            ):
                 node.license_text = node_analyze.get("data")
                 node.license_analyzed = node_analyze.get("name")
     return dep_tree
