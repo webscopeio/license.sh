@@ -13,7 +13,8 @@ except ImportError:
     def normalize(license_expression):
         return license_expression, False
 
-NODE_ID_SEP = ':-:'
+
+NODE_ID_SEP = ":-:"
 
 licensing = Licensing()
 
@@ -282,6 +283,7 @@ def get_node_id(node_name: str, node_version: str) -> str:
     id_name = node_name.replace("/", ">")
     id_version = node_version.replace("/", ">")
     return f"{id_name}{NODE_ID_SEP}{id_version}"
+
 
 def decode_node_id(node_id: str) -> List:
     """

@@ -28,7 +28,7 @@ def get_askalono():
     return ASKALONO_BINARY[platform]
 
 
-def analyze_node_modules(directory: str) -> List:
+def run_askalono(directory: str, glob: str = GLOB) -> List:
     """ Analyze node modules dependencies
 
   Args:
@@ -52,7 +52,7 @@ def analyze_node_modules(directory: str) -> List:
                     "json",
                     "crawl",
                     "--glob",
-                    GLOB,
+                    glob,
                     directory,
                 ],
                 stdout=subprocess.PIPE,
@@ -80,7 +80,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
       [Dict]: Project id as a key and Dict with license text and analyzed license name
   """
     data_dict = {}
-    license_data = analyze_node_modules(directory)
+    license_data = run_askalono(directory)
     for item in license_data:
         path = os.path.join(*item.get("path").split("/")[0:-1])
         package_file = os.path.join(path, PACKAGE_JSON)
