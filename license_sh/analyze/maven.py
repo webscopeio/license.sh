@@ -4,11 +4,12 @@ import os
 import json
 import asyncio
 import aiohttp as aiohttp
+from zipfile import ZipFile 
 from importlib import resources
 import xml.etree.ElementTree as ET
-from license_sh.helpers import get_node_id
+from license_sh.helpers import get_node_id, decode_node_id
 from anytree import AnyNode, PreOrderIter
-from license_sh.analyze.analyze_shared import get_askalono
+from license_sh.analyze.analyze_shared import get_askalono, GLOB
 from license_sh.analyze import lib
 from typing import Dict, List
 
@@ -39,6 +40,60 @@ def get_analyze_maven_data(directory: str, license_dir: str):
 
         fetch_maven_licenses(dep_data, license_dir)
         return analyze_maven_dependencies(license_dir)
+
+def copy_maven_dependencies(directory: str, dependency_dir: str):
+    subprocess.run(
+        [
+            "mvn",
+            "dependency:copy-dependencies",
+            f"-DoutputDirectory={dependency_dir}",
+            "-f",
+            directory,
+        ],
+        capture_output=True,
+    )
+
+def get_jar_dependency_analyze(directory: str, analyze_dict: Dict):
+    with tempfile.TemporaryDirectory() as dirpath:
+        copy_maven_dependencies(directory, dirpath)
+        unzip_maven_dependencies(dirpath)
+        jar_analyze = list(filter(lambda item: item.get('result', {}).get('license', {}).get('name'), analyze_maven_jar_dependencies(dirpath)))
+        jar_analyze_dict = {}
+        for jar_item in jar_analyze:
+            dir_name = jar_item.get('path').split(f"{dirpath}/")[1].split('/')[0]
+            jar_analyze_dict[dir_name] = jar_item
+        for key, item in analyze_dict.items():
+            if item.get('name'):
+                continue
+            name, version = decode_node_id(key)
+            jar_analyze_item = jar_analyze_dict.get(f"{name}-{version}")
+            if jar_analyze_item:
+                item['name'] = jar_analyze_item.get('result', {}).get('name')
+                with open(jar_analyze_item.get("path"), "r") as license_file:
+                    item['data'] = license_file.read()
+                    
+
+def unzip_maven_dependencies(directory: str):
+    for f in os.listdir(directory):
+        if f.endswith('.jar'):
+            with ZipFile(os.path.join(directory, f),"r") as zip_ref:
+                zip_ref.extractall(os.path.join(directory, f.split('.jar')[0]))
+
+def analyze_maven_jar_dependencies(dir_path: str):
+    result = []
+    with resources.path(lib, get_askalono()) as askalono_path:
+        output_str = subprocess.run(
+            [askalono_path, "--format", "json", "crawl", "--glob", GLOB, dir_path],
+            stdout=subprocess.PIPE,
+        ).stdout.decode("utf-8")
+        output_lines = output_str.split("\n")
+        for line in output_lines:
+            try:
+                result.append(json.loads(line))
+            except json.JSONDecodeError:
+                pass
+    return result
+
 
 
 def analyze_maven_dependencies(dir_path: str):
@@ -76,6 +131,7 @@ def get_maven_analyze_dict(directory: str) -> Dict:
 
 def analyze_maven(directory: str, dep_tree: AnyNode) -> AnyNode:
     analyze_data = get_maven_analyze_dict(directory)
+    get_jar_dependency_analyze(directory, analyze_data)
     return add_analyze_to_dep_tree(analyze_data, dep_tree)
 
 
