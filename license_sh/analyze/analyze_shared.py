@@ -111,7 +111,7 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
     for node in PreOrderIter(dep_tree):
         node_analyze = analyze_dict.get(node.id)
         if node_analyze:
-            if re.match(LICENSE_GLOB, node_analyze.get("file")) or node_analyze.get(
+            if re.match(LICENSE_GLOB, node_analyze.get("file", "")) or node_analyze.get(
                 "name"
             ):
                 node.license_text = node_analyze.get("data")
