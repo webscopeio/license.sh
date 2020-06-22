@@ -2,6 +2,7 @@ import unittest
 import subprocess
 import sys
 from unittest import mock
+from unittest.mock import mock_open
 from license_sh.helpers import get_node_id
 from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
