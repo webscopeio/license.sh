@@ -14,11 +14,25 @@ from license_sh.analyze.analyze_shared import (
 from anytree import AnyNode, PreOrderIter
 
 ASKALONO_RESULT = [
-{"path":"../license-sh/node_modules/snapsvg/LICENSE","result":{"score":0.9993655,"license":{"name":"Apache-2.0"}}},
-{"path":"../license-sh/node_modules/react/LICENSE","result":{"score":0.9993655,"license":{"name":"Apache-2.0"}}},
-{"path":"../license-sh/node_modules/react/LICENSE-MIT","result":{"score":0.9993655,"license":{"name":"MIT"}}},
-{"path":"../license-sh/node_modules/redux/LICENSE","result":{"score":0.9993655,"license":{"name":"Apache-2.0"}}}
-] 
+    {
+        "path": "../license-sh/node_modules/snapsvg/LICENSE",
+        "result": {"score": 0.9993655, "license": {"name": "Apache-2.0"}},
+    },
+    {
+        "path": "../license-sh/node_modules/react/LICENSE",
+        "result": {"score": 0.9993655, "license": {"name": "Apache-2.0"}},
+    },
+    {
+        "path": "../license-sh/node_modules/react/LICENSE-MIT",
+        "result": {"score": 0.9993655, "license": {"name": "MIT"}},
+    },
+    {
+        "path": "../license-sh/node_modules/redux/LICENSE",
+        "result": {"score": 0.9993655, "license": {"name": "Apache-2.0"}},
+    },
+]
+
+
 class Askalono_result:
     stdout = """{"path":"../license-sh/node_modules/snapsvg/LICENSE","result":{"score":0.9993655,"license":{"name":"Apache-2.0"}}}
 {"path":"../license-sh/node_modules/react/LICENSE","result":{"score":0.9993655,"license":{"name":"Apache-2.0"}}}
@@ -126,8 +140,12 @@ class AnalyzeSharedTestCase(unittest.TestCase):
     @mock.patch("os.path.isfile", return_value=True)
     @mock.patch("builtins.open", callable=mock_open(read_data="data"))
     @mock.patch("json.load")
-    @mock.patch("license_sh.analyze.analyze_shared.run_askalono", return_value=ASKALONO_RESULT)
-    def test_get_node_analyze_dict(self, mock_subprocess, mock_json_load, mock_open, mock_isFile):
+    @mock.patch(
+        "license_sh.analyze.analyze_shared.run_askalono", return_value=ASKALONO_RESULT
+    )
+    def test_get_node_analyze_dict(
+        self, mock_subprocess, mock_json_load, mock_open, mock_isFile
+    ):
         project_name = "project_name"
         project_version = "project_version"
         mock_json_load.return_value = {"name": project_name, "version": project_version}
