@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import mock_open
 import xml.etree.ElementTree as ET
 import aiohttp as aiohttp
+from anytree import AnyNode
 from license_sh.analyze.maven import (
     get_analyze_maven_data,
     fetch_maven_licenses,
@@ -11,6 +12,7 @@ from license_sh.analyze.maven import (
     call_copy_dependencies,
     get_jar_analyze_dict,
     get_maven_analyze_dict,
+    analyze_maven,
     merge_licenses_analysis_with_jar_analysis,
 )
 from license_sh.helpers import get_node_id
@@ -123,12 +125,8 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         result = merge_licenses_analysis_with_jar_analysis(
             licenses_analysis, jar_analysis
         )
-        self.assertEqual(
-            result.get(package1)[0].get("name"), "MIT"
-        )
-        self.assertEqual(
-            result.get(package2)[1].get("name"), "MIT"
-        )
+        self.assertEqual(result.get(package1)[0].get("name"), "MIT")
+        self.assertEqual(result.get(package2)[1].get("name"), "MIT")
 
     @mock.patch("builtins.open", callable=mock_open(read_data="data"))
     @mock.patch("license_sh.analyze.maven.get_analyze_maven_data")
@@ -146,3 +144,53 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         result = get_maven_analyze_dict("doesnt/matter")
         self.assertEqual(result.get("react:-:15.5.4")[0].get("name"), "Apache-2.0")
         self.assertEqual(result.get("react:-:15.5.4")[1].get("name"), "MIT")
+
+    @mock.patch("license_sh.analyze.maven.get_jar_analyze_data")
+    @mock.patch("license_sh.analyze.maven.get_maven_analyze_dict")
+    def test_analyze_maven(
+        self, mock_get_maven_analyze_dict, mock_get_jar_analyze_data
+    ):
+        tree = AnyNode(
+            id=get_node_id("root", "1.0.0"),
+            children=[
+                AnyNode(id=get_node_id("child", "0.0.2-GA")),
+                AnyNode(
+                    id=get_node_id("child2", "0.0.5"),
+                    children=[AnyNode(id=get_node_id("childChild", "9.5.4"))],
+                ),
+            ],
+        )
+        mock_get_jar_analyze_data.return_value = {
+            "root-1.0.0": [{"data": "License text", "name": "MIT"}],
+            "child-0.0.2-GA": [
+                {"data": "Apache license", "name": "Apache-2.0"},
+                {"data": "MIT license", "name": "MIT"},
+            ],
+        }
+        mock_get_maven_analyze_dict.return_value = {
+            get_node_id("root", "1.0.0"): [{"data": "License text", "name": "MIT"}],
+            get_node_id("child", "0.0.2-GA"): [],
+            get_node_id("child2", "0.0.5"): [],
+            get_node_id("childChild", "9.5.4"): [
+                {"data": "License text", "name": "Apache-2.0"}
+            ],
+        }
+        result = analyze_maven("doesnt/matter", tree)
+        self.assertEqual(
+            tree.analyze,
+            [
+                {"data": "License text", "name": "MIT"},
+                {"data": "License text", "name": "MIT"},
+            ],
+        )
+        self.assertEqual(
+            tree.children[0].analyze,
+            [
+                {"data": "Apache license", "name": "Apache-2.0"},
+                {"data": "MIT license", "name": "MIT"},
+            ],
+        )
+        self.assertEqual(
+            tree.children[1].children[0].analyze,
+            [{"data": "License text", "name": "Apache-2.0"}],
+        )

@@ -112,7 +112,7 @@ def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
                 {
                     "name": jar_item.get("result", {}).get("license", {}).get("name"),
                     "data": license_file.read(),
-                    "file": jar_item.get("path")
+                    "file": jar_item.get("path"),
                 }
             )
     return jar_analyze_dict
@@ -167,7 +167,7 @@ def merge_licenses_analysis_with_jar_analysis(
         name, version = decode_node_id(key)
         jar_analyze_list = jar_analysis.get(f"{name}-{version}")
         if jar_analyze_list:
-            item.append(*jar_analyze_list)
+            item.extend(jar_analyze_list)
     return result
 
 
@@ -226,6 +226,7 @@ def analyze_maven(directory: str, dep_tree: AnyNode) -> AnyNode:
     analyze_data = merge_licenses_analysis_with_jar_analysis(
         licenses_analysis, jar_analysis
     )
+    print(licenses_analysis, jar_analysis, analyze_data)
     return add_analyze_to_dep_tree(analyze_data, dep_tree)
 
 
