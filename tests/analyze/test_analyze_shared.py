@@ -127,6 +127,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         project_version = "project_version"
         mock_json_load.return_value = {"name": project_name, "version": project_version}
         result = get_node_analyze_dict("shouldnt/matter")
+        print('yeeye', result)
         self.assertEqual(
             result.get(get_node_id(project_name, project_version))[0].get("name"),
             "Apache-2.0",
