@@ -124,6 +124,6 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
             if re.match(LICENSE_GLOB, node_analyze.get("file", "")) or node_analyze.get(
                 "name"
             ):
-                node_analyze.pop('file', None)
+                node_analyze.pop("file", None)
                 node.analyze.append(node_analyze)
     return dep_tree
