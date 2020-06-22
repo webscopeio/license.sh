@@ -123,11 +123,11 @@ class AnalyzeSharedTestCase(unittest.TestCase):
             print("yeey")
         self.assertEqual(mock_rename.call_count, 2)
 
+    @mock.patch("os.path.isfile", return_value=True)
     @mock.patch("builtins.open", callable=mock_open(read_data="data"))
     @mock.patch("json.load")
-    @mock.patch("license_sh.analyze.analyze_shared.run_askalono")
-    def test_get_node_analyze_dict(self, mock_subprocess, mock_json_load, mock_open):
-        mock_subprocess.return_value = ASKALONO_RESULT
+    @mock.patch("license_sh.analyze.analyze_shared.run_askalono", return_value=ASKALONO_RESULT)
+    def test_get_node_analyze_dict(self, mock_subprocess, mock_json_load, mock_open, mock_isFile):
         project_name = "project_name"
         project_version = "project_version"
         mock_json_load.return_value = {"name": project_name, "version": project_version}
