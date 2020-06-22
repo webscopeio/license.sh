@@ -18,7 +18,7 @@ Options:
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
   -p --project <project_type>         Run only specific project [yarn | npm | maven | pipenv]
-  -a --analyze                        Analyze dependencies. Suported: npm, yarn, maven
+  --dependencies                      Include dependency license text analysis. Suported: npm, yarn, maven
   -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 ```
@@ -31,9 +31,6 @@ Yarn - `yarn` and `node`
 Maven - `maven` and `java`
 Pipenv - `python`
 Npm - `npm`
-
-## Analyze
-`--analyze` option turns on check for license texts in the project dependencies. Once the license file of files are found they are added to the dependency tree as `analyze`. Analyze is a list of license texts and analyzed names.
 
 ## Configuration
 

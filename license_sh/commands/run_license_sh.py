@@ -16,7 +16,7 @@ def run_license_sh(arguments):
     configPath = arguments["--config"]
     output = arguments["--output"]
     tree = arguments["--tree"]
-    analyze = arguments["--analyze"]
+    analyze = arguments["--dependencies"]
     project_type = arguments["--project"]
     debug = arguments["--debug"]
 
