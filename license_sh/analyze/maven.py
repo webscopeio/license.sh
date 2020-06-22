@@ -226,7 +226,6 @@ def analyze_maven(directory: str, dep_tree: AnyNode) -> AnyNode:
     analyze_data = merge_licenses_analysis_with_jar_analysis(
         licenses_analysis, jar_analysis
     )
-    print(licenses_analysis, jar_analysis, analyze_data)
     return add_analyze_to_dep_tree(analyze_data, dep_tree)
 
 
