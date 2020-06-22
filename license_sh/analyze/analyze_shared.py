@@ -87,17 +87,24 @@ def get_node_analyze_dict(directory: str) -> Dict:
         if os.path.isfile(package_file):
             with open(package_file, "r") as package_file:
                 package_json = json.load(package_file)
-                project_name = package_json.get("name", "project_name")
-                project_version = package_json.get("version", "unknown")
+                node_id = get_node_id(
+                    package_json.get("name", "project_name"),
+                    package_json.get("version", "unknown"),
+                )
+
+            if not data_dict.get(node_id):
+                data_dict[node_id] = []
 
             with open(item.get("path"), "r") as license_file:
                 license_text = license_file.read()
                 license_result = item.get("result", {})
-                data_dict[get_node_id(project_name, project_version)] = {
-                    "data": license_text,
-                    "name": license_result.get("license", {}).get("name"),
-                    "file": item.get("path").split("/")[-1],
-                }
+                data_dict[node_id].append(
+                    {
+                        "data": license_text,
+                        "name": license_result.get("license", {}).get("name"),
+                        "file": item.get("path").split("/")[-1],
+                    }
+                )
     return data_dict
 
 
@@ -109,11 +116,13 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
       dep_tree (AnyNode): Dependency tree to update
   """
     for node in PreOrderIter(dep_tree):
-        node_analyze = analyze_dict.get(node.id)
-        if node_analyze:
+        node_analyze_list = analyze_dict.get(node.id)
+        node.analyze = []
+        if not node_analyze_list:
+            continue
+        for node_analyze in node_analyze_list:
             if re.match(LICENSE_GLOB, node_analyze.get("file", "")) or node_analyze.get(
                 "name"
             ):
-                node.license_text = node_analyze.get("data")
-                node.license_analyzed = node_analyze.get("name")
+                node.analyze.append(node_analyze)
     return dep_tree
