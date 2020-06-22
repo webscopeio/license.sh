@@ -14,7 +14,7 @@ Options:
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
   -p --project <project_type>         Run only specific project [yarn | npm | maven | pipenv]
-  -a --analyze                        Analyze dependencies. Suported: npm, yarn
+  --dependencies                      Include dependency license text analysis. Suported: npm, yarn, maven
   -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 """
