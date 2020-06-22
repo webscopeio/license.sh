@@ -117,7 +117,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
             print("yeey")
         self.assertEqual(mock_rename.call_count, 2)
 
-    @mock.patch("builtins.open")
+    @mock.patch("builtins.open", callable=mock_open(read_data="data"))
     @mock.patch("json.load")
     @mock.patch("license_sh.analyze.analyze_shared.subprocess")
     def test_get_node_analyze_dict(self, mock_subprocess, mock_json_load, mock_open):
