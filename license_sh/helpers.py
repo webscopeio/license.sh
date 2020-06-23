@@ -5,14 +5,7 @@ from anytree.exporter import DictExporter
 from anytree.importer import DictImporter
 from license_expression import Licensing
 from license_sh.version import __version__
-
-try:
-    from license_sh_private.normalizer import normalize
-except ImportError:
-
-    def normalize(license_expression):
-        return license_expression, False
-
+from license_sh.normalizer import normalize
 
 NODE_ID_SEP = ":-:"
 
