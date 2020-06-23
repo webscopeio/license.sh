@@ -432,7 +432,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         name = extract_npm_license(data, "1.0.0")
         self.assertEqual(name, "APACHE")
 
-    def test_extract_npm_license_global_priority(self):
+    def test_extract_npm_license_version_priority(self):
         data = json.loads(
             """{
             "name": "name",
@@ -445,7 +445,7 @@ class NpmRunnerTestCase(unittest.TestCase):
         }"""
         )
         name = extract_npm_license(data, "1.0.0")
-        self.assertEqual(name, "MIT")
+        self.assertEqual(name, "APACHE")
 
     def test_extract_npm_license_no_versions(self):
         data = json.loads(

@@ -70,6 +70,18 @@ def extract_npm_license(json_data, version: str):
     """
     if not json_data:
         return None
+    version_data = json_data.get("versions", {}).get(version, {})
+    licenses_array = version_data.get("licenses")
+    if licenses_array:
+        return get_npm_license_from_licenses_array(licenses_array)
+    license_name = version_data.get("license")
+    if license_name:
+        return (
+            license_name.get("type")
+            if type(license_name) is dict
+            else f"{license_name}"
+        )
+
     licenses_array = json_data.get("licenses")
     if licenses_array:
         return get_npm_license_from_licenses_array(licenses_array)
@@ -82,11 +94,7 @@ def extract_npm_license(json_data, version: str):
             else f"{license_name}"
         )
 
-    version_data = json_data.get("versions", {}).get(version, {})
-    licenses_array = version_data.get("licenses")
-    if licenses_array:
-        return get_npm_license_from_licenses_array(licenses_array)
-    return version_data.get("license", None)
+    return None
 
 
 def flatten_dependency_tree(tree):
