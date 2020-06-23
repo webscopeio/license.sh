@@ -15,6 +15,7 @@ It could use NpmRunner, Python runner etc.
    licenses. The output of a runner is a [License Dependency Tree](#license-dependency-tree).
 3. **License analysis** - `TODO`
 4. **Reporters** - Take the input from the runner and output it in various formats.
+4. **Dependency analysis** - Go through project dependencies and look for license files
 
 In the following sections, we will describe each of these components in more detail.
 
