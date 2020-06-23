@@ -98,6 +98,8 @@ def get_node_analyze_dict(directory: str) -> Dict:
             with open(item.get("path"), "r") as license_file:
                 license_text = license_file.read()
                 license_result = item.get("result", {})
+                if license_text in [item.get('data') for item in data_dict.get(node_id)]:
+                    continue
                 data_dict[node_id].append(
                     {
                         "data": license_text,

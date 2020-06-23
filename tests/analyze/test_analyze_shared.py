@@ -159,6 +159,34 @@ class AnalyzeSharedTestCase(unittest.TestCase):
             "LICENSE",
         )
 
+    @mock.patch("os.path.isfile", return_value=True)
+    @mock.patch("builtins.open", new_callable=mock_open, read_data="License_text")
+    @mock.patch("json.load")
+    @mock.patch(
+        "license_sh.analyze.analyze_shared.run_askalono"
+    )
+    def test_get_node_analyze_dict_duplicities(
+        self, mock_askalono, mock_json_load, mock_open, mock_isFile
+    ):
+        project_name = "project_name"
+        project_version = "project_version"
+        mock_askalono.return_value = [
+    {
+        "path": "../license-sh/node_modules/react/LICENSE",
+        "result": {"score": 0.9993655, "license": {"name": "Apache-2.0"}},
+    },
+    {
+        "path": "../license-sh/node_modules/package/react/LICENSE",
+        "result": {"score": 0.9993655, "license": {"name": "Apache-2.0"}},
+    },
+]
+        mock_json_load.return_value = {"name": project_name, "version": project_version}
+        result = get_node_analyze_dict("shouldnt/matter")
+        self.assertEqual(
+            len(result.get(get_node_id(project_name, project_version))),
+            1,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
