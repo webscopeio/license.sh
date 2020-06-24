@@ -29,7 +29,7 @@ setuptools.setup(
             "runners/yarn/js/parseYarnLock.js",
             "runners/maven/maven-dependency-plugin-3.1.1-Licensesh.jar",
             "runners/maven/pom.xml",
-            "data/licenses.json"
+            "data/licenses.json",
             "analyze/lib/askalono.linux",
             "analyze/lib/askalono.osx",
             "analyze/lib/askalono.exe",
