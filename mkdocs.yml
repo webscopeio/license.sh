@@ -1,0 +1,21 @@
+site_name: License.sh
+theme:
+  name: material
+#  logo: img/license.svg
+  palette:
+    primary: black
+    accent: green
+
+repo_name: webscopeio/license.sh
+repo_url: https://github.com/webscopeio/license.sh
+
+nav:
+  - Home: README.md
+  - Usage: usage.md
+  - Project Architecture: project-architecture.md
+  - Contribution Guide: contribution-guide.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: Link

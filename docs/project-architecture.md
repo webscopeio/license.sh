@@ -10,7 +10,7 @@ The architecture consists of 4 main components:
 
 1. **Project identification** - First, we need to identify the type of project in a directory. Basically, `license.sh` need to know what kind of runner it should use for your project.
 It could use NpmRunner, Python runner etc.
-2. **Runners** - Runners are the :green_heart: of the application, they
+2. **Runners** - Runners are the heart of the application, they
    transitively identify all of the project dependencies and their
    licenses. The output of a runner is a [License Dependency Tree](#license-dependency-tree).
 3. **License analysis** - `TODO`
@@ -90,8 +90,7 @@ What is interesting for an user is to identify which one of the root
 dependencies is not in allowed licenses and see all problematic paths
 for that dependency.
 
-Annotated License Dependency tree is an extension of a
-[License Dependency Tree](#license-dependency-tree). 
+Annotated License Dependency tree is an extension of a License Dependency Tree. 
 
 Each node has two more properties:
 

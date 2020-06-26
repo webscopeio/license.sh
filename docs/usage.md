@@ -27,10 +27,11 @@ Options:
 
 Depends on the project you want to test.
 
-Yarn - `yarn` and `node`
-Maven - `maven` and `java`
-Pipenv - `python`
-Npm - `npm`
+!!! Prerequisites
+    - Yarn - `yarn` and `node`
+    - Maven - `maven` and `java`
+    - Pipenv - `python`
+    - Npm - `npm`
 
 ## Configuration
 
