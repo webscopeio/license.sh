@@ -60,7 +60,7 @@ $ pipenv run ./license-sh <path_to_test_project>
 `pipenv run python -m unittest`
 
 ## Documentation
-`docsify serve ./docs`  
+`pipenv run mkdocs serve`  
 
 ## Packaging
 
