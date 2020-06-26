@@ -8,3 +8,4 @@ examples
 **/dist/**
 **/build/**
 **/license_sh.egg-info/**
+.vercel

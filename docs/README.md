@@ -27,14 +27,12 @@ the following features:
      [@webscopeio/license.sh](https://github.com/webscopeio/license.sh)
      
 - **Community driven** - We were missing a place where IT professionals
-  could help each other with licensing & legal questions. Feel free to
-  join:
-    - [License.sh Slack channel]()
-    - [License.sh Forum]()
+  could help each other with licensing & legal questions. If you email us at hello@license.sh we will add you to our Slack channel.
+
   
 - **Enterprise ready support** (Optional)
   - In case you need more advanced features, we provide you a
-    [platform]() where you can start doing license audits on more
+    [platform](https://license.sh) where you can start doing license audits on more
     professional level with **zero-infrastructure** and
     **zero-maintenance**.
     
@@ -42,15 +40,17 @@ the following features:
 ## Language support
  
 We currently support the following package managers. We will add more
-languages soon! Please let us know what languages to prioritize in [this
-form]() and we will let you know once we add support for them.
+languages soon! Please let us know what languages to prioritize by opening a Github issue
+and we will let you know once we add support for them.
 
-* Javascript
-  * NPM
-  * Yarn
-* Python :snake:
-  * pipenv
-* Java
-  * Maven
+
+!!! note "Supported Lanaguages"
+    * Javascript
+        * NPM
+        * Yarn
+    * Python
+        * pipenv
+    * Java
+        * Maven
   
 
