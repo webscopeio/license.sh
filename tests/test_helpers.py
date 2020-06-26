@@ -7,6 +7,7 @@ from license_sh.helpers import (
     flatten_dependency_tree,
     annotate_dep_tree,
     is_license_ok,
+    is_analyze_ok,
     parse_license,
     extract_npm_license,
     get_npm_license_from_licenses_array,
@@ -503,6 +504,42 @@ class NpmRunnerTestCase(unittest.TestCase):
         )
         name = get_npm_license_from_licenses_array(data.get("licenses"))
         self.assertEqual(name, None)
+
+    def test_is_analyze_ok_simple(self):
+        node = AnyNode(licenses=['MIT'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), True)
+
+    def test_is_analyze_ok_empty(self):
+        node = AnyNode(licenses=['MIT'], analyze=[])
+        self.assertEqual(is_analyze_ok(node), False)
+
+    def test_is_analyze_ok_empty2(self):
+        node = AnyNode(licenses=[], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), False)
+
+    def test_is_analyze_ok_None2(self):
+        node = AnyNode(licenses=['MIT'])
+        self.assertEqual(is_analyze_ok(node), False)
+
+    def test_is_analyze_ok_more_same(self):
+        node = AnyNode(licenses=['MIT'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }, { 'name': 'MIT', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), True)
+
+    def test_is_analyze_ok_more_different(self):
+        node = AnyNode(licenses=['MIT'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }, { 'name': 'Apache2', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), False)
+
+    def test_is_analyze_ok_more_same(self):
+        node = AnyNode(licenses=['Apache2', 'MIT'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }, { 'name': 'Apache2', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), True)
+
+    def test_is_analyze_ok_more_missing(self):
+        node = AnyNode(licenses=['Apache2', 'MIT', 'BSD'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }, { 'name': 'Apache2', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), False)
+
+    def test_is_analyze_ok_more_analyzed(self):
+        node = AnyNode(licenses=['Apache2', 'MIT'], analyze=[{ 'name': 'MIT', 'data': 'LicenseText' }, { 'name': 'Apache2', 'data': 'LicenseText' }, { 'name': 'BSD', 'data': 'LicenseText' }])
+        self.assertEqual(is_analyze_ok(node), False)
 
 
 if __name__ == "__main__":

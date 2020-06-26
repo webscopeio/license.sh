@@ -153,6 +153,21 @@ def is_license_ok(license_text, whitelist):
 
     return fn(map(lambda x: is_license_ok(x, whitelist), license.args))
 
+def is_analyze_ok(node: AnyNode):
+    try:
+        node_analyze = node.analyze
+    except AttributeError:
+        return False
+
+    node_analyze_names = { item.get("name") for item in node_analyze}
+
+    if len(node.licenses) != len(node_analyze_names):
+        return False
+
+    for analyze_name in node_analyze_names:
+        if not analyze_name in node.licenses:
+            return False
+    return True
 
 def normalize_license_expression(license_text_raw):
     if license_text_raw is None:
@@ -178,7 +193,7 @@ def normalize_license_expression(license_text_raw):
 
 
 def annotate_dep_tree(
-    tree, whitelist: [str], ignored_packages: [str]
+    tree, whitelist: [str], ignored_packages: [str], analyze: bool = False
 ) -> Tuple[AnyNode, Set[str]]:
     """
   An idea of this function is to go through elements from the bottom -> up and
@@ -195,6 +210,8 @@ def annotate_dep_tree(
 
     licenses_not_found = set()
     for node in PreOrderIter(tree):
+        if analyze:
+            node.analyze_problem = not is_analyze_ok(node)
         node.license_problem = (
             not is_license_ok(node.license_normalized, whitelist)
             and node.name not in ignored_packages
@@ -209,7 +226,7 @@ def annotate_dep_tree(
             False
             if node.is_leaf
             else any(
-                map(lambda x: x.subtree_problem or x.license_problem, node.children)
+                map(lambda x: x.subtree_problem or x.license_problem or (analyze and x.analyze_problem), node.children)
             )
         )
 
@@ -247,7 +264,7 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
     treeCopy = DictImporter().import_(DictExporter().export(tree))
     for node in LevelOrderIter(treeCopy):
         node.children = filter(
-            lambda subnode: subnode.subtree_problem or subnode.license_problem,
+            lambda subnode: subnode.subtree_problem or subnode.license_problem or subnode.analyze_problem,
             node.children,
         )
 
@@ -259,6 +276,7 @@ def get_dependency_tree_with_licenses(
     whitelist: List[str],
     ignored_packages: List[str],
     get_full_tree: bool,
+    analyze: bool = False
 ) -> Tuple[AnyNode, Set[str]]:
     """
     Constructs the annotated dependency tree that is later given to a reporter.
@@ -269,7 +287,7 @@ def get_dependency_tree_with_licenses(
     :return:
     """
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
-        dep_tree, whitelist=whitelist, ignored_packages=ignored_packages
+        dep_tree, whitelist=whitelist, ignored_packages=ignored_packages, analyze=analyze
     )
     filtered_dependency_tree = filter_dep_tree(annotated_dep_tree)
     has_issues = filtered_dependency_tree.height > 0
