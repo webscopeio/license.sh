@@ -2,28 +2,28 @@
   "version": "1.0.0",
   "licenses": [
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/Apachev2.0.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/Apachev2.0.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/BSD3Clause.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/BSD3Clause.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/GPL3.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/GPL3.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/ISC.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/ISC.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/MIT.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/MIT.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/MPL2.0.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/MPL2.0.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/MS-PL.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/MS-PL.json"
     },
     {
-      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/feat/licensesData/license_sh/data/analyzed/Unlicense.json"
+      "url": "https://raw.githubusercontent.com/webscopeio/license.sh/master/license_sh/data/analyzed/Unlicense.json"
     }
   ]
 }
