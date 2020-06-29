@@ -1,0 +1,110 @@
+{
+  "title": "BSD 3-Clause",
+  "overview": "Ideal for open source software that does not put requirements on redistribution",
+  "tags": {
+    "can": [
+      {
+        "title": "Commercial use"
+      },
+      {
+        "title": "Modify"
+      },
+      {
+        "title": "Distribute"
+      },
+      {
+        "title": "Warranty"
+      }
+    ],
+    "cannot": [
+      {
+        "title": "Trademark use"
+      },
+      {
+        "title": "Liability"
+      }
+    ],
+    "must": [
+      {
+        "title": "Copyright"
+      },
+      {
+        "title": "Permission notice"
+      }
+    ]
+  },
+  "data": [
+    {
+      "text": "The 3-Clause BSD License",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Note: This license has also been called the \"New BSD License\" or \"Modified BSD License\". See also the 2-clause BSD License.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Copyright <YEAR> <COPYRIGHT HOLDER>",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:",
+      "tags": ["Commercial use", "Distribute", "Modify"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "1. Redistributions of source code must retain the above copyright notice",
+      "tags": ["Copyright", "Permission notice"]
+    },
+    {
+      "text": ", this list of conditions and the following disclaimer",
+      "tags": ["Permission notice"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "2. Redistributions in binary form must reproduce the above copyright notice",
+      "tags": ["Copyright", "Permission notice"]
+    },
+    {
+      "text": ", this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.",
+      "tags": ["Permission notice"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.",
+      "tags": ["Trademark use"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.",
+      "tags": ["Warranty"]
+    },
+    {
+      "text": " IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE",
+      "tags": ["Liability"]
+    },
+    {
+      "text": " FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "newline": true
+    }
+  ]
+}
