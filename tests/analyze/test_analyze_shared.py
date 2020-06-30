@@ -10,6 +10,7 @@ from license_sh.analyze.analyze_shared import (
     GIT_IGNORE,
     GIT_IGNORE_DISABLED,
     get_node_analyze_dict,
+    transformHtml
 )
 from anytree import AnyNode, PreOrderIter
 
@@ -183,6 +184,48 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         self.assertEqual(
             len(result.get(get_node_id(project_name, project_version))), 1,
         )
+
+    def test_transformHtml_string(self):
+        normal_string = 'This is normal string'
+        self.assertEqual(transformHtml(normal_string), normal_string)
+
+    def test_transformHtml_simple(self):
+        normal_string = 'This is normal string'
+        self.assertEqual(transformHtml(f"<p>{normal_string}</p>"), normal_string)
+
+    def test_transformHtml_complex(self):
+        html_text = """<html>
+        <head>
+            <style>
+                * {
+                    background-color: red;
+                }
+            </style>
+            <title>This is title</title>
+            </head>
+            <Body>
+                <h3>License title</h3>
+                <p>License text</p>
+            </Body>
+</html>"""
+        result = """License title
+License text"""
+        self.assertEqual(transformHtml(html_text), result)
+
+    def test_transformHtml_xml(self):
+        html_text = """<xml>
+        <head>
+            <title>This is title</title>
+            </head>
+            <Body>
+                <h3>License title</h3>
+                <p>License text</p>
+            </Body>
+</xml>"""
+        result = """License title
+License text"""
+        print(transformHtml(html_text))
+        self.assertEqual(transformHtml(html_text), result)
 
 
 if __name__ == "__main__":

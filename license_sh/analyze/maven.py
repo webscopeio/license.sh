@@ -15,6 +15,7 @@ from license_sh.analyze.analyze_shared import (
     GLOB,
     run_askalono,
     add_analyze_to_dep_tree,
+    transformHtml
 )
 from license_sh.analyze import lib
 from typing import Dict, List
@@ -258,6 +259,6 @@ def fetch_maven_licenses(dep_data: Dict, dir_path: str):
                 output, dep_id = await result
 
                 with open(os.path.join(dir_path, dep_id), "w") as file:
-                    file.write(output)
+                    file.write(transformHtml(output))
 
     asyncio.run(fetch_concurrent())

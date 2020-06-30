@@ -2,6 +2,7 @@ from importlib import resources
 from license_sh.analyze import lib
 from anytree import AnyNode, PreOrderIter
 from typing import Dict, List
+from html.parser import HTMLParser
 from ..helpers import get_node_id
 import os
 import re
@@ -9,6 +10,7 @@ import json
 import subprocess
 from sys import platform
 
+IGNORED_HTML_TAGS = ['style', 'script', 'head']
 GIT_IGNORE = ".gitignore"
 GIT_IGNORE_DISABLED = ".gitignore_disabled"
 PACKAGE_JSON = "package.json"
@@ -131,3 +133,33 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
                 node_analyze.pop("file", None)
                 node.analyze.append(node_analyze)
     return dep_tree
+
+
+def transformHtml(htmlText: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
+    """Transform html/xml as string into a raw string without tags
+
+    Args:
+        htmlText (str): Html/xml string
+
+    Returns:
+        str: Raw string without tags
+    """
+    class HTMLFilter(HTMLParser):
+        text = ""
+        ignored_tag = None
+
+        def handle_starttag(self, tag, attrs):
+            if tag in ignored_tags and not self.ignored_tag:
+                self.ignored_tag = tag
+
+        def handle_endtag(self, tag):
+            if tag == self.ignored_tag:
+                self.ignored_tag = None
+
+        def handle_data(self, data):
+            if not self.ignored_tag and len(data.strip()) != 0:
+                self.text += '\n' + data if len(self.text) > 0 else data
+
+    html_filter = HTMLFilter()
+    html_filter.feed(htmlText)
+    return html_filter.text
