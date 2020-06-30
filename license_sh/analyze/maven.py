@@ -15,7 +15,7 @@ from license_sh.analyze.analyze_shared import (
     GLOB,
     run_askalono,
     add_analyze_to_dep_tree,
-    transformHtml
+    transformHtml,
 )
 from license_sh.analyze import lib
 from typing import Dict, List

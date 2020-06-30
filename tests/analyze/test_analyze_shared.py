@@ -10,7 +10,7 @@ from license_sh.analyze.analyze_shared import (
     GIT_IGNORE,
     GIT_IGNORE_DISABLED,
     get_node_analyze_dict,
-    transformHtml
+    transformHtml,
 )
 from anytree import AnyNode, PreOrderIter
 
@@ -186,11 +186,11 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         )
 
     def test_transformHtml_string(self):
-        normal_string = 'This is normal string'
+        normal_string = "This is normal string"
         self.assertEqual(transformHtml(normal_string), normal_string)
 
     def test_transformHtml_simple(self):
-        normal_string = 'This is normal string'
+        normal_string = "This is normal string"
         self.assertEqual(transformHtml(f"<p>{normal_string}</p>"), normal_string)
 
     def test_transformHtml_complex(self):

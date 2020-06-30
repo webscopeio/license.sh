@@ -10,7 +10,7 @@ import json
 import subprocess
 from sys import platform
 
-IGNORED_HTML_TAGS = ['style', 'script', 'head']
+IGNORED_HTML_TAGS = ["style", "script", "head"]
 GIT_IGNORE = ".gitignore"
 GIT_IGNORE_DISABLED = ".gitignore_disabled"
 PACKAGE_JSON = "package.json"
@@ -144,6 +144,7 @@ def transformHtml(htmlText: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
     Returns:
         str: Raw string without tags
     """
+
     class HTMLFilter(HTMLParser):
         text = ""
         ignored_tag = None
@@ -158,7 +159,7 @@ def transformHtml(htmlText: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
 
         def handle_data(self, data):
             if not self.ignored_tag and len(data.strip()) != 0:
-                self.text += '\n' + data if len(self.text) > 0 else data
+                self.text += "\n" + data if len(self.text) > 0 else data
 
     html_filter = HTMLFilter()
     html_filter.feed(htmlText)
