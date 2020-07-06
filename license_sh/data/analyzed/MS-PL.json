@@ -1,0 +1,170 @@
+{
+  "title": "MS-PL",
+  "overview": "You can do anything with the software as long as you include this license and existing copyrights",
+  "tags": {
+    "can": [
+      {
+        "title": "Commercial use"
+      },
+      {
+        "title": "Modify"
+      },
+      {
+        "title": "Distribute"
+      },
+      {
+        "title": "Sublicense"
+      }
+    ],
+    "cannot": [
+      {
+        "title": "Trademark use"
+      },
+      {
+        "title": "Liability"
+      }
+    ],
+    "must": [
+      {
+        "title": "Copyright"
+      },
+      {
+        "title": "Include license"
+      }
+    ]
+  },
+  "data": [
+    {
+      "text": "Microsoft Public License (MS-PL)",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "1. Definitions",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "The terms \"reproduce,\" \"reproduction,\" \"derivative works,\" and \"Distribute\" have the same meaning here as under U.S. copyright law.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "A \"contribution\" is the original software, or any additions or changes to the software.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "A \"contributor\" is any person that distributes its contribution under this license.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "\"Licensed patents\" are a contributor's patent claims that read directly on its contribution.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "2. Grant of Rights",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(A) Copyright Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, ",
+      "tags": ["Copyright"]
+    },
+    {
+      "text": "each contributor grants you a non-exclusive, worldwide, royalty-free copyright license ",
+      "tags": ["Copyright", "Sublicense"]
+    },
+    {
+      "text": "to reproduce its contribution, ",
+      "tags": ["Copyright", "Sublicense", "Commercial use"]
+    },
+    {
+      "text": "prepare derivative works of its contribution",
+      "tags": ["Copyright", "Sublicense", "Commercial use", "Modify"]
+    },
+    {
+      "text": ", and distribute its contribution or any derivative works that you create.",
+      "tags": ["Copyright", "Sublicense", "Commercial use", "Distribute"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(B) Patent Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, each contributor grants you a non-exclusive, worldwide, royalty-free license under its licensed patents to make, have made, use, sell, offer for sale, import, and/or otherwise dispose of its contribution in the software or derivative works of the contribution in the software.",
+      "tags": ["Include license"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "3. Conditions and Limitations",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(A) No Trademark License- This license does not grant you rights to use any contributors' name, logo, or trademarks.",
+      "newline": true,
+      "tags": ["Trademark use"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(B) If you bring a patent claim against any contributor over patents that you claim are infringed by the software, your patent license from such contributor to the software ends automatically.",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(C) If you distribute any portion of the software, you must retain all copyright, patent, trademark, and attribution notices that are present in the software.",
+      "tags": ["Copyright", "Include license"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(D) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your Distribute. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.",
+      "tags": ["Include license"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "(E) The software is licensed \"as-is.\" You bear the risk of using it. The contributors give no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.",
+      "tags": ["Liability"],
+      "newline": true
+    }
+  ]
+}
