@@ -60,7 +60,8 @@ def get_pipenv_analyze_dict(directory: str) -> Dict:
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_pipenv_data(directory, dirpath)
         for item in license_data:
-            dep_id = item.get("path").split("/")[-2].split(SUFFIX)[0]
+            *path, folder_name, license_name = item.get("path").split("/")
+            dep_id, *rest = folder_name.split(SUFFIX)
             if not data_dict.get(dep_id):
                 data_dict[dep_id] = []
             with open(item.get("path"), "r") as license_file:
@@ -70,7 +71,7 @@ def get_pipenv_analyze_dict(directory: str) -> Dict:
                     {
                         "data": license_text,
                         "name": license_result.get("license", {}).get("name"),
-                        "file": item.get("path").split("/")[-1],
+                        "file": license_name,
                     }
                 )
         return data_dict
