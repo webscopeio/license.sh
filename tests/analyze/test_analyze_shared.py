@@ -10,7 +10,7 @@ from license_sh.analyze.analyze_shared import (
     GIT_IGNORE,
     GIT_IGNORE_DISABLED,
     get_node_analyze_dict,
-    transformHtml,
+    transform_html,
 )
 from anytree import AnyNode, PreOrderIter
 
@@ -187,11 +187,11 @@ class AnalyzeSharedTestCase(unittest.TestCase):
 
     def test_transformHtml_string(self):
         normal_string = "This is normal string"
-        self.assertEqual(transformHtml(normal_string), normal_string)
+        self.assertEqual(transform_html(normal_string), normal_string)
 
     def test_transformHtml_simple(self):
         normal_string = "This is normal string"
-        self.assertEqual(transformHtml(f"<p>{normal_string}</p>"), normal_string)
+        self.assertEqual(transform_html(f"<p>{normal_string}</p>"), normal_string)
 
     def test_transformHtml_complex(self):
         html_text = """<html>
@@ -210,7 +210,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
 </html>"""
         result = """License title
 License text"""
-        self.assertEqual(transformHtml(html_text), result)
+        self.assertEqual(transform_html(html_text), result)
 
     def test_transformHtml_xml(self):
         html_text = """<xml>
@@ -224,8 +224,7 @@ License text"""
 </xml>"""
         result = """License title
 License text"""
-        print(transformHtml(html_text))
-        self.assertEqual(transformHtml(html_text), result)
+        self.assertEqual(transform_html(html_text), result)
 
 
 if __name__ == "__main__":

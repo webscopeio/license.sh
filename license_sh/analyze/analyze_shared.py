@@ -135,7 +135,7 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
     return dep_tree
 
 
-def transformHtml(htmlText: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
+def transform_html(html_text: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
     """Transform html/xml as string into a raw string without tags
 
     Args:
@@ -162,5 +162,5 @@ def transformHtml(htmlText: str, ignored_tags: List = IGNORED_HTML_TAGS) -> str:
                 self.text += "\n" + data if len(self.text) > 0 else data
 
     html_filter = HTMLFilter()
-    html_filter.feed(htmlText)
+    html_filter.feed(html_text)
     return html_filter.text
