@@ -1,0 +1,119 @@
+{
+  "title": "MIT",
+  "overview": "One of the most permissive licenses that allows to use the software for any purpose if the notice requirements are fulfilled ",
+  "tags": {
+    "can": [
+      {
+        "title": "Commercial use"
+      },
+      {
+        "title": "Modify"
+      },
+      {
+        "title": "Distribute"
+      },
+      {
+        "title": "Sublicense"
+      },
+      {
+        "title": "Private use"
+      },
+      {
+        "title": "Derivative work"
+      }
+    ],
+    "cannot": [
+      {
+        "title": "Liability"
+      }
+    ],
+    "must": [
+      {
+        "title": "Copyright"
+      },
+      {
+        "title": "Permission notice"
+      }
+    ]
+  },
+  "data": [
+    {
+      "text": "MIT License",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "text": "https://opensource.org/licenses/MIT",
+      "newline": true,
+      "align": "center"
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Begin license text",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Copyright <YEAR> <COPYRIGHT HOLDER>",
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, ",
+      "tags": ["Commercial use", "Private use"]
+    },
+    {
+      "text": "copy, ",
+      "tags": ["Commercial use", "Private use", "Derivative work"]
+    },
+    {
+      "text": "modify, ",
+      "tags": ["Commercial use", "Private use", "Derivative work", "Modify"]
+    },
+    {
+      "text": "merge, publish, ",
+      "tags": ["Commercial use", "Private use", "Derivative work"]
+    },
+    {
+      "text": "distribute, ",
+      "tags": ["Commercial use", "Private use", "Derivative work", "Distribute"]
+    },
+    {
+      "text": "sublicense, ",
+      "tags": ["Commercial use", "Private use", "Derivative work", "Sublicense"]
+    },
+    {
+      "text": "and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:",
+      "tags": ["Commercial use", "Private use", "Derivative work"],
+      "newline": true
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.",
+      "newline": true,
+      "tags": ["Copyright", "Permission notice"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+      "newline": true,
+      "tags": ["Liability"]
+    },
+    {
+      "newline": true
+    },
+    {
+      "text": "End license text."
+    }
+  ]
+}
