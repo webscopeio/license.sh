@@ -212,7 +212,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
 License text"""
         self.assertEqual(transform_html(html_text), result)
 
-    def test_transformHtml_xml(self):
+    def test_transform_html_xml(self):
         html_text = """<xml>
         <head>
             <title>This is title</title>
