@@ -189,7 +189,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         normal_string = "This is normal string"
         self.assertEqual(transform_html(normal_string), normal_string)
 
-    def test_transformHtml_simple(self):
+    def test_transform_html_simple(self):
         normal_string = "This is normal string"
         self.assertEqual(transform_html(f"<p>{normal_string}</p>"), normal_string)
 
