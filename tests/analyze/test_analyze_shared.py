@@ -185,7 +185,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
             len(result.get(get_node_id(project_name, project_version))), 1,
         )
 
-    def test_transformHtml_string(self):
+    def test_transform_html_string(self):
         normal_string = "This is normal string"
         self.assertEqual(transform_html(normal_string), normal_string)
 
