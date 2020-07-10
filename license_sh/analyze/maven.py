@@ -105,7 +105,8 @@ def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
     )
     jar_analyze_dict = {}
     for jar_item in jar_analyze:
-        dir_name = jar_item.get("path").split(f"{tmp_dir}/")[1].split("/")[0]
+        tmp_dir_path, license_file_path = jar_item.get("path").split(f"{tmp_dir}/")
+        dir_name, *rest, license_file_name = license_file_path.split("/")
         if not jar_analyze_dict.get(dir_name):
             jar_analyze_dict[dir_name] = []
         with open(jar_item.get("path"), "r") as license_file:
@@ -113,7 +114,7 @@ def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
                 {
                     "name": jar_item.get("result", {}).get("license", {}).get("name"),
                     "data": license_file.read(),
-                    "file": jar_item.get("path"),
+                    "file": license_file_name,
                 }
             )
     return jar_analyze_dict
@@ -197,7 +198,8 @@ def get_maven_analyze_dict(directory: str) -> Dict:
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_maven_data(directory, dirpath)
         for item in license_data:
-            dep_id = item.get("path").split("/")[-1].split("@")[0]
+            *path_to_file, file_name = item.get("path").split("/")
+            dep_id, *rest = file_name.split("@")
             if not data_dict.get(dep_id):
                 data_dict[dep_id] = []
             with open(item.get("path"), "r") as license_file:

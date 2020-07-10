@@ -84,7 +84,8 @@ def get_node_analyze_dict(directory: str) -> Dict:
     data_dict = {}
     license_data = run_askalono(directory)
     for item in license_data:
-        path = os.path.join(*item.get("path").split("/")[0:-1])
+        *path_to_dependency, license_file = item.get("path").split("/")
+        path = os.path.join(*path_to_dependency)
         package_file = os.path.join(path, PACKAGE_JSON)
         if os.path.isfile(package_file):
             with open(package_file, "r") as package_file:
@@ -100,6 +101,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
             with open(item.get("path"), "r") as license_file:
                 license_text = license_file.read()
                 license_result = item.get("result", {})
+                *path_to_file, file_name = item.get("path").split("/")
                 if license_text in [
                     item.get("data") for item in data_dict.get(node_id)
                 ]:
@@ -108,7 +110,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
                     {
                         "data": license_text,
                         "name": license_result.get("license", {}).get("name"),
-                        "file": item.get("path").split("/")[-1],
+                        "file": file_name,
                     }
                 )
     return data_dict
