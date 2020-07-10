@@ -43,9 +43,9 @@ Example:
 ```
 {
   "ignored_packages": {
-    "python_pipenv": [
-      "PyInquirer",
-      "setuptools"
+    "python_pipenv": [ 
+      "PyInquirer:-:1.0.0",
+      "setuptools;-:3.4.5"
     ],
     "npm": [],
     "maven": [],
@@ -60,15 +60,19 @@ Example:
 ```
   "ignored_packages": {
     "python_pipenv": [
-      "PyInquirer",
-      "setuptools"
+      "PyInquirer:-:1.0.0",
+      "setuptools;-:3.4.5"
     ],
     "npm": [],
     "maven": [],
     "yarn": []
   }
 ```
-You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error
+You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error.
+
+Format:
+"{PACKAGE_NAME}:-:{PACKAGE_VESION}"
+
 
 * ### Whitelist
 ```

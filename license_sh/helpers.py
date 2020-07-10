@@ -212,11 +212,10 @@ def annotate_dep_tree(
 
     licenses_not_found = set()
     for node in PreOrderIter(tree):
-        if analyze:
-            node.analyze_problem = not is_analyze_ok(node)
+        node.analyze_problem = analyze and not is_analyze_ok(node)
         node.license_problem = (
             not is_license_ok(node.license_normalized, whitelist)
-            and node.name not in ignored_packages
+            and get_node_id(node.name, node.version) not in ignored_packages
         )
         if node.license_problem and node.licenses:
             for license_not_found in node.licenses:
@@ -231,7 +230,7 @@ def annotate_dep_tree(
                 map(
                     lambda x: x.subtree_problem
                     or x.license_problem
-                    or (analyze and x.analyze_problem),
+                    or x.analyze_problem,
                     node.children,
                 )
             )
