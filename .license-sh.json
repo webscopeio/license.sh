@@ -11,7 +11,8 @@
   ],
   "ignored_packages": {
     "pipenv": [
-      "aiohttp:-:3.6.2"
+      "aiohttp:-:3.6.2",
+      "async-timeout"
     ]
   }
 }

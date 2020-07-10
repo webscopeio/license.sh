@@ -71,7 +71,9 @@ Example:
 You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error.
 
 Format:
-"{PACKAGE_NAME}:-:{PACKAGE_VESION}"
+"{PACKAGE_NAME}:-:{PACKAGE_VESION}"  --- To ignore specific version of the package RECOMENDED 
+
+"{PACKAGE_NAME}" --- To ignore every version of this specific package
 
 
 * ### Whitelist

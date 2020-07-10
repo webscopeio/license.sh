@@ -213,9 +213,11 @@ def annotate_dep_tree(
     licenses_not_found = set()
     for node in PreOrderIter(tree):
         node.analyze_problem = analyze and not is_analyze_ok(node)
-        node.license_problem = (
-            not is_license_ok(node.license_normalized, whitelist)
-            and get_node_id(node.name, node.version) not in ignored_packages
+        node.license_problem = not is_license_ok(
+            node.license_normalized, whitelist
+        ) and not (
+            get_node_id(node.name, node.version) in ignored_packages
+            or node.name in ignored_packages
         )
         if node.license_problem and node.licenses:
             for license_not_found in node.licenses:
