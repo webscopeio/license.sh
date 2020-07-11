@@ -5,8 +5,7 @@ Check licenses of your software.
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CircleCI](https://circleci.com/gh/webscopeio/license.sh.svg?style=svg)](https://circleci.com/gh/webscopeio/license.sh)
-
+![Python build](https://github.com/webscopeio/license.sh/workflows/Python%20build/badge.svg)
 
 
 The goal of this repository is to create a simple utility that you can simply run in your repository to check compliance of your 3rd party dependencies.
