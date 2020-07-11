@@ -11,7 +11,12 @@ class ConsoleReporter:
             if node.is_root:
                 print(" ")
             else:
-                color = RED if node.license_problem or node.analyze_problem else GREEN
+                color = (
+                    RED
+                    if hasattr(node, "license_problem")
+                    or hasattr(node, "analyze_problem")
+                    else GREEN
+                )
                 normalized_info = (
                     f', normalized as "{BOLD}{color}{node.license_normalized}{RESET}"'
                     if node.license_normalized != node.license
