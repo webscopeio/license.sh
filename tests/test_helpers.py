@@ -8,6 +8,7 @@ from license_sh.helpers import (
     annotate_dep_tree,
     is_license_ok,
     is_analyze_ok,
+    filter_dep_tree,
     parse_license,
     extract_npm_license,
     get_npm_license_from_licenses_array,
@@ -573,6 +574,26 @@ class NpmRunnerTestCase(unittest.TestCase):
             ],
         )
         self.assertEqual(is_analyze_ok(node), False)
+    
+    def test_filter_dep_tree_simple(self):
+        tree = AnyNode(
+            children=[
+                AnyNode(subtree_problem=False, license_problem=False)
+            ]
+        )
+        filtered_tree = filter_dep_tree(tree)
+        self.assertEqual(len(filtered_tree.children), 0)
+
+    def test_filter_dep_tree_multiple(self):
+        tree = AnyNode(
+            children=[
+                AnyNode(id="good", subtree_problem=False, license_problem=False),
+                AnyNode(id="node", subtree_problem=False, license_problem=True)
+            ]
+        )
+        filtered_tree = filter_dep_tree(tree)
+        self.assertEqual(len(filtered_tree.children), 1)
+        self.assertEqual(filtered_tree.children[0].id, 'node')
 
 
 if __name__ == "__main__":
