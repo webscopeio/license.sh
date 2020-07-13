@@ -271,9 +271,9 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
     treeCopy = DictImporter().import_(DictExporter().export(tree))
     for node in LevelOrderIter(treeCopy):
         node.children = filter(
-            lambda subnode: hasattr(subnode, "subtree_problem")
-            or hasattr(subnode, "license_problem")
-            or hasattr(subnode, "analyze_problem"),
+            lambda subnode: getattr(subnode, "subtree_problem", False)
+            or getattr(subnode, "license_problem", False)
+            or getattr(subnode, "analyze_problem", False),
             node.children,
         )
 

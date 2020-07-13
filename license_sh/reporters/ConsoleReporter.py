@@ -13,8 +13,8 @@ class ConsoleReporter:
             else:
                 color = (
                     RED
-                    if hasattr(node, "license_problem")
-                    or hasattr(node, "analyze_problem")
+                    if getattr(node, "license_problem", False)
+                    or getattr(node, "analyze_problem", False)
                     else GREEN
                 )
                 normalized_info = (
