@@ -11,7 +11,9 @@ from license_sh.helpers import (
     filter_dep_tree,
     parse_license,
     extract_npm_license,
-    get_npm_license_from_licenses_array, is_problematic_node, get_problematic_packages_from_analyzed_tree,
+    get_npm_license_from_licenses_array,
+    is_problematic_node,
+    get_problematic_packages_from_analyzed_tree,
 )
 
 
@@ -607,21 +609,27 @@ class HelpersTestCase(unittest.TestCase):
         ignored_packages = []
 
         whitelist = ["MIT", "Apache-2.0"]
-        annotated_tree, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
-        self.assertSetEqual(get_problematic_packages_from_analyzed_tree(annotated_tree), {
-            ('package7', '7.7.6'),
-            ('package6', '6.6.6'),
-        })
+        annotated_tree, unknown_licenses = annotate_dep_tree(
+            tree, whitelist, ignored_packages
+        )
+        self.assertSetEqual(
+            get_problematic_packages_from_analyzed_tree(annotated_tree),
+            {("package7", "7.7.6"), ("package6", "6.6.6"),},
+        )
 
     def test_get_problematic_packages_from_analyzed_tree_with_ignored_package(self):
         tree = get_tree()
         ignored_packages = ["package7"]
 
         whitelist = ["MIT", "Apache-2.0"]
-        annotated_tree, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
-        self.assertSetEqual(get_problematic_packages_from_analyzed_tree(annotated_tree), {
-            ('package6', '6.6.6'),
-        })
+        annotated_tree, unknown_licenses = annotate_dep_tree(
+            tree, whitelist, ignored_packages
+        )
+        self.assertSetEqual(
+            get_problematic_packages_from_analyzed_tree(annotated_tree),
+            {("package6", "6.6.6"),},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

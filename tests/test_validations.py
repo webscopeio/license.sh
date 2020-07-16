@@ -2,6 +2,7 @@ import unittest
 
 from license_sh.helpers import is_license_ok, normalize_license_expression
 
+
 class LicenseValidationsTestCase(unittest.TestCase):
     def test_simple_validation_test(self):
         whitelist = ["MIT", "Apache-2.0"]

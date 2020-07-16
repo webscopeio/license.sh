@@ -272,7 +272,10 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
     """
     treeCopy = DictImporter().import_(DictExporter().export(tree))
     for node in LevelOrderIter(treeCopy):
-        node.children = filter(lambda subnode: is_problematic_node(subnode, check_subtree=True), node.children)
+        node.children = filter(
+            lambda subnode: is_problematic_node(subnode, check_subtree=True),
+            node.children,
+        )
 
     return treeCopy
 
@@ -325,19 +328,31 @@ def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:
     Determines whether there is an issue with a node.
     :return: True if there is a problem False otherwise
     """
-    problematic_node = getattr(node, "license_problem", False) or getattr(node, "analyze_problem", False)
+    problematic_node = getattr(node, "license_problem", False) or getattr(
+        node, "analyze_problem", False
+    )
     if check_subtree:
         return problematic_node or getattr(node, "subtree_problem", False)
     else:
         return problematic_node
 
 
-def get_problematic_packages_from_analyzed_tree(node: AnyNode) -> Set[Tuple[str, str or None]]:
+def get_problematic_packages_from_analyzed_tree(
+    node: AnyNode,
+) -> Set[Tuple[str, str or None]]:
     """
     Gets a set of problematic packages with the corresponding versions
     """
-    return set([(node.name, node.version) for node in LevelOrderIter(node) if is_problematic_node(node)])
+    return set(
+        [
+            (node.name, node.version)
+            for node in LevelOrderIter(node)
+            if is_problematic_node(node)
+        ]
+    )
 
 
-def get_initiated_text(project_type: ProjectType, project_name: str, dir_path: str) -> str:
+def get_initiated_text(
+    project_type: ProjectType, project_name: str, dir_path: str
+) -> str:
     return f"🔍 Initiated license.sh check for {project_type.value} project {f'{project_name} ' if project_name else ''}located at {dir_path}"

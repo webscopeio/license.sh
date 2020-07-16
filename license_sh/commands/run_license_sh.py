@@ -3,8 +3,12 @@ import sys
 from . import config_cmd
 from license_sh.analyze import run_analyze
 from ..config import get_config, get_raw_config, whitelist_licenses, ignore_packages
-from ..helpers import get_dependency_tree_with_licenses, label_dep_tree, flatten_dependency_tree, \
-    get_problematic_packages_from_analyzed_tree
+from ..helpers import (
+    get_dependency_tree_with_licenses,
+    label_dep_tree,
+    flatten_dependency_tree,
+    get_problematic_packages_from_analyzed_tree,
+)
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
 from ..reporters.JSONConsoleReporter import JSONConsoleReporter
@@ -102,9 +106,13 @@ def run_license_sh(arguments):
 
     Reporter.output(filtered_dep_tree)
 
-    if licenses_not_found and interactive and questionary.confirm(
+    if (
+        licenses_not_found
+        and interactive
+        and questionary.confirm(
             "Do you want to add some of the licenses to your whitelist?"
-    ).ask():
+        ).ask()
+    ):
         license_whitelist = questionary.checkbox(
             "📋 Which licenses do you want to whitelist?",
             choices=[{"name": license} for license in licenses_not_found],
@@ -113,13 +121,15 @@ def run_license_sh(arguments):
         if license_whitelist:
             whitelist_licenses(path_to_config, license_whitelist)
 
-    if has_issues and interactive and questionary.confirm(
-            "Do you want to ignore some of the packages?"
-    ).ask():
+    if (
+        has_issues
+        and interactive
+        and questionary.confirm("Do you want to ignore some of the packages?").ask()
+    ):
         bad_packages = get_problematic_packages_from_analyzed_tree(filtered_dep_tree)
         new_ignored_packages = questionary.checkbox(
             "📋 Which packages do you want to ignore?",
-            choices=[{"name": package} for package, version in bad_packages]
+            choices=[{"name": package} for package, version in bad_packages],
         ).ask()
         ignore_packages(path_to_config, project_to_check, new_ignored_packages)
 
