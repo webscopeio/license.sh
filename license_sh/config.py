@@ -99,7 +99,7 @@ def whitelist_licenses(path_to_config: str, licenses: List[str]):
     write_config(path_to_config, config)
 
 
-def whitelist_packages(path_to_config: str, project_type: ProjectType, packages: List[str]):
+def ignore_packages(path_to_config: str, project_type: ProjectType, packages: List[str]):
     config = get_raw_config(path_to_config)
     lang_ignored_packages = config.get(IGNORED_PACKAGES, {}).get(project_type, [])
     config[IGNORED_PACKAGES][project_type] = list(set(lang_ignored_packages + packages))

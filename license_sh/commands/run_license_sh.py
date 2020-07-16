@@ -2,7 +2,7 @@ import questionary
 import sys
 from . import config_cmd
 from license_sh.analyze import run_analyze
-from ..config import get_config, get_raw_config, whitelist_licenses, whitelist_packages
+from ..config import get_config, get_raw_config, whitelist_licenses, ignore_packages
 from ..helpers import get_dependency_tree_with_licenses, label_dep_tree, flatten_dependency_tree, \
     get_problematic_packages_from_analyzed_tree
 from ..project_identifier import ProjectType, get_project_types
@@ -114,14 +114,14 @@ def run_license_sh(arguments):
             whitelist_licenses(path_to_config, license_whitelist)
 
     if has_issues and interactive and questionary.confirm(
-            "Do you want to add some of the packages to your whitelist?"
+            "Do you want to ignore some of the packages?"
     ).ask():
         bad_packages = get_problematic_packages_from_analyzed_tree(filtered_dep_tree)
-        new_whitelisted_packages = questionary.checkbox(
-            "📋 Which packages do you want to whitelist?",
+        new_ignored_packages = questionary.checkbox(
+            "📋 Which packages do you want to ignore?",
             choices=[{"name": package} for package, version in bad_packages]
         ).ask()
-        whitelist_packages(path_to_config, project_to_check, new_whitelisted_packages)
+        ignore_packages(path_to_config, project_to_check, new_ignored_packages)
 
     if not has_issues:
         print("✅ Your project passed the compliance check 🎉🎉🎉")
