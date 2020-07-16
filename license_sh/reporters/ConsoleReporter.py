@@ -1,4 +1,5 @@
-from anytree import Node, RenderTree, AnyNode, ContStyle
+from anytree import RenderTree, ContStyle
+
 from license_sh.helpers import GREEN, RESET, RED, BOLD, is_problematic_node
 
 UNKNOWN = "Unknown"

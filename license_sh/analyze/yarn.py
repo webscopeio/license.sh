@@ -1,11 +1,11 @@
 import subprocess
-import os
-import json
+
+from anytree import AnyNode
+
 from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
     get_node_analyze_dict,
 )
-from anytree import AnyNode
 
 
 def get_analyze_yarn_data(directory: str):

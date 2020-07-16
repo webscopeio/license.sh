@@ -1,12 +1,13 @@
-import questionary
 import sys
-from . import config_cmd
+
+import questionary
+
 from license_sh.analyze import run_analyze
+from . import config_cmd
 from ..config import get_config, get_raw_config, whitelist_licenses, ignore_packages
 from ..helpers import (
     get_dependency_tree_with_licenses,
     label_dep_tree,
-    flatten_dependency_tree,
     get_problematic_packages_from_analyzed_tree,
 )
 from ..project_identifier import ProjectType, get_project_types
@@ -18,7 +19,7 @@ from ..runners import run_check
 def run_license_sh(arguments):
     config_mode = arguments["config"]
     path = arguments["<path>"] or "."
-    configPath = arguments["--config"]
+    config_path = arguments["--config"]
     output = arguments["--output"]
     tree = arguments["--tree"]
     analyze = arguments["--dependencies"]
@@ -26,7 +27,7 @@ def run_license_sh(arguments):
     debug = arguments["--debug"]
     interactive = arguments["--interactive"]
 
-    path_to_config = configPath if configPath else path
+    path_to_config = config_path if config_path else path
 
     if interactive and output == "json":
         print("You can't run in interactive mode while specifying json as an output")
@@ -56,14 +57,14 @@ def run_license_sh(arguments):
     project_to_check: ProjectType = project_type if project_type else project_list[0]
 
     if project_type:
-        if not project_type in supported_projects:
+        if project_type not in supported_projects:
             print(
                 f"Specified project '{project_type}' is not supported. Supported {supported_projects}",
                 file=sys.stderr,
             )
             exit(2)
 
-        if not project_type in project_list:
+        if project_type not in project_list:
             print(
                 f"Specified project '{project_type}' not found in '{path}'. Found {project_list}",
                 file=sys.stderr,
@@ -72,7 +73,8 @@ def run_license_sh(arguments):
 
     if not project_type and len(project_list) > 1:
         print(
-            f"Curretly there is no support for multi project/language repositories. Found {project_list}. Only '{project_list[0]}' will be checked.",
+            "Curretly there is no support for multi project/language repositories." +
+            f" Found {project_list}. Only '{project_list[0]}' will be checked.",
             file=sys.stderr,
         )
 
@@ -89,7 +91,7 @@ def run_license_sh(arguments):
             )
 
     if not dep_tree:
-        print(f"Unexpected issue, couldn't create dependency tree", file=sys.stderr)
+        print("Unexpected issue, couldn't create dependency tree", file=sys.stderr)
         exit(3)
 
     (
@@ -106,13 +108,9 @@ def run_license_sh(arguments):
 
     Reporter.output(filtered_dep_tree)
 
-    if (
-        licenses_not_found
-        and interactive
-        and questionary.confirm(
-            "Do you want to add some of the licenses to your whitelist?"
-        ).ask()
-    ):
+    if licenses_not_found and interactive and questionary.confirm(
+        "Do you want to add some of the licenses to your whitelist?"
+    ).ask():
         license_whitelist = questionary.checkbox(
             "📋 Which licenses do you want to whitelist?",
             choices=[{"name": license} for license in licenses_not_found],
@@ -121,11 +119,7 @@ def run_license_sh(arguments):
         if license_whitelist:
             whitelist_licenses(path_to_config, license_whitelist)
 
-    if (
-        has_issues
-        and interactive
-        and questionary.confirm("Do you want to ignore some of the packages?").ask()
-    ):
+    if has_issues and interactive and questionary.confirm("Do you want to ignore some of the packages?").ask():
         bad_packages = get_problematic_packages_from_analyzed_tree(filtered_dep_tree)
         new_ignored_packages = questionary.checkbox(
             "📋 Which packages do you want to ignore?",

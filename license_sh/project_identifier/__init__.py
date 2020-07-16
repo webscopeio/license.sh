@@ -1,7 +1,7 @@
 import os
+from enum import Enum
 from os import access, R_OK
 from os.path import isfile
-from enum import Enum
 
 
 class ProjectType(Enum):
@@ -11,7 +11,8 @@ class ProjectType(Enum):
     YARN = "yarn"
 
 
-__file_exists = lambda path: isfile(path) and access(path, R_OK)
+def __file_exists(path: str) -> bool:
+    return isfile(path) and access(path, R_OK)
 
 
 def get_project_types(dir_path: str) -> [ProjectType]:

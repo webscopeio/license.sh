@@ -3,11 +3,11 @@ from typing import Tuple, Set, List
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
 from anytree.importer import DictImporter
-from license_expression import Licensing
+from license_expression import Licensing, ExpressionError
 
+from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
 from license_sh.version import __version__
-from license_sh.normalizer import normalize
 
 NODE_ID_SEP = ":-:"
 
@@ -45,7 +45,7 @@ def get_npm_license_from_licenses_array(licenses_array):
             if type(license_item) is dict
             else f"{license_item}"
         )
-        if license_name != None:
+        if license_name is not None:
             license_name = f"{license_name} AND {license_item_type}"
         else:
             license_name = license_item_type
@@ -54,7 +54,7 @@ def get_npm_license_from_licenses_array(licenses_array):
 
 def extract_npm_license(json_data, version: str):
     """
-    Extract license name from npm package data json 
+    Extract license name from npm package data json
 
     Arguments:
         json_data {json} -- json data to parse license from
@@ -101,10 +101,10 @@ def flatten_dependency_tree(tree):
 
 def parse_license(license_text: str) -> list:
     """Parse license, if complex, then break it into simple parts
-    
+
     Arguments:
         license_text {str} -- license str to be parsed
-    
+
     Returns:
         list -- List of licenses parsed from gived license str
     """
@@ -112,7 +112,7 @@ def parse_license(license_text: str) -> list:
         return []
     try:
         license = licensing.parse(license_text)
-    except:
+    except ExpressionError:
         return [f"{license_text}"]
 
     if license is None:
@@ -140,7 +140,7 @@ def is_license_ok(license_text, whitelist):
   """
     try:
         license = licensing.parse(license_text)
-    except:
+    except ExpressionError:
         return f"{license_text}" in whitelist
 
     if license is None:
@@ -168,7 +168,7 @@ def is_analyze_ok(node: AnyNode):
         return False
 
     for analyze_name in node_analyze_names:
-        if not analyze_name in node.licenses:
+        if analyze_name not in node.licenses:
             return False
     return True
 
@@ -179,7 +179,7 @@ def normalize_license_expression(license_text_raw):
     license_text, normalized = normalize(f"{license_text_raw}")
     try:
         license = licensing.parse(license_text)
-    except:
+    except ExpressionError:
         return license_text
 
     if license is None:
@@ -222,7 +222,7 @@ def annotate_dep_tree(
         )
         if node.license_problem and node.licenses:
             for license_not_found in node.licenses:
-                if not license_not_found in whitelist:
+                if license_not_found not in whitelist:
                     licenses_not_found.add(license_not_found)
 
     for node in list(LevelOrderIter(tree))[::-1]:
@@ -261,12 +261,12 @@ def label_dep_tree(tree: AnyNode, project: ProjectType) -> AnyNode:
 
 def filter_dep_tree(tree: AnyNode) -> AnyNode:
     """Filter dependency tree.
-    
-    Leave only nodes with license problem of itself or children 
-    
+
+    Leave only nodes with license problem of itself or children
+
     Arguments:
         tree {AnyNode} -- Tree to filter
-    
+
     Returns:
         AnyNode -- Filtered tree
     """
@@ -352,7 +352,6 @@ def get_problematic_packages_from_analyzed_tree(
     )
 
 
-def get_initiated_text(
-    project_type: ProjectType, project_name: str, dir_path: str
-) -> str:
-    return f"🔍 Initiated license.sh check for {project_type.value} project {f'{project_name} ' if project_name else ''}located at {dir_path}"
+def get_initiated_text(project_type: ProjectType, project_name: str, dir_path: str) -> str:
+    return f"🔍 Initiated license.sh check for {project_type.value} project " + \
+           f"{f'{project_name} ' if project_name else ''}located at {dir_path}"

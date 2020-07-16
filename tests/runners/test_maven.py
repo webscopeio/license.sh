@@ -1,10 +1,11 @@
 import unittest
+import xml.etree.ElementTree as ET
+
 from license_sh.runners.maven import (
     parse_dependency_xml,
     parse_licenses_xml,
     get_project_name,
 )
-import xml.etree.ElementTree as ET
 
 
 class ParserTestCase(unittest.TestCase):

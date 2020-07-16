@@ -1,8 +1,9 @@
-import unittest
 import json
+import unittest
 
 from anytree import AnyNode
 from anytree.exporter import DictExporter
+
 from license_sh.helpers import (
     flatten_dependency_tree,
     annotate_dep_tree,
@@ -486,11 +487,11 @@ class HelpersTestCase(unittest.TestCase):
         name = extract_npm_license(data, "1.0.0")
         self.assertEqual(name, None)
 
-    def test_get_npm_license_from_licenses_array_None(self):
+    def test_get_npm_license_from_licenses_array_none(self):
         name = get_npm_license_from_licenses_array(None)
         self.assertEqual(name, None)
 
-    def test_get_npm_license_from_licenses_array_None(self):
+    def test_get_npm_license_from_licenses_array(self):
         data = json.loads(
             """{
              "licenses": [{"type":"MIT"}, {"type":"Apache"}]
@@ -518,11 +519,11 @@ class HelpersTestCase(unittest.TestCase):
         node = AnyNode(licenses=["MIT"], analyze=[])
         self.assertEqual(is_analyze_ok(node), False)
 
-    def test_is_analyze_ok_empty2(self):
+    def test_is_analyze_ok_empty_2(self):
         node = AnyNode(licenses=[], analyze=[{"name": "MIT", "data": "LicenseText"}])
         self.assertEqual(is_analyze_ok(node), False)
 
-    def test_is_analyze_ok_None2(self):
+    def test_is_analyze_ok_none_2(self):
         node = AnyNode(licenses=["MIT"])
         self.assertEqual(is_analyze_ok(node), False)
 
@@ -546,7 +547,7 @@ class HelpersTestCase(unittest.TestCase):
         )
         self.assertEqual(is_analyze_ok(node), False)
 
-    def test_is_analyze_ok_more_same(self):
+    def test_is_analyze_ok_more_same_multiple(self):
         node = AnyNode(
             licenses=["Apache2", "MIT"],
             analyze=[
@@ -614,7 +615,7 @@ class HelpersTestCase(unittest.TestCase):
         )
         self.assertSetEqual(
             get_problematic_packages_from_analyzed_tree(annotated_tree),
-            {("package7", "7.7.6"), ("package6", "6.6.6"),},
+            {("package7", "7.7.6"), ("package6", "6.6.6"), },
         )
 
     def test_get_problematic_packages_from_analyzed_tree_with_ignored_package(self):
@@ -627,7 +628,7 @@ class HelpersTestCase(unittest.TestCase):
         )
         self.assertSetEqual(
             get_problematic_packages_from_analyzed_tree(annotated_tree),
-            {("package6", "6.6.6"),},
+            {("package6", "6.6.6"), },
         )
 
 

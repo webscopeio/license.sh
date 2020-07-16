@@ -1,6 +1,6 @@
 import unittest
 
-from license_sh.normalizer import normalize, is_spdx_compliant
+from license_sh.normalizer import is_spdx_compliant
 
 
 class TestSPDXCompliance(unittest.TestCase):
