@@ -4,6 +4,8 @@ from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
 from anytree.importer import DictImporter
 from license_expression import Licensing
+
+from license_sh.project_identifier import ProjectType
 from license_sh.version import __version__
 from license_sh.normalizer import normalize
 
@@ -240,7 +242,7 @@ def annotate_dep_tree(
     return tree, licenses_not_found
 
 
-def label_dep_tree(tree: AnyNode, project: str) -> AnyNode:
+def label_dep_tree(tree: AnyNode, project: ProjectType) -> AnyNode:
     """
   An idea of this function is to go through elements from the bottom -> up and
   add parameters
@@ -270,12 +272,7 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
     """
     treeCopy = DictImporter().import_(DictExporter().export(tree))
     for node in LevelOrderIter(treeCopy):
-        node.children = filter(
-            lambda subnode: getattr(subnode, "subtree_problem", False)
-            or getattr(subnode, "license_problem", False)
-            or getattr(subnode, "analyze_problem", False),
-            node.children,
-        )
+        node.children = filter(lambda subnode: is_problematic_node(subnode, check_subtree=True), node.children)
 
     return treeCopy
 
@@ -286,7 +283,7 @@ def get_dependency_tree_with_licenses(
     ignored_packages: List[str],
     get_full_tree: bool,
     analyze: bool = False,
-) -> Tuple[AnyNode, Set[str]]:
+) -> Tuple[AnyNode, Set[str], bool]:
     """
     Constructs the annotated dependency tree that is later given to a reporter.
     :param dep_tree: Dependency tree without licesnes
@@ -321,3 +318,26 @@ def decode_node_id(node_id: str) -> List:
     Get name and version from node id
     """
     return node_id.split(NODE_ID_SEP)
+
+
+def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:
+    """
+    Determines whether there is an issue with a node.
+    :return: True if there is a problem False otherwise
+    """
+    problematic_node = getattr(node, "license_problem", False) or getattr(node, "analyze_problem", False)
+    if check_subtree:
+        return problematic_node or getattr(node, "subtree_problem", False)
+    else:
+        return problematic_node
+
+
+def get_problematic_packages_from_analyzed_tree(node: AnyNode) -> Set[Tuple[str, str or None]]:
+    """
+    Gets a set of problematic packages with the corresponding versions
+    """
+    return set([(node.name, node.version) for node in LevelOrderIter(node) if is_problematic_node(node)])
+
+
+def get_initiated_text(project_type: ProjectType, project_name: str, dir_path: str) -> str:
+    return f"🔍 Initiated license.sh check for {project_type.value} project {f'{project_name} ' if project_name else ''}located at {dir_path}"

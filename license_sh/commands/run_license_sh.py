@@ -2,8 +2,9 @@ import questionary
 import sys
 from . import config_cmd
 from license_sh.analyze import run_analyze
-from ..config import get_config, get_raw_config, whitelist_licenses
-from ..helpers import get_dependency_tree_with_licenses, label_dep_tree
+from ..config import get_config, get_raw_config, whitelist_licenses, whitelist_packages
+from ..helpers import get_dependency_tree_with_licenses, label_dep_tree, flatten_dependency_tree, \
+    get_problematic_packages_from_analyzed_tree
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
 from ..reporters.JSONConsoleReporter import JSONConsoleReporter
@@ -19,8 +20,13 @@ def run_license_sh(arguments):
     analyze = arguments["--dependencies"]
     project_type = arguments["--project"]
     debug = arguments["--debug"]
+    interactive = arguments["--interactive"]
 
     path_to_config = configPath if configPath else path
+
+    if interactive and output == "json":
+        print("You can't run in interactive mode while specifying json as an output")
+        exit(1)
 
     if config_mode:
         config_cmd(path, get_raw_config(path_to_config))
@@ -42,7 +48,8 @@ def run_license_sh(arguments):
             file=sys.stderr,
         )
         exit(2)
-    project_to_check = project_type if project_type else project_list[0]
+
+    project_to_check: ProjectType = project_type if project_type else project_list[0]
 
     if project_type:
         if not project_type in supported_projects:
@@ -95,30 +102,27 @@ def run_license_sh(arguments):
 
     Reporter.output(filtered_dep_tree)
 
-    if licenses_not_found and output != "json":
-        manual_add: bool = questionary.confirm(
+    if licenses_not_found and interactive and questionary.confirm(
             "Do you want to add some of the licenses to your whitelist?"
+    ).ask():
+        license_whitelist = questionary.checkbox(
+            "📋 Which licenses do you want to whitelist?",
+            choices=[{"name": license} for license in licenses_not_found],
         ).ask()
 
-        if manual_add:
-            license_whitelist = questionary.checkbox(
-                "📋 Which licenses do you want to whitelist?",
-                choices=[{"name": license} for license in licenses_not_found],
-            ).ask()
-            if license_whitelist:
-                whitelist_licenses(path_to_config, license_whitelist)
+        if license_whitelist:
+            whitelist_licenses(path_to_config, license_whitelist)
 
-                whitelist, ignored_packages = get_config(path_to_config)
-                (
-                    filtered_dep_tree,
-                    licenses_not_found,
-                    has_issues,
-                ) = get_dependency_tree_with_licenses(
-                    dep_tree,
-                    whitelist,
-                    ignored_packages=ignored_packages,
-                    get_full_tree=tree,
-                )
-                Reporter.output(filtered_dep_tree)
+    if has_issues and interactive and questionary.confirm(
+            "Do you want to add some of the packages to your whitelist?"
+    ).ask():
+        bad_packages = get_problematic_packages_from_analyzed_tree(filtered_dep_tree)
+        new_whitelisted_packages = questionary.checkbox(
+            "📋 Which packages do you want to whitelist?",
+            choices=[{"name": package} for package, version in bad_packages]
+        ).ask()
+        whitelist_packages(path_to_config, project_to_check, new_whitelisted_packages)
 
+    if not has_issues:
+        print("✅ Your project passed the compliance check 🎉🎉🎉")
     exit(1 if has_issues else 0)

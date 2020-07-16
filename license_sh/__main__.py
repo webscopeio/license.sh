@@ -14,6 +14,7 @@ Options:
   -t --tree                           Show full dependency tree.
   -d --debug                          Debug mode
   -p --project <project_type>         Run only specific project [yarn | npm | maven | pipenv]
+  -i --interactive                    Runs in an interactive mode that allows you to configure project after a license check.
   --dependencies                      Include dependency license text analysis
   -c --config <config_path>           Use custom path to config       
   --version                           Show version.

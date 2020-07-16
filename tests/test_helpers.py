@@ -11,7 +11,7 @@ from license_sh.helpers import (
     filter_dep_tree,
     parse_license,
     extract_npm_license,
-    get_npm_license_from_licenses_array,
+    get_npm_license_from_licenses_array, is_problematic_node, get_problematic_packages_from_analyzed_tree,
 )
 
 
@@ -119,7 +119,7 @@ def get_tree():
     return tree
 
 
-class NpmRunnerTestCase(unittest.TestCase):
+class HelpersTestCase(unittest.TestCase):
     maxDiff = None
 
     def test_dependency_tree_is_flattened(self):
@@ -591,6 +591,37 @@ class NpmRunnerTestCase(unittest.TestCase):
         self.assertEqual(len(filtered_tree.children), 1)
         self.assertEqual(filtered_tree.children[0].id, "node")
 
+    def test_is_problematic_node(self):
+        node = AnyNode(subtree_problem=False, license_problem=False)
+        self.assertFalse(is_problematic_node(node))
+
+        node = AnyNode(subtree_problem=True, license_problem=False)
+        self.assertFalse(is_problematic_node(node))
+        self.assertTrue(is_problematic_node(node, check_subtree=True))
+
+        node = AnyNode(subtree_problem=False, license_problem=True)
+        self.assertTrue(is_problematic_node(node))
+
+    def test_get_problematic_packages_from_analyzed_tree(self):
+        tree = get_tree()
+        ignored_packages = []
+
+        whitelist = ["MIT", "Apache-2.0"]
+        annotated_tree, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
+        self.assertSetEqual(get_problematic_packages_from_analyzed_tree(annotated_tree), {
+            ('package7', '7.7.6'),
+            ('package6', '6.6.6'),
+        })
+
+    def test_get_problematic_packages_from_analyzed_tree_with_ignored_package(self):
+        tree = get_tree()
+        ignored_packages = ["package7"]
+
+        whitelist = ["MIT", "Apache-2.0"]
+        annotated_tree, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
+        self.assertSetEqual(get_problematic_packages_from_analyzed_tree(annotated_tree), {
+            ('package6', '6.6.6'),
+        })
 
 if __name__ == "__main__":
     unittest.main()

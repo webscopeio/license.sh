@@ -9,7 +9,8 @@ import aiohttp
 from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
 
-from license_sh.helpers import flatten_dependency_tree
+from license_sh.helpers import flatten_dependency_tree, get_initiated_text
+from license_sh.project_identifier import ProjectType
 
 
 def add_nested_dependencies(dep, parent):
@@ -71,11 +72,7 @@ class PythonRunner:
 
     def check(self):
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for pipenv project located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.PYTHON_PIPENV, None, self.directory))
 
         with (
             yaspin(text="Analysing dependencies ...")

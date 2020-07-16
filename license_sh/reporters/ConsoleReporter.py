@@ -1,5 +1,5 @@
 from anytree import Node, RenderTree, AnyNode, ContStyle
-from license_sh.helpers import GREEN, RESET, RED, BOLD
+from license_sh.helpers import GREEN, RESET, RED, BOLD, is_problematic_node
 
 UNKNOWN = "Unknown"
 
@@ -11,12 +11,7 @@ class ConsoleReporter:
             if node.is_root:
                 print(" ")
             else:
-                color = (
-                    RED
-                    if getattr(node, "license_problem", False)
-                    or getattr(node, "analyze_problem", False)
-                    else GREEN
-                )
+                color = RED if is_problematic_node(node) else GREEN
                 normalized_info = (
                     f', normalized as "{BOLD}{color}{node.license_normalized}{RESET}"'
                     if node.license_normalized != node.license
