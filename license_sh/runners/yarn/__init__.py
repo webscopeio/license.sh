@@ -9,6 +9,8 @@ from contextlib import nullcontext
 
 from importlib import resources
 
+from license_sh.helpers import get_initiated_text
+from license_sh.project_identifier import ProjectType
 from license_sh.runners.runners_shared import fetch_npm_licenses, check_node, check_yarn
 from license_sh.runners.yarn import js
 
@@ -327,11 +329,7 @@ class YarnRunner:
             project_name = package_json.get("name", "project_name")
 
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for YARN project {project_name} located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.YARN, project_name, self.directory))
 
         with (
             yaspin(text="Analysing dependencies ...")

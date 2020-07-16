@@ -11,6 +11,8 @@ from typing import Dict
 from pathlib import Path
 from importlib import resources
 
+from license_sh.helpers import get_initiated_text
+from license_sh.project_identifier import ProjectType
 from license_sh.runners import maven
 from license_sh.runners.runners_shared import check_maven
 
@@ -205,11 +207,7 @@ class MavenRunner:
         project_name = get_project_name(get_project_pom_xml(self.directory))
 
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for Maven project {project_name} located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.MAVEN, project_name, self.directory))
 
         with (
             yaspin(text="Getting dependency tree... (First run might take a while)")

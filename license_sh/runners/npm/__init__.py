@@ -8,6 +8,8 @@ from anytree import AnyNode, PreOrderIter
 
 from yaspin import yaspin
 
+from license_sh.helpers import get_initiated_text
+from license_sh.project_identifier import ProjectType
 from license_sh.runners.runners_shared import fetch_npm_licenses
 
 
@@ -130,11 +132,7 @@ class NpmRunner:
                 else dict()
             )
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for NPM project {project_name} located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.NPM, project_name, self.directory))
 
         with (
             yaspin(text="Analysing dependencies ...")

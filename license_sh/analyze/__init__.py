@@ -13,7 +13,7 @@ ANALYZERS = {
 }
 
 
-def run_analyze(project_to_check: str, path: str, dep_tree: AnyNode) -> AnyNode:
+def run_analyze(project_to_check: ProjectType, path: str, dep_tree: AnyNode) -> AnyNode:
     """ Run dependency analyze
 
     Args:
