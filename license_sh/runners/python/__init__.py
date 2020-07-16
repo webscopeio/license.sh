@@ -2,8 +2,8 @@ import asyncio
 import json
 import os
 import subprocess
-from json import JSONDecodeError
 from contextlib import nullcontext
+from json import JSONDecodeError
 
 import aiohttp
 from anytree import AnyNode, PreOrderIter
@@ -74,11 +74,7 @@ class PythonRunner:
         if not self.silent:
             print(get_initiated_text(ProjectType.PYTHON_PIPENV, None, self.directory))
 
-        with (
-            yaspin(text="Analysing dependencies ...")
-            if not self.silent
-            else nullcontext()
-        ) as sp:
+        with yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext():
             result = subprocess.run(
                 ["pipdeptree", "--json-tree", "--local-only"],
                 capture_output=not self.debug,
@@ -92,11 +88,7 @@ class PythonRunner:
 
             all_dependencies = flatten_dependency_tree(root)
 
-        with (
-            yaspin(text="Fetching license info from pypi ...")
-            if not self.silent
-            else nullcontext()
-        ) as sp:
+        with yaspin(text="Fetching license info from pypi ...") if not self.silent else nullcontext():
             license_map = PythonRunner.fetch_licenses(all_dependencies)
 
         for node in PreOrderIter(root):

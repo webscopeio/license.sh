@@ -1,12 +1,12 @@
 import subprocess
-import os
-import json
+from typing import Dict
+
+from anytree import AnyNode
+
 from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
     get_node_analyze_dict,
 )
-from anytree import AnyNode
-from typing import Dict, List
 
 
 def get_analyze_npm_data(directory: str) -> Dict:

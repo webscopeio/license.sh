@@ -12,11 +12,11 @@ docopt = "*"
 license-expression = "*"
 pipdeptree = "*"
 questionary = "*"
-black = "*"
 
 [dev-packages]
 mkdocs = "*"
 mkdocs-material = "*"
+flake8 = "*"
 
 [pipenv]
 allow_prereleases = true

@@ -1,24 +1,26 @@
-import subprocess
 import os
 import re
-import json
+import subprocess
 import tempfile
+from typing import Dict
+
 from anytree import AnyNode, PreOrderIter
+
 from license_sh.analyze.analyze_shared import run_askalono, LICENSE_GLOB
-from typing import Dict, List
 
 SUFFIX = ".dist-info"
 
 
 def get_analyze_pipenv_data(directory: str, tmpDir: str) -> Dict:
-    """Analyze pipenv dependencies
+    """
+    Analyze pipenv dependencies
 
-  Args:
+    Args:
       directory (str): Path to the project
 
-  Returns:
+    Returns:
       [Dict]: Analyzed data as dictionary
-  """
+    """
     requirements_output = subprocess.run(
         ["pipenv", "lock", "-r"],
         stdout=subprocess.PIPE,
@@ -48,14 +50,16 @@ def get_analyze_pipenv_data(directory: str, tmpDir: str) -> Dict:
 
 
 def get_pipenv_analyze_dict(directory: str) -> Dict:
-    """Get pipenv analyze dictionary
+    """
+    Get pipenv analyze dictionary
 
-	Args:
-		directory (str): Path to the project
+    Args:
+        directory (str): Path to the project
 
-	Returns:
-		Dict: Dependency {name}-{version} as key, license text and analyzed license name and value
-	"""
+    Returns:
+        Dict: Dependency {name}-{version} as key, license text and analyzed license name and value
+    """
+
     data_dict = {}
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_pipenv_data(directory, dirpath)
@@ -80,10 +84,10 @@ def get_pipenv_analyze_dict(directory: str) -> Dict:
 def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
     """Add analyze result to the nodes in the dependency tree
 
-  Args:
+    Args:
       analyze_dict (Dict): Result of the pipenv analyze
       dep_tree (AnyNode): Dependency tree to update
-  """
+    """
     for node in PreOrderIter(dep_tree):
         node_analyze_list = analyze_dict.get(f"{node.name}-{node.version}")
         node.analyze = []
@@ -101,12 +105,12 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
 def analyze_pipenv(directory: str, dep_tree: AnyNode) -> AnyNode:
     """Run pipenv analyze
 
-  Args:
+    Args:
       directory (str): Path to the project
       dep_tree (AnyNode): Dependency tree to update
 
-  Returns:
+    Returns:
       [AnyNode]: Updated tree with analyze
-  """
+    """
     analyze_dict = get_pipenv_analyze_dict(directory)
     return add_analyze_to_dep_tree(analyze_dict, dep_tree)

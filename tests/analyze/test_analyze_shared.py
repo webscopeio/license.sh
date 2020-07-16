@@ -1,18 +1,16 @@
 import unittest
-import subprocess
-import sys
 from unittest import mock
 from unittest.mock import mock_open
-from license_sh.helpers import get_node_id
+
+from anytree import AnyNode
+
 from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
     run_askalono,
-    GIT_IGNORE,
-    GIT_IGNORE_DISABLED,
     get_node_analyze_dict,
     transform_html,
 )
-from anytree import AnyNode, PreOrderIter
+from license_sh.helpers import get_node_id
 
 ASKALONO_RESULT = [
     {
@@ -53,7 +51,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         analyze = {
             "root": [{"data": "Hey! I am a license text", "name": "Awesome license"}],
             "childChild": [
-                {"data": "Hmm, i am a license text too", "name": "Hmm license",}
+                {"data": "Hmm, i am a license text too", "name": "Hmm license", }
             ],
         }
         updated_tree = add_analyze_to_dep_tree(analyze, tree)
@@ -121,7 +119,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
     def test_run_askalono_gitignore(self, mock_rename, mock_isfile, mock_subprocess):
         mock_isfile.return_value = True
         mock_subprocess.run.return_value = Askalono_result()
-        result = run_askalono("shouldnt/matter")
+        run_askalono("shouldnt/matter")
         self.assertEqual(mock_rename.call_count, 2)
 
     @mock.patch("license_sh.analyze.analyze_shared.subprocess")
@@ -133,7 +131,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         mock_isfile.return_value = True
         mock_subprocess.run.side_effect = Exception("Boom!")
         try:
-            result = run_askalono("shouldnt/matter")
+            run_askalono("shouldnt/matter")
         except Exception:
             print("yeey")
         self.assertEqual(mock_rename.call_count, 2)

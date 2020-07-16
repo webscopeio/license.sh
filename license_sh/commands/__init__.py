@@ -1,9 +1,6 @@
-import os
-
 import questionary
 
 from license_sh.config import write_config
-from license_sh.project_identifier import get_project_types
 
 
 def config_cmd(path, config):

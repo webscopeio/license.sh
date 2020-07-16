@@ -1,8 +1,8 @@
+from ..project_identifier import ProjectType
 from ..runners.maven import MavenRunner
 from ..runners.npm import NpmRunner
 from ..runners.python import PythonRunner
 from ..runners.yarn import YarnRunner
-from ..project_identifier import ProjectType
 
 RUNNERS = {
     ProjectType.PYTHON_PIPENV.value: PythonRunner,

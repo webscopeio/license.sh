@@ -1,11 +1,10 @@
 import unittest
 from unittest import mock
 from unittest.mock import mock_open
-import xml.etree.ElementTree as ET
-import aiohttp as aiohttp
+
 from anytree import AnyNode
+
 from license_sh.analyze.pipenv import get_pipenv_analyze_dict, analyze_pipenv
-from license_sh.helpers import get_node_id
 
 ANALYZE_RESULT = [
     {
@@ -57,7 +56,8 @@ class AnalyzePipenvTestCase(unittest.TestCase):
                 AnyNode(name="redux", version="15.5.4"),
             ],
         )
-        result = analyze_pipenv("doesnt/matter", tree)
+        # TODO - make this immutable
+        analyze_pipenv("doesnt/matter", tree)
         self.assertEqual(
             tree.children[0].analyze,
             [

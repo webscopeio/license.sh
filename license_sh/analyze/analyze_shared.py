@@ -1,14 +1,16 @@
-from importlib import resources
-from license_sh.analyze import lib
-from anytree import AnyNode, PreOrderIter
-from typing import Dict, List
-from html.parser import HTMLParser
-from ..helpers import get_node_id
+import json
 import os
 import re
-import json
 import subprocess
+from html.parser import HTMLParser
+from importlib import resources
 from sys import platform
+from typing import Dict, List
+
+from anytree import AnyNode, PreOrderIter
+
+from license_sh.analyze import lib
+from ..helpers import get_node_id
 
 IGNORED_HTML_TAGS = ["style", "script", "head"]
 GIT_IGNORE = ".gitignore"
@@ -75,12 +77,12 @@ def run_askalono(directory: str, glob: str = GLOB) -> List:
 def get_node_analyze_dict(directory: str) -> Dict:
     """ Get node_modules analyze with package json data
 
-  Args:
-      directory (str): Path to the project 
+    Args:
+        directory (str): Path to the project
 
-  Returns:
-      [Dict]: Project id as a key and Dict with license text and analyzed license name
-  """
+    Returns:
+        [Dict]: Project id as a key and Dict with license text and analyzed license name
+    """
     data_dict = {}
     license_data = run_askalono(directory)
     for item in license_data:
@@ -119,10 +121,10 @@ def get_node_analyze_dict(directory: str) -> Dict:
 def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
     """Add analyze result to the nodes in the dependency tree
 
-  Args:
-      analyze_dict (Dict): Result of the node_modules analyze
-      dep_tree (AnyNode): Dependency tree to update
-  """
+    Args:
+        analyze_dict (Dict): Result of the node_modules analyze
+        dep_tree (AnyNode): Dependency tree to update
+    """
     for node in PreOrderIter(dep_tree):
         node_analyze_list = analyze_dict.get(node.id)
         node.analyze = []

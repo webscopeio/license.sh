@@ -1,35 +1,32 @@
+import asyncio
+import copy
+import os
 import subprocess
 import tempfile
-import os
-import json
-import copy
-import asyncio
-import aiohttp as aiohttp
-from zipfile import ZipFile
-from importlib import resources
 import xml.etree.ElementTree as ET
-from license_sh.helpers import get_node_id, decode_node_id
-from anytree import AnyNode, PreOrderIter
+from typing import Dict, List
+from zipfile import ZipFile
+
+import aiohttp as aiohttp
+from anytree import AnyNode
+
 from license_sh.analyze.analyze_shared import (
-    get_askalono,
-    GLOB,
     run_askalono,
     add_analyze_to_dep_tree,
     transform_html,
 )
-from license_sh.analyze import lib
-from typing import Dict, List
+from license_sh.helpers import get_node_id, decode_node_id
 
 
 def get_licenses_xml(directory: str):
     """Get maven licenses xml
 
-	Args:
-		directory (str): Path to the project
+    Args:
+        directory (str): Path to the project
 
-	Returns:
-		[xml]: Parsed licenses xml
-	"""
+    Returns:
+        [xml]: Parsed licenses xml
+    """
     with tempfile.TemporaryDirectory() as dirpath:
         fname = os.path.join(dirpath, "licenses.tmp")
         subprocess.run(
@@ -50,12 +47,12 @@ def get_licenses_xml(directory: str):
 def parse_licenses_xml(data_root) -> Dict:
     """Parse maven licenses xml
 
-	Args:
-		data_root (xml): Parsed licenses xml
+    Args:
+        data_root (xml): Parsed licenses xml
 
-	Returns:
-		[Dict]: dependency id as key, licenses url list as value
-	"""
+    Returns:
+        [Dict]: dependency id as key, licenses url list as value
+    """
     dep_data = {}
     for dependency in data_root.find("dependencies"):
         dep_id = get_node_id(
@@ -71,10 +68,10 @@ def parse_licenses_xml(data_root) -> Dict:
 def call_copy_dependencies(directory: str, tmpDir: str):
     """Call maven copy dependencies command
 
-	Args:
-		directory (str): Path to the project
-		tmpDir (str): Path where to copy dependencies
-	"""
+    Args:
+        directory (str): Path to the project
+        tmpDir (str): Path where to copy dependencies
+    """
     subprocess.run(
         [
             "mvn",
@@ -90,13 +87,13 @@ def call_copy_dependencies(directory: str, tmpDir: str):
 def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
     """Parse jar analyze result
 
-	Args:
-		tmp_dir (str): Path to the jar location
-		analyze_list (List): Analyze results
+    Args:
+        tmp_dir (str): Path to the jar location
+        analyze_list (List): Analyze results
 
-	Returns:
-		[Dict]: Maven dependency id "{name}-{version}" as key, analyze result and license_text as value
-	"""
+    Returns:
+        [Dict]: Maven dependency id "{name}-{version}" as key, analyze result and license_text as value
+    """
     jar_analyze = list(
         filter(
             lambda item: item.get("result", {}).get("license", {}).get("name"),
@@ -123,13 +120,13 @@ def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
 def get_analyze_maven_data(directory: str, license_dir: str) -> List:
     """Download licenses xml and based on that download licenses and analyze them
 
-	Args:
-		directory (str): Path to the project
-		license_dir (str): Directory where to store licenses
+    Args:
+        directory (str): Path to the project
+        license_dir (str): Directory where to store licenses
 
-	Returns:
-		[List]: Result of the askalono analysis
-	"""
+    Returns:
+        [List]: Result of the askalono analysis
+    """
     fetch_maven_licenses(parse_licenses_xml(get_licenses_xml(directory)), license_dir)
     return run_askalono(license_dir, "*")
 
@@ -137,13 +134,13 @@ def get_analyze_maven_data(directory: str, license_dir: str) -> List:
 def get_jar_analyze_data(directory: str) -> Dict:
     """Get dependency jars and analyze them
 
-	Args:
-		directory (str): Path to project to check
-		tmpDir (str): Directory to store dependency jars
+    Args:
+        directory (str): Path to project to check
+        tmpDir (str): Directory to store dependency jars
 
-	Returns:
-		Dict: "{artifactID}-{version}" as key, analysis result as value
-	"""
+    Returns:
+        Dict: "{artifactID}-{version}" as key, analysis result as value
+    """
     with tempfile.TemporaryDirectory() as tmp_dir:
         call_copy_dependencies(directory, tmp_dir)
         unzip_maven_dependencies(tmp_dir)
@@ -155,13 +152,13 @@ def merge_licenses_analysis_with_jar_analysis(
 ):
     """Merge licenses analysis with jar dependency analysis
 
-	Args:
-		licenses_analysis (Dict): licenses xml analysis
-		jar_analysis (Dict): jar dependency analysis
+    Args:
+        licenses_analysis (Dict): licenses xml analysis
+        jar_analysis (Dict): jar dependency analysis
 
-	Returns:
-		Dict: Updated analysis
-	"""
+    Returns:
+        Dict: Updated analysis
+    """
     result = {}
     for key, value in licenses_analysis.items():
         item = copy.deepcopy(value)
@@ -176,9 +173,9 @@ def merge_licenses_analysis_with_jar_analysis(
 def unzip_maven_dependencies(directory: str):
     """Unzip jars in the directory
 
-	Args:
-		directory (str): Path to the jars location
-	"""
+    Args:
+        directory (str): Path to the jars location
+    """
     for f in os.listdir(directory):
         if f.endswith(".jar"):
             with ZipFile(os.path.join(directory, f), "r") as zip_ref:
@@ -188,12 +185,12 @@ def unzip_maven_dependencies(directory: str):
 def get_maven_analyze_dict(directory: str) -> Dict:
     """Get maven alanyze dictonary
 
-	Args:
-		directory (str): Path to the project
+    Args:
+        directory (str): Path to the project
 
-	Returns:
-		Dict: Dependency id as key, license text and analyzed license name and value
-	"""
+    Returns:
+        Dict: Dependency id as key, license text and analyzed license name and value
+    """
     data_dict = {}
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_maven_data(directory, dirpath)
@@ -218,11 +215,11 @@ def analyze_maven(directory: str, dep_tree: AnyNode) -> AnyNode:
     """Run maven analyze
 
   Args:
-	  directory (str): Path to the project
-	  dep_tree (AnyNode): Dependency tree to update
+      directory (str): Path to the project
+      dep_tree (AnyNode): Dependency tree to update
 
   Returns:
-	  [AnyNode]: Updated tree with analyze
+      [AnyNode]: Updated tree with analyze
   """
     jar_analysis = get_jar_analyze_data(directory)
     licenses_analysis = get_maven_analyze_dict(directory)
@@ -235,12 +232,12 @@ def analyze_maven(directory: str, dep_tree: AnyNode) -> AnyNode:
 def fetch_maven_licenses(dep_data: Dict, dir_path: str):
     """Fetch licenses from url
 
-	TODO: Write unittests
+    TODO: Write unittests
 
-	Args:
-		dep_data (Dict): dependency data with dep_id as key and url as value
-		dir_path (str): path to where to download the files
-	"""
+    Args:
+        dep_data (Dict): dependency data with dep_id as key and url as value
+        dir_path (str): path to where to download the files
+    """
 
     async def fetch(session, url, dep_id):
         async with session.get(url) as resp:

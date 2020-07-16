@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import setuptools
+
 from license_sh.version import __version__
 
 with open("README.md", "r") as fh:
