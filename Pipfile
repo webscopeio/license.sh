@@ -12,9 +12,9 @@ docopt = "*"
 license-expression = "*"
 pipdeptree = "*"
 questionary = "*"
+black = "*"
 
 [dev-packages]
-black = "*"
 mkdocs = "*"
 mkdocs-material = "*"
 
