@@ -1,5 +1,6 @@
-from typing import NamedTuple, Union, List
+from typing import NamedTuple, Union, List, Optional
 
+# type: ignore
 from anytree import NodeMixin
 
 
@@ -20,7 +21,7 @@ class PackageNode(NodeMixin):
 
 
 class AnnotatedPackageNode(PackageNode):
-    def __init__(self, license_normalized: Union[str, None] = None, licenses: List[str] = None, *args, **kwargs):
+    def __init__(self, license_normalized: Optional[str] = None, licenses: List[str] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.license_normalized = license_normalized
         self.licenses = licenses

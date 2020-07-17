@@ -1,4 +1,4 @@
-from typing import Tuple, Set, List, Union
+from typing import Tuple, Set, List, Optional
 
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
@@ -123,7 +123,7 @@ def parse_license(license_text: str) -> List[str]:
     if license.isliteral:
         return [license.render()]
 
-    licenses = []
+    licenses: List[str] = []
     for license_arg in license.args:
         licenses = licenses + parse_license(license_arg)
 
@@ -175,9 +175,9 @@ def is_analyze_ok(node: AnyNode):
     return True
 
 
-def normalize_license_expression(license_text_raw) -> Union[str, None]:
+def normalize_license_expression(license_text_raw) -> str:
     if license_text_raw is None:
-        return None
+        return ""
 
     license_text, normalized = normalize(f"{license_text_raw}")
 
@@ -187,7 +187,7 @@ def normalize_license_expression(license_text_raw) -> Union[str, None]:
         return license_text
 
     if license is None:
-        return None
+        return ""
 
     if license.isliteral:
         normalized_license, normalized = normalize(license.render())
@@ -201,7 +201,7 @@ def normalize_license_expression(license_text_raw) -> Union[str, None]:
 
 
 def annotate_dep_tree(
-    tree, whitelist: [str], ignored_packages: [str], analyze: bool = False
+        tree: PackageNode, whitelist: List[str], ignored_packages: List[str], analyze: bool = False
 ) -> Tuple[AnnotatedPackageNode, Set[str]]:
     """
     An idea of this function is to go through elements from the bottom -> up and
@@ -209,6 +209,7 @@ def annotate_dep_tree(
     :param tree:
     :param whitelist:
     :param ignored_packages:
+    :param analyze:
     :return: list of licenses not found in a whitelist
     """
 
@@ -346,7 +347,7 @@ def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:
 
 def get_problematic_packages_from_analyzed_tree(
     node: AnyNode,
-) -> Set[Tuple[str, str or None]]:
+) -> Set[Tuple[str, Optional[str]]]:
     """
     Gets a set of problematic packages with the corresponding versions
     """
@@ -359,6 +360,6 @@ def get_problematic_packages_from_analyzed_tree(
     )
 
 
-def get_initiated_text(project_type: ProjectType, project_name: str or None, dir_path: str) -> str:
+def get_initiated_text(project_type: ProjectType, project_name: Optional[str], dir_path: str) -> str:
     return f"🔍 Initiated license.sh check for {project_type.value} project " + \
            f"{f'{project_name} ' if project_name else ''}located at {dir_path}"

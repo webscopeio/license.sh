@@ -2,6 +2,7 @@ import os
 from enum import Enum
 from os import access, R_OK
 from os.path import isfile
+from typing import List
 
 
 class ProjectType(Enum):
@@ -15,7 +16,7 @@ def __file_exists(path: str) -> bool:
     return isfile(path) and access(path, R_OK)
 
 
-def get_project_types(dir_path: str) -> [ProjectType]:
+def get_project_types(dir_path: str) -> List[ProjectType]:
     types = []
 
     # check for python's pipenv
@@ -26,10 +27,10 @@ def get_project_types(dir_path: str) -> [ProjectType]:
         types += [ProjectType.PYTHON_PIPENV]
 
     # check for npm
-    pipfile_path: str = os.path.join(dir_path, "package.json")
-    pipfile_lock_path: str = os.path.join(dir_path, "package-lock.json")
+    package_json_path: str = os.path.join(dir_path, "package.json")
+    package_lock_path: str = os.path.join(dir_path, "package-lock.json")
 
-    if __file_exists(pipfile_path) and __file_exists(pipfile_lock_path):
+    if __file_exists(package_json_path) and __file_exists(package_lock_path):
         types += [ProjectType.NPM]
 
     # check for maven
@@ -37,6 +38,7 @@ def get_project_types(dir_path: str) -> [ProjectType]:
 
     if __file_exists(maven_path):
         types += [ProjectType.MAVEN]
+
     # check for yarn
     yarn_path: str = os.path.join(dir_path, "package.json")
     yarn_lock_path: str = os.path.join(dir_path, "yarn.lock")

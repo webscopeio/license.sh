@@ -37,3 +37,6 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run python -m unittest
+    - name: Check types with mypy
+      run: |
+        pipenv run mypy ./license-sh
