@@ -39,4 +39,5 @@ jobs:
         pipenv run python -m unittest
     - name: Check types with mypy
       run: |
+        pip install mypy
         pipenv run mypy ./license-sh
