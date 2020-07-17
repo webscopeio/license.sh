@@ -1,6 +1,5 @@
-from typing import NamedTuple, Union, List, Optional
+from typing import NamedTuple, List, Optional
 
-# type: ignore
 from anytree import NodeMixin
 
 
