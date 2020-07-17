@@ -12,6 +12,7 @@ from yaspin import yaspin
 
 from license_sh.helpers import flatten_dependency_tree, get_initiated_text
 from license_sh.project_identifier import ProjectType
+from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.types.nodes import PackageNode, PackageInfo
 
 
@@ -28,7 +29,7 @@ def add_nested_dependencies(dep, parent: PackageNode) -> None:
 PYPI_HOST = "https://pypi.org/pypi"
 
 
-class PythonRunner:
+class PythonRunner(AbstractRunner):
     def __init__(self, directory: str, silent: bool, debug: bool):
         self.directory = directory
         self.silent = silent

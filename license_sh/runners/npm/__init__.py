@@ -8,6 +8,7 @@ from yaspin import yaspin
 
 from license_sh.helpers import get_initiated_text
 from license_sh.project_identifier import ProjectType
+from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.runners.runners_shared import fetch_npm_licenses
 
 
@@ -95,7 +96,7 @@ def get_dependency_tree(package_json, package_lock_tree):
     return root
 
 
-class NpmRunner:
+class NpmRunner(AbstractRunner):
     """
     This class checks for dependencies in NPM projects and fetches license info
     for each of the packages (including transitive dependencies)

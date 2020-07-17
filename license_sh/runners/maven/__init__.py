@@ -14,6 +14,7 @@ from yaspin import yaspin
 from license_sh.helpers import get_initiated_text
 from license_sh.project_identifier import ProjectType
 from license_sh.runners import maven
+from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.runners.runners_shared import check_maven
 
 DEPENDENCY_JAR = path.join(
@@ -189,7 +190,7 @@ def parse_dependency_xml(xml, parent: AnyNode = None) -> AnyNode:
     return root
 
 
-class MavenRunner:
+class MavenRunner(AbstractRunner):
     """
     This class checks for dependencies in maven projects and fetches license info
     for each of the packages (including transitive dependencies)

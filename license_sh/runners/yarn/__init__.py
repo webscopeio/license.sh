@@ -11,6 +11,7 @@ from yaspin import yaspin
 
 from license_sh.helpers import get_initiated_text
 from license_sh.project_identifier import ProjectType
+from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.runners.runners_shared import fetch_npm_licenses, check_node, check_yarn
 from license_sh.runners.yarn import js
 
@@ -121,33 +122,33 @@ def get_name(name: str) -> str:
 def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
     """Parse yarn list json dependencies and add them locked version
 
-  Example:
-  {
-    "package@1.2.3": {
-      "name": "package",
-      "version": "1.2.3",
-      dependencies: {
-        "utils@1.2.3": {
-          "name": "utils",
-          "version": "1.2.3",
-          dependencies: {}
+    Example:
+    {
+      "package@1.2.3": {
+        "name": "package",
+        "version": "1.2.3",
+        dependencies: {
+          "utils@1.2.3": {
+            "name": "utils",
+            "version": "1.2.3",
+            dependencies: {}
+          }
         }
+      },
+      "helper@3.2.1": {
+        "name": "helper",
+        "version": "3.2.1",
+        dependencies: {}
       }
-    },
-    "helper@3.2.1": {
-      "name": "helper",
-      "version": "3.2.1",
-      dependencies: {}
     }
-  }
 
-  Arguments:
-      dependencies {List} -- List of Dicts that represent yarn list.
-      package_map {Dict[str, str]} -- Dict to resolve locked versions of packages
+    Arguments:
+        dependencies {List} -- List of Dicts that represent yarn list.
+        package_map {Dict[str, str]} -- Dict to resolve locked versions of packages
 
-  Returns:
-      Dict -- Dict representation of yarn flat tree.
-  """
+    Returns:
+        Dict -- Dict representation of yarn flat tree.
+    """
     flat_tree = {}
     for dependency in dependencies:
         dep_full_name = dependency.get("name")
@@ -162,20 +163,20 @@ def get_flat_tree(dependencies: List, package_map: Dict[str, str]) -> Dict:
 def get_node_from_dependency(dependency: Dict, parent: AnyNode) -> AnyNode:
     """Parse dependency dict into node
 
-  Dependency example:
-   {
-      "name": "utils",
-      "version": "1.2.3",
-      "dependencies": {}
-    }
+    Dependency example:
+     {
+        "name": "utils",
+        "version": "1.2.3",
+        "dependencies": {}
+      }
 
-  Arguments:
-      dependency {Dict} -- Dict representation of dependency
-      parent {AnyNode} -- Parent node
+    Arguments:
+        dependency {Dict} -- Dict representation of dependency
+        parent {AnyNode} -- Parent node
 
-  Returns:
-      AnyNode -- Parsed node or None if not valid dependency
-  """
+    Returns:
+        AnyNode -- Parsed node or None if not valid dependency
+    """
     dep_version = dependency.get("version")
     dep_name = dependency.get("name")
     if not dep_version or not dep_name:
@@ -191,40 +192,43 @@ def get_node_from_dependency(dependency: Dict, parent: AnyNode) -> AnyNode:
 def find_full_dependency(dependencies: Dict, name: str) -> Dict:
     """Find full dependency in dependencies dict
 
-  Full dependency mean dependency that has childs specified
+    Full dependency mean dependency that has childs specified
 
-  Arguments:
-      dependencies {Dict} -- Dict representation of dependencies, key as name, value as dependency
-      name {str} -- Name of node to find
+    Arguments:
+        dependencies {Dict} -- Dict representation of dependencies, key as name, value as dependency
+        name {str} -- Name of node to find
 
-  Returns:
-      Dict -- Found dependency or None
-  """
+    Returns:
+        Dict -- Found dependency or None
+    """
     if not dependencies:
         return None
+
     dependency = dependencies.get(name)
     if not dependency:
         return None
+
     result = dependency.get("dependencies")
     if result:
         return dependency
+
     return None
 
 
 def add_nested_dependencies(dependency: Dict, parent: AnyNode) -> None:
     """Recurcivelly resolve nested dependencies
 
-  Dependency example:
-   {
-      "name": "utils",
-      "version": "1.2.3",
-      "dependencies": {}
-    }
+    Dependency example:
+     {
+        "name": "utils",
+        "version": "1.2.3",
+        "dependencies": {}
+      }
 
-  Arguments:
-      dependency {Dict} -- Dict representation of dependency
-      parent {AnyNode} -- Parent node
-  """
+    Arguments:
+        dependency {Dict} -- Dict representation of dependency
+        parent {AnyNode} -- Parent node
+    """
     for dependency in dependency.get("dependencies", {}).values():
         node = get_node_from_dependency(dependency, parent)
         if not node:
@@ -261,14 +265,14 @@ def get_dependency_tree(
 ) -> AnyNode:
     """Get dependency tree.
 
-  Arguments:
-      flat_tree {Dict} -- Yarn flat tree
-      package_json {Dict} -- package.json of yarn project
-      package_map {Dict} -- package_map with locked versions
+    Arguments:
+        flat_tree {Dict} -- Yarn flat tree
+        package_json {Dict} -- package.json of yarn project
+        package_map {Dict} -- package_map with locked versions
 
-  Returns:
-      AnyNode -- Dependency tree
-  """
+    Returns:
+        AnyNode -- Dependency tree
+    """
     # Create root node with project info
     root = AnyNode(
         name=package_json.get("name", "package.json"),
@@ -281,14 +285,17 @@ def get_dependency_tree(
             f"{dep_name}@{dep_version}"
         )  # Resolve locked version of the package
         full_name = f"{dep_name}@{resolved_version}"
+
         if full_name not in flat_tree.keys():
             print(
                 f"{dep_name} package not found in yarn.lock", file=sys.stderr,
             )
             exit(1)
+
         dependency = flat_tree.get(
             full_name
         )  # Use package full name to get it dependencies
+
         # Create first level of nodes based on package.json dependencies
         parent = AnyNode(
             name=dep_name,
@@ -296,6 +303,7 @@ def get_dependency_tree(
             parent=root,
             dependencies=dependency.get("dependencies"),
         )
+
         add_nested_dependencies(
             dependency, parent
         )  # Add nested dependencies of first level nodes
@@ -307,7 +315,7 @@ def get_dependency_tree(
     return root
 
 
-class YarnRunner:
+class YarnRunner(AbstractRunner):
     """
     This class checks for dependencies in Yarn projects and fetches license info
     for each of the packages (including transitive dependencies)
