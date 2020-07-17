@@ -251,7 +251,7 @@ def label_dep_tree(tree: AnyNode, project: ProjectType) -> AnyNode:
   :return tree
   """
     for node in PreOrderIter(tree):
-        node.project = project
+        node.project = project.value
         node.id = get_node_id(node.name, node.version)
         node.leaf = node.is_leaf
         node.data_version = __version__

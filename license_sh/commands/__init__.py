@@ -41,3 +41,5 @@ def config_cmd(path, config):
 
     if write_config(path, config):
         print("Successfully generated .license-sh.json file")
+
+    return 0

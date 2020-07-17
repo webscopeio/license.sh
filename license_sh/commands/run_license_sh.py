@@ -1,4 +1,5 @@
 import sys
+from typing import List
 
 import questionary
 
@@ -25,17 +26,16 @@ def run_license_sh(arguments):
     analyze = arguments["--dependencies"]
     project_type = arguments["--project"]
     debug = arguments["--debug"]
-    interactive = arguments["--interactive"]
+    interactive = bool(arguments["--interactive"])
 
-    path_to_config = config_path if config_path else path
+    path_to_config: str = config_path if config_path else path
 
     if interactive and output == "json":
         print("You can't run in interactive mode while specifying json as an output")
         exit(1)
 
     if config_mode:
-        config_cmd(path, get_raw_config(path_to_config))
-        exit(0)
+        exit(config_cmd(path, get_raw_config(path_to_config)))
 
     silent = output == "json" or debug
     whitelist, ignored_packages_map = get_config(path_to_config)
@@ -43,9 +43,8 @@ def run_license_sh(arguments):
     # docopt guarantees that output variable contains either console or json
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
-    ignored_packages = []
     supported_projects = [e.value for e in ProjectType]
-    project_list = [e.value for e in get_project_types(path)]
+    project_list = get_project_types(path)
 
     if len(project_list) == 0:
         print(
@@ -54,7 +53,7 @@ def run_license_sh(arguments):
         )
         exit(2)
 
-    project_to_check: ProjectType = project_type if project_type else project_list[0]
+    project_to_check: ProjectType = ProjectType(project_type) if project_type else project_list[0]
 
     if project_type:
         if project_type not in supported_projects:

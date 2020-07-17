@@ -5,10 +5,10 @@ from ..runners.python import PythonRunner
 from ..runners.yarn import YarnRunner
 
 RUNNERS = {
-    ProjectType.PYTHON_PIPENV.value: PythonRunner,
-    ProjectType.YARN.value: YarnRunner,
-    ProjectType.NPM.value: NpmRunner,
-    ProjectType.MAVEN.value: MavenRunner,
+    ProjectType.PYTHON_PIPENV: PythonRunner,
+    ProjectType.YARN: YarnRunner,
+    ProjectType.NPM: NpmRunner,
+    ProjectType.MAVEN: MavenRunner,
 }
 
 

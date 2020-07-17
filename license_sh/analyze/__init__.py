@@ -1,3 +1,5 @@
+from typing import Union
+
 from anytree import AnyNode
 
 from .maven import analyze_maven
@@ -7,14 +9,14 @@ from .yarn import analyze_yarn
 from ..project_identifier import ProjectType
 
 ANALYZERS = {
-    ProjectType.YARN.value: analyze_yarn,
-    ProjectType.NPM.value: analyze_npm,
-    ProjectType.MAVEN.value: analyze_maven,
-    ProjectType.PYTHON_PIPENV.value: analyze_pipenv,
+    ProjectType.YARN: analyze_yarn,
+    ProjectType.NPM: analyze_npm,
+    ProjectType.MAVEN: analyze_maven,
+    ProjectType.PYTHON_PIPENV: analyze_pipenv,
 }
 
 
-def run_analyze(project_to_check: ProjectType, path: str, dep_tree: AnyNode) -> AnyNode:
+def run_analyze(project_to_check: ProjectType, path: str, dep_tree: AnyNode) -> Union[AnyNode, None]:
     """ Run dependency analyze
 
     Args:
@@ -26,6 +28,7 @@ def run_analyze(project_to_check: ProjectType, path: str, dep_tree: AnyNode) -> 
         [AnyNode]: Updated tree or None if unsuported project type
     """
     analyzer = ANALYZERS.get(project_to_check)
+
     if not analyzer:
         return None
 

@@ -12,6 +12,7 @@ repo_url: https://github.com/webscopeio/license.sh
 nav:
   - Home: README.md
   - Usage: usage.md
+  - Configuration: configuration.md
   - Project Architecture: project-architecture.md
   - Contribution Guide: contribution-guide.md
 
