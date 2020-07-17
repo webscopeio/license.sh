@@ -12,7 +12,7 @@ class PackageInfo(NamedTuple):
 
 
 class PackageNode(NodeMixin):
-    def __init__(self, name: str, version: str, parent = None):
+    def __init__(self, name: str, version: str, parent=None):
         super().__init__()
         self.name: str = name
         self.version: str = version

@@ -7,7 +7,7 @@ from json import JSONDecodeError
 from typing import Set, Dict
 
 import aiohttp
-from anytree import AnyNode, PreOrderIter
+from anytree import PreOrderIter
 from yaspin import yaspin
 
 from license_sh.helpers import flatten_dependency_tree, get_initiated_text

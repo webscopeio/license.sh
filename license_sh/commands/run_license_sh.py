@@ -6,7 +6,6 @@ from . import config_cmd
 from ..config import get_config, get_raw_config, whitelist_licenses, ignore_packages
 from ..helpers import (
     get_dependency_tree_with_licenses,
-    label_dep_tree,
     get_problematic_packages_from_analyzed_tree,
 )
 from ..project_identifier import ProjectType, get_project_types
