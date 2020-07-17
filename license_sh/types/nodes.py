@@ -1,4 +1,4 @@
-from typing import NamedTuple
+from typing import NamedTuple, Union, List
 
 from anytree import NodeMixin
 
@@ -12,8 +12,15 @@ class PackageInfo(NamedTuple):
 
 
 class PackageNode(NodeMixin):
-    def __init__(self, name: str, version: str, parent: NodeMixin = None):
+    def __init__(self, name: str, version: str, parent = None):
         super().__init__()
-        self.name = name
-        self.version = version
-        self.parent = parent
+        self.name: str = name
+        self.version: str = version
+        self.parent: PackageNode = parent
+
+
+class AnnotatedPackageNode(PackageNode):
+    def __init__(self, license_normalized: Union[str, None] = None, licenses: List[str] = None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.license_normalized = license_normalized
+        self.licenses = licenses

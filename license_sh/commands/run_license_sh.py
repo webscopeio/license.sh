@@ -13,6 +13,7 @@ from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
 from ..reporters.JSONConsoleReporter import JSONConsoleReporter
 from ..runners import run_check
+from ..types.nodes import PackageNode
 
 
 def run_license_sh(arguments):
@@ -75,8 +76,10 @@ def run_license_sh(arguments):
             file=sys.stderr,
         )
 
-    dep_tree = run_check(project_to_check, path, silent, debug)
-    label_dep_tree(dep_tree, project_to_check)
+    dep_tree: PackageNode = run_check(project_to_check, path, silent, debug)
+
+    # TODO we should deprecate this
+    # label_dep_tree(dep_tree, project_to_check)
     ignored_packages = ignored_packages_map.get(project_to_check, [])
 
     if analyze:
@@ -126,4 +129,5 @@ def run_license_sh(arguments):
 
     if not has_issues:
         print("✅ Your project passed the compliance check 🎉🎉🎉")
+
     exit(1 if has_issues else 0)

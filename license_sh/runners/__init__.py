@@ -3,6 +3,7 @@ from ..runners.maven import MavenRunner
 from ..runners.npm import NpmRunner
 from ..runners.python import PythonRunner
 from ..runners.yarn import YarnRunner
+from ..types.nodes import PackageNode
 
 RUNNERS = {
     ProjectType.PYTHON_PIPENV: PythonRunner,
@@ -12,10 +13,6 @@ RUNNERS = {
 }
 
 
-def run_check(project_to_check: ProjectType, path: str, silent: bool, debug: bool):
+def run_check(project_to_check: ProjectType, path: str, silent: bool, debug: bool) -> PackageNode:
     runner = RUNNERS.get(project_to_check)
-
-    if not runner:
-        return None
-
     return runner(path, silent, debug).check()
