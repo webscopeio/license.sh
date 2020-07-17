@@ -4,6 +4,7 @@ import os
 import subprocess
 from contextlib import nullcontext
 from json import JSONDecodeError
+from typing import Set, Dict
 
 import aiohttp
 from anytree import AnyNode, PreOrderIter
@@ -11,15 +12,16 @@ from yaspin import yaspin
 
 from license_sh.helpers import flatten_dependency_tree, get_initiated_text
 from license_sh.project_identifier import ProjectType
+from license_sh.types.nodes import PackageNode, PackageInfo
 
 
-def add_nested_dependencies(dep, parent):
+def add_nested_dependencies(dep, parent: PackageNode) -> None:
     name = dep["package_name"]
     version = dep["installed_version"]
-    depdendencies = dep["dependencies"]
+    dependencies = dep["dependencies"]
 
-    node = AnyNode(name=name, version=version, parent=parent)
-    for dep in depdendencies:
+    node = PackageNode(name=name, version=version, parent=parent)
+    for dep in dependencies:
         add_nested_dependencies(dep, node)
 
 
@@ -35,12 +37,12 @@ class PythonRunner:
         self.debug = debug
 
     @staticmethod
-    def fetch_licenses(all_dependencies):
+    def fetch_licenses(all_dependencies: Set[PackageInfo]) -> Dict[PackageInfo, str]:
         license_map = {}
 
         urls = [
-            f"{PYPI_HOST}/{dependency}/{version}/json"
-            for dependency, version in all_dependencies
+            f"{PYPI_HOST}/{package_name}/{version}/json"
+            for package_name, version in all_dependencies
         ]
 
         async def fetch(session, url):
@@ -60,7 +62,7 @@ class PythonRunner:
                         page = json.loads(await result)
                         info = page.get("info", {})
                         license_map[
-                            f"{info.get('name')}@{info.get('version')}"
+                            PackageInfo(name=info.get('name'), version=info.get('version'))
                         ] = info.get("license", "Unknown")
                     except JSONDecodeError:
                         # TODO - investiage why does such a thing happen
@@ -70,7 +72,7 @@ class PythonRunner:
 
         return license_map
 
-    def check(self):
+    def check(self) -> PackageNode:
         if not self.silent:
             print(get_initiated_text(ProjectType.PYTHON_PIPENV, None, self.directory))
 
@@ -81,7 +83,7 @@ class PythonRunner:
             )
             dep_tree = json.loads(result.stdout)
 
-            root = AnyNode(name="root", version="")
+            root = PackageNode(name="", version="")
 
             for dep in dep_tree:
                 add_nested_dependencies(dep, root)
@@ -92,6 +94,6 @@ class PythonRunner:
             license_map = PythonRunner.fetch_licenses(all_dependencies)
 
         for node in PreOrderIter(root):
-            node.license = license_map.get(f"{node.name}@{node.version}", None)
+            node.license = license_map.get(PackageInfo(name=node.name, version=node.version), None)
 
         return root

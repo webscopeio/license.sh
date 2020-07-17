@@ -7,4 +7,3 @@ LanguageIgnoredPackages = List[str]
 
 IgnoredPackages = Dict[ProjectType, LanguageIgnoredPackages]
 ConfigurationType = Tuple[LicenseWhitelist, IgnoredPackages]
-

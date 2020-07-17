@@ -1,6 +1,4 @@
 import sys
-from typing import List
-
 import questionary
 
 from license_sh.analyze import run_analyze

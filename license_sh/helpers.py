@@ -7,6 +7,7 @@ from license_expression import Licensing, ExpressionError
 
 from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
+from license_sh.types.nodes import PackageNode, PackageInfo
 from license_sh.version import __version__
 
 NODE_ID_SEP = ":-:"
@@ -92,10 +93,10 @@ def extract_npm_license(json_data, version: str):
     return None
 
 
-def flatten_dependency_tree(tree):
+def flatten_dependency_tree(tree: PackageNode) -> Set[PackageInfo]:
     # remove the root node
     return set(
-        [(node.name, node.version) for node in PreOrderIter(tree) if tree is not node]
+        [PackageInfo(name=node.name, version=node.version) for node in PreOrderIter(tree) if tree is not node]
     )
 
 
@@ -352,6 +353,6 @@ def get_problematic_packages_from_analyzed_tree(
     )
 
 
-def get_initiated_text(project_type: ProjectType, project_name: str, dir_path: str) -> str:
+def get_initiated_text(project_type: ProjectType, project_name: str or None, dir_path: str) -> str:
     return f"🔍 Initiated license.sh check for {project_type.value} project " + \
            f"{f'{project_name} ' if project_name else ''}located at {dir_path}"

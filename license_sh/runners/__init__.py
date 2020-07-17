@@ -14,6 +14,7 @@ RUNNERS = {
 
 def run_check(project_to_check: ProjectType, path: str, silent: bool, debug: bool):
     runner = RUNNERS.get(project_to_check)
+
     if not runner:
         return None
 
