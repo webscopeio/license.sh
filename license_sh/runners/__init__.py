@@ -1,4 +1,3 @@
-from .abstract_runner import AbstractRunner
 from ..project_identifier import ProjectType
 from ..runners.maven import MavenRunner
 from ..runners.npm import NpmRunner
