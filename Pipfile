@@ -23,6 +23,6 @@ mypy = "*"
 allow_prereleases = true
 
 [scripts]
-lint = "flake8 . --count --max-complexity=10 --max-line-length=127 --statistics && flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics"
+lint = "flake8 . --count --max-complexity=10 --max-line-length=127 --statistics"
 check-types = "mypy ./license-sh"
 test = "python -m unittest"
