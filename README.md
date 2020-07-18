@@ -43,6 +43,20 @@ license-sh
 
 # Contribution guide
 
+Available commands:
+
+```
+pipenv run check-types
+pipenv run lint
+pipenv run test
+```
+
+or 
+
+```
+pipenv run check-all
+```
+
 You need to set-up a repository and install dependencies using pipenv.
 
 ```bash
