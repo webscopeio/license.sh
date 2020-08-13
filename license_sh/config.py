@@ -2,6 +2,7 @@ import json
 import sys
 from os import path
 from typing import List
+
 from .project_identifier import ProjectType
 
 DEFAULT_CONFIG_NAME = ".license-sh.json"
@@ -15,7 +16,7 @@ def get_ignored_packages(ignored_packages: dict):
         return ignored_packages_map
     project_list = [e.value for e in ProjectType]
     for project_type, ignored_packages in ignored_packages.items():
-        if not project_type in project_list:
+        if project_type not in project_list:
             print(
                 f"Ignored packages for project '{project_type}' is not supported. Ignoring...",
                 file=sys.stderr,
@@ -96,4 +97,11 @@ def whitelist_licenses(path_to_config: str, licenses: List[str]):
     config = get_raw_config(path_to_config)
     current_whitelist = get_licenses_whitelist(config.get(WHITELIST, []))
     config[WHITELIST] = list(set(current_whitelist + licenses))
+    write_config(path_to_config, config)
+
+
+def ignore_packages(path_to_config: str, project_type: ProjectType, packages: List[str]):
+    config = get_raw_config(path_to_config)
+    lang_ignored_packages = config.get(IGNORED_PACKAGES, {}).get(project_type, [])
+    config.setdefault(IGNORED_PACKAGES, {}).setdefault(project_type, list(set(lang_ignored_packages + packages)))
     write_config(path_to_config, config)

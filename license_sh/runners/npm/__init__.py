@@ -1,25 +1,25 @@
 import json
 import sys
-import subprocess
-from os import path
 from contextlib import nullcontext
+from os import path
 
 from anytree import AnyNode, PreOrderIter
-
 from yaspin import yaspin
 
+from license_sh.helpers import get_initiated_text
+from license_sh.project_identifier import ProjectType
 from license_sh.runners.runners_shared import fetch_npm_licenses
 
 
 def flatten_package_lock_dependencies(package_lock_dependencies):
     """
-  Flattens package.lock dependencies
-  :param package_lock_dependencies:
-  :return: tuple(flat_array, dep_mapping)
+    Flattens package.lock dependencies
+    :param package_lock_dependencies:
+    :return: tuple(flat_array, dep_mapping)
      WHERE
      array flat_array is a flat array of all dependencies
      dict dep_mapping is a tree representing nested dependencies
-  """
+    """
     # get the root dependencies
     root_deps = [
         (name, dep.get("version")) for name, dep in package_lock_dependencies.items()
@@ -77,7 +77,7 @@ def get_dependency_tree(package_json, package_lock_tree):
 
     # load root dependencies from package.json
     for dep_name in package_json.get("dependencies", {}).keys():
-        if not dep_name in package_lock_tree:
+        if dep_name not in package_lock_tree:
             print(
                 f"{dep_name} package not found in package-lock.json", file=sys.stderr,
             )
@@ -95,20 +95,11 @@ def get_dependency_tree(package_json, package_lock_tree):
     return root
 
 
-def fetch_license(dep):
-    dependency, version = dep
-    result = subprocess.run(
-        ["npm", "info", f"{dependency}@{version}", "--json"], stdout=subprocess.PIPE
-    )
-    info = json.loads(result.stdout)
-    return 3
-
-
 class NpmRunner:
     """
-  This class checks for dependencies in NPM projects and fetches license info
-  for each of the packages (including transitive dependencies)
-  """
+    This class checks for dependencies in NPM projects and fetches license info
+    for each of the packages (including transitive dependencies)
+    """
 
     def __init__(self, directory: str, silent: bool, debug: bool):
         self.directory = directory
@@ -130,25 +121,13 @@ class NpmRunner:
                 else dict()
             )
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for NPM project {project_name} located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.NPM, project_name, self.directory))
 
-        with (
-            yaspin(text="Analysing dependencies ...")
-            if not self.silent
-            else nullcontext()
-        ) as sp:
+        with yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext():
             dep_tree = get_dependency_tree(package_json, all_dependencies)
             flat_dependencies = flatten_package_lock_dependencies(all_dependencies)
 
-        with (
-            yaspin(text="Fetching license info from npm ...")
-            if not self.silent
-            else nullcontext()
-        ) as sp:
+        with yaspin(text="Fetching license info from npm ...") if not self.silent else nullcontext():
             license_map = fetch_npm_licenses(flat_dependencies)
 
         for node in PreOrderIter(dep_tree):

@@ -1,8 +1,9 @@
-from .npm import analyze_npm
-from .yarn import analyze_yarn
-from .maven import analyze_maven
-from .pipenv import analyze_pipenv
 from anytree import AnyNode
+
+from .maven import analyze_maven
+from .npm import analyze_npm
+from .pipenv import analyze_pipenv
+from .yarn import analyze_yarn
 from ..project_identifier import ProjectType
 
 ANALYZERS = {
@@ -13,7 +14,7 @@ ANALYZERS = {
 }
 
 
-def run_analyze(project_to_check: str, path: str, dep_tree: AnyNode) -> AnyNode:
+def run_analyze(project_to_check: ProjectType, path: str, dep_tree: AnyNode) -> AnyNode:
     """ Run dependency analyze
 
     Args:

@@ -2,13 +2,6 @@ import unittest
 
 from license_sh.helpers import is_license_ok, normalize_license_expression
 
-try:
-    import license_sh_private
-
-    private_package = True
-except ImportError:
-    private_package = False
-
 
 class LicenseValidationsTestCase(unittest.TestCase):
     def test_simple_validation_test(self):
@@ -62,12 +55,10 @@ class LicenseValidationsTestCase(unittest.TestCase):
             is_license_ok("(BSD-2-Clause OR MIT OR Apache-2.0)", whitelist), True
         )
 
-    @unittest.skipUnless(private_package, "requires license_sh_private package")
     def test_license_simple_expression_normalized(self):
         license_expression = "Apache-2"
         self.assertEqual("Apache-2.0", normalize_license_expression(license_expression))
 
-    @unittest.skipUnless(private_package, "requires license_sh_private package")
     def test_license_complex_expression_normalized(self):
         license_expression = "(mit or Apache-2)"
         self.assertEqual(

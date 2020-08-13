@@ -1,14 +1,16 @@
 import json
 import subprocess
 import sys
-from os import path
-from anytree import AnyNode, PreOrderIter
-from typing import Dict, List, Tuple
-from yaspin import yaspin
 from contextlib import nullcontext
-
 from importlib import resources
+from os import path
+from typing import Dict, List
 
+from anytree import AnyNode, PreOrderIter
+from yaspin import yaspin
+
+from license_sh.helpers import get_initiated_text
+from license_sh.project_identifier import ProjectType
 from license_sh.runners.runners_shared import fetch_npm_licenses, check_node, check_yarn
 from license_sh.runners.yarn import js
 
@@ -327,17 +329,9 @@ class YarnRunner:
             project_name = package_json.get("name", "project_name")
 
         if not self.silent:
-            print("===========")
-            print(
-                f"Initiated License.sh check for YARN project {project_name} located at {self.directory}"
-            )
-            print("===========")
+            print(get_initiated_text(ProjectType.YARN, project_name, self.directory))
 
-        with (
-            yaspin(text="Analysing dependencies ...")
-            if not self.silent
-            else nullcontext()
-        ) as sp:
+        with yaspin(text="Analysing dependencies ...") if not self.silent else nullcontext():
             package_map = parse_yarn_lock(get_yarn_lock_json(self.directory))
             flat_tree = get_flat_tree(
                 get_yarn_list_json(self.directory).get("data", {}).get("trees", []),

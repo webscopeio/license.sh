@@ -19,6 +19,7 @@ Options:
   -d --debug                          Debug mode
   -p --project <project_type>         Run only specific project [yarn | npm | maven | pipenv]
   --dependencies                      Include dependency license text analysis. Suported: npm, yarn, maven
+  -i --interactive                    Runs program in an interactive mode, allows you to configure licenses and packages
   -c --config <config_path>           Use custom path to config       
   --version                           Show version.
 ```

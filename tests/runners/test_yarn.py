@@ -1,5 +1,5 @@
-import unittest
 import json
+import unittest
 
 from license_sh.runners.yarn import (
     parse_yarn_lock,

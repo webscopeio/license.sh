@@ -1,7 +1,9 @@
-import json
 import asyncio
+import json
 import subprocess
+
 import aiohttp as aiohttp
+
 from license_sh.helpers import extract_npm_license
 
 NPM_HOST = "https://registry.npmjs.org"
@@ -56,17 +58,17 @@ def check_command(command: list) -> bool:
 
 def check_yarn():
     if not check_command(["yarn", "--version"]):
-        print(f"Missing prerequisite! Yarn is required")
+        print("Missing prerequisite! Yarn is required")
         exit(5)
 
 
 def check_node():
     if not check_command(["node", "--version"]):
-        print(f"Missing prerequisite! Node is required")
+        print("Missing prerequisite! Node is required")
         exit(5)
 
 
 def check_maven():
     if not check_command(["mvn", "--version"]):
-        print(f"Missing prerequisite! Maven is required")
+        print("Missing prerequisite! Maven is required")
         exit(5)
