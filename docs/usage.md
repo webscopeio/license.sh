@@ -45,8 +45,8 @@ Example:
 {
   "ignored_packages": {
     "python_pipenv": [ 
-      "PyInquirer:-:1.0.0",
-      "setuptools;-:3.4.5"
+      "PyInquirer==1.0.0",
+      "setuptools==3.4.5"
     ],
     "npm": [],
     "maven": [],
@@ -61,8 +61,8 @@ Example:
 ```
   "ignored_packages": {
     "python_pipenv": [
-      "PyInquirer:-:1.0.0",
-      "setuptools;-:3.4.5"
+      "PyInquirer==1.0.0",
+      "setuptools==3.4.5"
     ],
     "npm": [],
     "maven": [],
