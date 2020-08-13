@@ -300,7 +300,7 @@ class HelpersTestCase(unittest.TestCase):
 
     def test_bad_licenses_identified_are_ignored_by_package_whitelist(self):
         tree = get_tree()
-        ignored_packages = ["package7:-:7.7.6", "package6:-:6.6.6"]
+        ignored_packages = ["package7==7.7.6", "package6==6.6.6"]
 
         whitelist = ["MIT", "Apache-2.0"]
         _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)

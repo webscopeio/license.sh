@@ -218,7 +218,7 @@ def annotate_dep_tree(
         node.license_problem = not is_license_ok(
             node.license_normalized, whitelist
         ) and not (
-            get_node_id(node.name, node.version) in ignored_packages
+            f"{node.name}=={node.version}" in ignored_packages
             or node.name in ignored_packages
         )
         if node.license_problem and node.licenses:
