@@ -35,12 +35,12 @@ def get_askalono():
 def run_askalono(directory: str, glob: str = GLOB) -> List:
     """ Analyze node modules dependencies
 
-  Args:
+    Args:
       directory (str): Path to the project
 
-  Returns:
+    Returns:
       [List]: Result of an node_modules crawling with analyze as List of Dictionaries
-  """
+    """
     with resources.path(lib, get_askalono()) as askalono_path:
         result = []
         git_ignore_path = os.path.join(directory, GIT_IGNORE)
@@ -105,7 +105,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
                 license_result = item.get("result", {})
                 *path_to_file, file_name = item.get("path").split("/")
                 if license_text in [
-                    item.get("data") for item in data_dict.get(node_id)
+                    item.get("data") for item in data_dict.get(node_id, [])
                 ]:
                     continue
                 data_dict[node_id].append(

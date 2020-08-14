@@ -4,7 +4,7 @@ import sys
 from contextlib import nullcontext
 from importlib import resources
 from os import path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
@@ -189,7 +189,7 @@ def get_node_from_dependency(dependency: Dict, parent: AnyNode) -> AnyNode:
     )
 
 
-def find_full_dependency(dependencies: Dict, name: str) -> Dict:
+def find_full_dependency(dependencies: Dict, name: str) -> Optional[Dict]:
     """Find full dependency in dependencies dict
 
     Full dependency mean dependency that has childs specified
@@ -235,21 +235,22 @@ def add_nested_dependencies(dependency: Dict, parent: AnyNode) -> None:
             continue
         dep_name = f"{node.name}@{node.version}"
         dep = None
-        checkNode = node.parent
+
+        checked_node = node.parent
         names = []
-        while checkNode.parent:
-            full_dep = find_full_dependency(checkNode.dependencies, dep_name)
+        while checked_node.parent:
+            full_dep = find_full_dependency(checked_node.dependencies, dep_name)
             if not dep and full_dep:
                 node.dependencies = full_dep.get(
                     "dependencies"
                 )  # Update own dependencies with correct dependencies
                 dep = full_dep
 
-            checkNode = checkNode.parent  # continue for parent
-            names.append(checkNode.name)  # save name to prevent cyclic dependency loop
+            checked_node = checked_node.parent  # continue for parent
+            names.append(checked_node.name)  # save name to prevent cyclic dependency loop
 
         # Check the root
-        full_dep = find_full_dependency(checkNode.dependencies, dep_name)
+        full_dep = find_full_dependency(checked_node.dependencies, dep_name)
         if not dep and full_dep:
             node.dependencies = node.dependencies = full_dep.get("dependencies")
             dep = full_dep
@@ -301,12 +302,13 @@ def get_dependency_tree(
             name=dep_name,
             version=resolved_version,
             parent=root,
-            dependencies=dependency.get("dependencies"),
+            dependencies=dependency.get("dependencies") if dependency else {},
         )
 
-        add_nested_dependencies(
-            dependency, parent
-        )  # Add nested dependencies of first level nodes
+        if dependency:
+            add_nested_dependencies(
+                dependency, parent
+            )  # Add nested dependencies of first level nodes
 
     # Delete helper dependencies field
     for node in PreOrderIter(root):

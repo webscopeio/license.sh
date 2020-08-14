@@ -6,7 +6,7 @@ from contextlib import nullcontext
 from importlib import resources
 from os import path
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
@@ -81,7 +81,7 @@ def get_dependency_tree_xml(directory: str, debug=False):
     return None
 
 
-def get_license_xml_file(directory: str, debug: bool) -> ET.ElementTree:
+def get_license_xml_file(directory: str, debug: bool) -> ET.Element:
     """Get maven xml licenses
 
     Arguments:
@@ -120,6 +120,8 @@ def get_project_name(pom_xml) -> str:
         if "artifactId" in child.tag:
             return child.text
 
+    raise ValueError("No artifactId found")
+
 
 def get_project_pom_xml(directory: str):
     """Get xml representation of pom.xml
@@ -133,7 +135,7 @@ def get_project_pom_xml(directory: str):
     return ET.parse(path.join(directory, "pom.xml")).getroot()
 
 
-def parse_licenses_xml(xml) -> Dict[str, str]:
+def parse_licenses_xml(xml) -> Dict[str, Optional[str]]:
     """Parse xml representation of maven licenses xml
 
     Example:
