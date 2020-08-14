@@ -83,14 +83,14 @@ def get_node_analyze_dict(directory: str) -> Dict:
     Returns:
         [Dict]: Project id as a key and Dict with license text and analyzed license name
     """
-    data_dict = {}
+    data_dict: Dict[str, List[Dict[str, str]]] = {}
     license_data = run_askalono(directory)
     for item in license_data:
         *path_to_dependency, license_file = item.get("path").split("/")
         path = os.path.join(*path_to_dependency)
-        package_file = os.path.join(path, PACKAGE_JSON)
-        if os.path.isfile(package_file):
-            with open(package_file, "r") as package_file:
+        package_file_path = os.path.join(path, PACKAGE_JSON)
+        if os.path.isfile(package_file_path):
+            with open(package_file_path, "r") as package_file:
                 package_json = json.load(package_file)
                 node_id = get_node_id(
                     package_json.get("name", "project_name"),
