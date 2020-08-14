@@ -160,6 +160,7 @@ class HelpersTestCase(unittest.TestCase):
             version="",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -171,6 +172,7 @@ class HelpersTestCase(unittest.TestCase):
             version="1.1.1",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -181,6 +183,7 @@ class HelpersTestCase(unittest.TestCase):
             version="4.4.4",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -192,6 +195,7 @@ class HelpersTestCase(unittest.TestCase):
             version="2.2.2",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -202,6 +206,7 @@ class HelpersTestCase(unittest.TestCase):
             version="5.5.5",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -212,6 +217,7 @@ class HelpersTestCase(unittest.TestCase):
             version="7.7.7",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -223,6 +229,7 @@ class HelpersTestCase(unittest.TestCase):
             version="3.3.3",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -233,6 +240,7 @@ class HelpersTestCase(unittest.TestCase):
             version="7.7.6",
             license="GPL",
             licenses=["GPL"],
+            analyze_problem=False,
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -244,6 +252,7 @@ class HelpersTestCase(unittest.TestCase):
             version="4.4.4",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=False,
             license_normalized="MIT",
@@ -255,6 +264,7 @@ class HelpersTestCase(unittest.TestCase):
             version="5.5.5",
             license="MIT",
             licenses=["MIT"],
+            analyze_problem=False,
             license_problem=False,
             subtree_problem=True,
             license_normalized="MIT",
@@ -265,6 +275,7 @@ class HelpersTestCase(unittest.TestCase):
             version="6.6.6",
             license="GPL",
             licenses=["GPL"],
+            analyze_problem=False,
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -276,6 +287,7 @@ class HelpersTestCase(unittest.TestCase):
             version="6.6.6",
             license="GPL",
             licenses=["GPL"],
+            analyze_problem=False,
             license_problem=True,
             subtree_problem=False,
             license_normalized="GPL",
@@ -288,7 +300,7 @@ class HelpersTestCase(unittest.TestCase):
 
     def test_bad_licenses_identified_are_ignored_by_package_whitelist(self):
         tree = get_tree()
-        ignored_packages = ["package7", "package6"]
+        ignored_packages = ["package7==7.7.6", "package6==6.6.6"]
 
         whitelist = ["MIT", "Apache-2.0"]
         _, unknown_licenses = annotate_dep_tree(tree, whitelist, ignored_packages)
