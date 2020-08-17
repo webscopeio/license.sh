@@ -1,4 +1,4 @@
-# Configuration
+## Configuration
 
 Configuration is stored inside `.license-sh.json` in the root of the project.
 
@@ -9,9 +9,9 @@ Example:
 ```
 {
   "ignored_packages": {
-    "python_pipenv": [
-      "PyInquirer",
-      "setuptools"
+    "python_pipenv": [ 
+      "PyInquirer==1.0.0",
+      "setuptools==3.4.5"
     ],
     "npm": [],
     "maven": [],
@@ -22,21 +22,27 @@ Example:
   ]
 ```
 
-## Ignored packages
+* ### Ignore packages
 ```
   "ignored_packages": {
     "python_pipenv": [
-      "PyInquirer",
-      "setuptools"
+      "PyInquirer==1.0.0",
+      "setuptools==3.4.5"
     ],
     "npm": [],
     "maven": [],
     "yarn": []
   }
 ```
-You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error
+You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error.
 
-## Whitelisted licenses
+Format:
+"{PACKAGE_NAME}=={PACKAGE_VESION}"  --- To ignore specific version of the package RECOMENDED 
+
+"{PACKAGE_NAME}" --- To ignore every version of this specific package
+
+
+* ### Whitelist
 ```
   "whitelist": [
     "MIT"
