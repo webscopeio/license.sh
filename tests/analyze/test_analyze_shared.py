@@ -133,7 +133,8 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         try:
             run_askalono("shouldnt/matter")
         except Exception:
-            print("yeey")
+            pass
+
         self.assertEqual(mock_rename.call_count, 2)
 
     @mock.patch("os.path.isfile", return_value=True)

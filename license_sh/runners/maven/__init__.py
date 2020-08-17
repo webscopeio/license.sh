@@ -6,7 +6,7 @@ from contextlib import nullcontext
 from importlib import resources
 from os import path
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from anytree import AnyNode, PreOrderIter
 from yaspin import yaspin
@@ -14,6 +14,7 @@ from yaspin import yaspin
 from license_sh.helpers import get_initiated_text
 from license_sh.project_identifier import ProjectType
 from license_sh.runners import maven
+from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.runners.runners_shared import check_maven
 
 DEPENDENCY_JAR = path.join(
@@ -80,7 +81,7 @@ def get_dependency_tree_xml(directory: str, debug=False):
     return None
 
 
-def get_license_xml_file(directory: str, debug: bool) -> ET.ElementTree:
+def get_license_xml_file(directory: str, debug: bool) -> ET.Element:
     """Get maven xml licenses
 
     Arguments:
@@ -119,6 +120,8 @@ def get_project_name(pom_xml) -> str:
         if "artifactId" in child.tag:
             return child.text
 
+    raise ValueError("No artifactId found")
+
 
 def get_project_pom_xml(directory: str):
     """Get xml representation of pom.xml
@@ -132,7 +135,7 @@ def get_project_pom_xml(directory: str):
     return ET.parse(path.join(directory, "pom.xml")).getroot()
 
 
-def parse_licenses_xml(xml) -> Dict[str, str]:
+def parse_licenses_xml(xml) -> Dict[str, Optional[str]]:
     """Parse xml representation of maven licenses xml
 
     Example:
@@ -189,7 +192,7 @@ def parse_dependency_xml(xml, parent: AnyNode = None) -> AnyNode:
     return root
 
 
-class MavenRunner:
+class MavenRunner(AbstractRunner):
     """
     This class checks for dependencies in maven projects and fetches license info
     for each of the packages (including transitive dependencies)

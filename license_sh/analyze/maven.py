@@ -53,7 +53,8 @@ def parse_licenses_xml(data_root) -> Dict:
     Returns:
         [Dict]: dependency id as key, licenses url list as value
     """
-    dep_data = {}
+    dep_data: Dict[str, List[str]] = {}
+
     for dependency in data_root.find("dependencies"):
         dep_id = get_node_id(
             dependency.find("artifactId").text, dependency.find("version").text
@@ -100,7 +101,7 @@ def get_jar_analyze_dict(tmp_dir: str, analyze_list: List) -> Dict:
             analyze_list,
         )
     )
-    jar_analyze_dict = {}
+    jar_analyze_dict: Dict[str, List[Dict[str, str]]] = {}
     for jar_item in jar_analyze:
         tmp_dir_path, license_file_path = jar_item.get("path").split(f"{tmp_dir}/")
         dir_name, *rest, license_file_name = license_file_path.split("/")
@@ -191,7 +192,8 @@ def get_maven_analyze_dict(directory: str) -> Dict:
     Returns:
         Dict: Dependency id as key, license text and analyzed license name and value
     """
-    data_dict = {}
+    data_dict: Dict[str, List[Dict[str, str]]] = {}
+
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_maven_data(directory, dirpath)
         for item in license_data:

@@ -17,6 +17,12 @@ questionary = "*"
 mkdocs = "*"
 mkdocs-material = "*"
 flake8 = "*"
+mypy = "*"
 
 [pipenv]
 allow_prereleases = true
+
+[scripts]
+lint = "flake8 . --count --max-complexity=10 --max-line-length=127 --statistics"
+check-types = "mypy ./license-sh"
+test = "python -m unittest"

@@ -2,7 +2,7 @@ import os
 import re
 import subprocess
 import tempfile
-from typing import Dict
+from typing import Dict, List
 
 from anytree import AnyNode, PreOrderIter
 
@@ -11,7 +11,7 @@ from license_sh.analyze.analyze_shared import run_askalono, LICENSE_GLOB
 SUFFIX = ".dist-info"
 
 
-def get_analyze_pipenv_data(directory: str, tmpDir: str) -> Dict:
+def get_analyze_pipenv_data(directory: str, tmp_dir: str) -> List:
     """
     Analyze pipenv dependencies
 
@@ -27,7 +27,7 @@ def get_analyze_pipenv_data(directory: str, tmpDir: str) -> Dict:
         stderr=subprocess.PIPE,
         cwd=directory,
     ).stdout.decode("utf-8")
-    requirements_path = os.path.join(tmpDir, "requirements.txt")
+    requirements_path = os.path.join(tmp_dir, "requirements.txt")
     with open(requirements_path, "w") as requirements_file:
         requirements_file.write(requirements_output)
 
@@ -40,13 +40,14 @@ def get_analyze_pipenv_data(directory: str, tmpDir: str) -> Dict:
             "-r",
             requirements_path,
             "--target",
-            tmpDir,
+            tmp_dir,
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd=directory,
     )
-    return run_askalono(tmpDir)
+
+    return run_askalono(tmp_dir)
 
 
 def get_pipenv_analyze_dict(directory: str) -> Dict:
@@ -60,7 +61,8 @@ def get_pipenv_analyze_dict(directory: str) -> Dict:
         Dict: Dependency {name}-{version} as key, license text and analyzed license name and value
     """
 
-    data_dict = {}
+    data_dict: Dict[str, List[Dict[str, str]]] = {}
+
     with tempfile.TemporaryDirectory() as dirpath:
         license_data = get_analyze_pipenv_data(directory, dirpath)
         for item in license_data:

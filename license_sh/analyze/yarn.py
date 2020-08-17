@@ -11,12 +11,12 @@ from license_sh.analyze.analyze_shared import (
 def get_analyze_yarn_data(directory: str):
     """Analyze yarn dependencies
 
-  Args:
-      directory (str): Path to the project
+    Args:
+        directory (str): Path to the project
 
-  Returns:
+    Returns:
       [Dict]: Analyzed data as dictionary
-  """
+    """
     subprocess.run(
         ["yarn", "install", "--pure-lockfile", "--cwd", directory],
         stdout=subprocess.PIPE,
@@ -28,12 +28,12 @@ def get_analyze_yarn_data(directory: str):
 def analyze_yarn(directory: str, dep_tree: AnyNode):
     """Run yarn analyze
 
-  Args:
-      directory (str): Path to the project
-      dep_tree (AnyNode): Dependency tree to update
+    Args:
+        directory (str): Path to the project
+        dep_tree (AnyNode): Dependency tree to update
 
-  Returns:
-      [AnyNode]: Updated tree with analyze
-  """
+    Returns:
+        [AnyNode]: Updated tree with analyze
+    """
     analyze_data = get_analyze_yarn_data(directory)
     return add_analyze_to_dep_tree(analyze_data, dep_tree)

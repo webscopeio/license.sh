@@ -1,13 +1,14 @@
 from anytree import RenderTree, ContStyle
 
 from license_sh.helpers import GREEN, RESET, RED, BOLD, is_problematic_node
+from license_sh.types.nodes import AnnotatedPackageNode
 
 UNKNOWN = "Unknown"
 
 
 class ConsoleReporter:
     @staticmethod
-    def output(dependency_tree):
+    def output(dependency_tree: AnnotatedPackageNode):
         for pre, fill, node in RenderTree(dependency_tree, style=ContStyle()):
             if node.is_root:
                 print(" ")

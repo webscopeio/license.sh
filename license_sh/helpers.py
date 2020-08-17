@@ -1,4 +1,4 @@
-from typing import Tuple, Set, List
+from typing import Tuple, Set, List, Optional
 
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
@@ -7,6 +7,7 @@ from license_expression import Licensing, ExpressionError
 
 from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
+from license_sh.types.nodes import PackageNode, PackageInfo, AnnotatedPackageNode
 from license_sh.version import __version__
 
 NODE_ID_SEP = ":-:"
@@ -92,14 +93,14 @@ def extract_npm_license(json_data, version: str):
     return None
 
 
-def flatten_dependency_tree(tree):
+def flatten_dependency_tree(tree: PackageNode) -> Set[PackageInfo]:
     # remove the root node
     return set(
-        [(node.name, node.version) for node in PreOrderIter(tree) if tree is not node]
+        [PackageInfo(name=node.name, version=node.version) for node in PreOrderIter(tree) if tree is not node]
     )
 
 
-def parse_license(license_text: str) -> list:
+def parse_license(license_text: str) -> List[str]:
     """Parse license, if complex, then break it into simple parts
 
     Arguments:
@@ -110,6 +111,7 @@ def parse_license(license_text: str) -> list:
     """
     if license_text is None:
         return []
+
     try:
         license = licensing.parse(license_text)
     except ExpressionError:
@@ -121,7 +123,7 @@ def parse_license(license_text: str) -> list:
     if license.isliteral:
         return [license.render()]
 
-    licenses = []
+    licenses: List[str] = []
     for license_arg in license.args:
         licenses = licenses + parse_license(license_arg)
 
@@ -173,17 +175,19 @@ def is_analyze_ok(node: AnyNode):
     return True
 
 
-def normalize_license_expression(license_text_raw):
+def normalize_license_expression(license_text_raw) -> str:
     if license_text_raw is None:
-        return None
+        return ""
+
     license_text, normalized = normalize(f"{license_text_raw}")
+
     try:
         license = licensing.parse(license_text)
     except ExpressionError:
         return license_text
 
     if license is None:
-        return None
+        return ""
 
     if license.isliteral:
         normalized_license, normalized = normalize(license.render())
@@ -197,16 +201,17 @@ def normalize_license_expression(license_text_raw):
 
 
 def annotate_dep_tree(
-    tree, whitelist: [str], ignored_packages: [str], analyze: bool = False
-) -> Tuple[AnyNode, Set[str]]:
+        tree: PackageNode, whitelist: List[str], ignored_packages: List[str], analyze: bool = False
+) -> Tuple[AnnotatedPackageNode, Set[str]]:
     """
-  An idea of this function is to go through elements from the bottom -> up and
-  mark subtree_problem if any of the children has a license_problem or a subtree_problem
-  :param tree:
-  :param whitelist:
-  :param ignored_packages:
-  :return: list of licenses not found in a whitelist
-  """
+    An idea of this function is to go through elements from the bottom -> up and
+    mark subtree_problem if any of the children has a license_problem or a subtree_problem
+    :param tree:
+    :param whitelist:
+    :param ignored_packages:
+    :param analyze:
+    :return: list of licenses not found in a whitelist
+    """
 
     for node in PreOrderIter(tree):
         node.license_normalized = normalize_license_expression(node.license)
@@ -221,6 +226,7 @@ def annotate_dep_tree(
             f"{node.name}=={node.version}" in ignored_packages
             or node.name in ignored_packages
         )
+
         if node.license_problem and node.licenses:
             for license_not_found in node.licenses:
                 if license_not_found not in whitelist:
@@ -243,16 +249,16 @@ def annotate_dep_tree(
     return tree, licenses_not_found
 
 
-def label_dep_tree(tree: AnyNode, project: ProjectType) -> AnyNode:
+def label_dep_tree(tree: PackageNode, project: ProjectType) -> PackageNode:
     """
-  An idea of this function is to go through elements from the bottom -> up and
-  add parameters
-  :param tree
-  :param project type
-  :return tree
-  """
+    An idea of this function is to go through elements from the bottom -> up and
+    add parameters
+    :param tree
+    :param project type
+    :return tree
+    """
     for node in PreOrderIter(tree):
-        node.project = project
+        node.project = project.value
         node.id = get_node_id(node.name, node.version)
         node.leaf = node.is_leaf
         node.data_version = __version__
@@ -260,7 +266,7 @@ def label_dep_tree(tree: AnyNode, project: ProjectType) -> AnyNode:
     return tree
 
 
-def filter_dep_tree(tree: AnyNode) -> AnyNode:
+def filter_dep_tree(tree: AnnotatedPackageNode) -> AnnotatedPackageNode:
     """Filter dependency tree.
 
     Leave only nodes with license problem of itself or children
@@ -282,18 +288,19 @@ def filter_dep_tree(tree: AnyNode) -> AnyNode:
 
 
 def get_dependency_tree_with_licenses(
-    dep_tree: AnyNode,
+    dep_tree: PackageNode,
     whitelist: List[str],
     ignored_packages: List[str],
     get_full_tree: bool,
     analyze: bool = False,
-) -> Tuple[AnyNode, Set[str], bool]:
+) -> Tuple[AnnotatedPackageNode, Set[str], bool]:
     """
     Constructs the annotated dependency tree that is later given to a reporter.
     :param dep_tree: Dependency tree without licesnes
     :param whitelist: Whitelist of licenses
     :param ignored_packages: Packages where bad licenses should be ignored
     :param get_full_tree: Determines whether we should display the whole tree or just the problematic parts.
+    :param analyze: Analyze flag
     :return:
     """
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
@@ -340,7 +347,7 @@ def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:
 
 def get_problematic_packages_from_analyzed_tree(
     node: AnyNode,
-) -> Set[Tuple[str, str or None]]:
+) -> Set[Tuple[str, Optional[str]]]:
     """
     Gets a set of problematic packages with the corresponding versions
     """
@@ -353,6 +360,6 @@ def get_problematic_packages_from_analyzed_tree(
     )
 
 
-def get_initiated_text(project_type: ProjectType, project_name: str, dir_path: str) -> str:
+def get_initiated_text(project_type: ProjectType, project_name: Optional[str], dir_path: str) -> str:
     return f"🔍 Initiated license.sh check for {project_type.value} project " + \
            f"{f'{project_name} ' if project_name else ''}located at {dir_path}"
