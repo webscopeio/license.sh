@@ -71,11 +71,10 @@ def get_pipenv_analyze_dict(directory: str) -> Dict:
             if not data_dict.get(dep_id):
                 data_dict[dep_id] = []
             with open(item.get("path"), "r") as license_file:
-                license_text = license_file.read()
                 license_result = item.get("result", {})
                 data_dict[dep_id].append(
                     {
-                        "data": license_text,
+                        "data": license_file.read(),
                         "name": license_result.get("license", {}).get("name"),
                         "file": license_name,
                     }

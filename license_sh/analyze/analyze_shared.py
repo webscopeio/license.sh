@@ -100,6 +100,9 @@ def get_node_analyze_dict(directory: str) -> Dict:
             if not data_dict.get(node_id):
                 data_dict[node_id] = []
 
+            if item.get("error", None):
+                continue
+
             with open(item.get("path"), "r") as license_file:
                 license_text = license_file.read()
                 license_result = item.get("result", {})
