@@ -43,7 +43,7 @@ def run_license_sh(arguments):
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
 
     supported_projects = [e.value for e in ProjectType]
-    project_list = [e.value for e in get_project_types(path)]
+    project_list = get_project_types(path)
 
     if len(project_list) == 0:
         print(
