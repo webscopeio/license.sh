@@ -1,4 +1,6 @@
 import sys
+from typing import List
+
 import questionary
 
 from license_sh.analyze import run_analyze
@@ -44,8 +46,9 @@ def run_license_sh(arguments):
 
     supported_projects = [e.value for e in ProjectType]
     project_list = get_project_types(path)
+    project_list_str: List[str] = [x.value for x in project_list]
 
-    if len(project_list) == 0:
+    if len(project_list_str) == 0:
         print(
             f"None of currently supported projects found. Supported {supported_projects}",
             file=sys.stderr,
@@ -62,17 +65,17 @@ def run_license_sh(arguments):
             )
             exit(2)
 
-        if project_type not in project_list:
+        if project_type not in project_list_str:
             print(
-                f"Specified project '{project_type}' not found in '{path}'. Found {project_list}",
+                f"Specified project '{project_type}' not found in '{path}'. Found {project_list_str}",
                 file=sys.stderr,
             )
             exit(2)
 
-    if not project_type and len(project_list) > 1:
+    if not project_type and len(project_list_str) > 1:
         print(
             "Curretly there is no support for multi project/language repositories." +
-            f" Found {project_list}. Only '{project_list[0]}' will be checked.",
+            f" Found {project_list}. Only '{project_list_str[0]}' will be checked.",
             file=sys.stderr,
         )
 
