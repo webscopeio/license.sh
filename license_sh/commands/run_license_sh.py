@@ -83,7 +83,7 @@ def run_license_sh(arguments):
 
     # TODO we should deprecate this
     label_dep_tree(dep_tree, project_to_check)
-    ignored_packages = ignored_packages_map.get(project_to_check, [])
+    ignored_packages = ignored_packages_map.get(project_to_check.value, [])
 
     if analyze:
         analyzed_tree = run_analyze(project_to_check, path, dep_tree)
