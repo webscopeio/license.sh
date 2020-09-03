@@ -8,7 +8,7 @@ from .types.configuration import ConfigurationType, LicenseWhitelist
 
 DEFAULT_CONFIG_NAME = ".license-sh.json"
 IGNORED_PACKAGES = "ignored_packages"
-OVERRIDEN_LICENSE = "overriden_packages"
+OVERRIDDEN_LICENSE = "overridden_packages"
 WHITELIST = "whitelist"
 
 
@@ -36,7 +36,7 @@ def get_config(path_to_config: str) -> ConfigurationType:
     return (
         raw_config.get(WHITELIST, []),
         raw_config.get(IGNORED_PACKAGES, {}),
-        raw_config.get(OVERRIDEN_LICENSE, {})
+        raw_config.get(OVERRIDDEN_LICENSE, {})
     )
 
 

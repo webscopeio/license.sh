@@ -20,9 +20,13 @@ Example:
   "whitelist": [
     "MIT"
   ],
-  "overriden_packages": {
+  "overridden_packages": {
     "python_pipenv": {
-      "hamcrest-core==1.3": ["Apache", ""]
+      "hamcrest-core==1.3": {
+        "license": "MIT",
+        "licenseText": "License text",
+        "reason": "This is reason for this override"
+      }
     }
   }
 
@@ -43,7 +47,7 @@ Example:
 You can ignore specific packages if it's license is unknown or you have some reason hat you don't what to see it as an error.
 
 Format:
-"{PACKAGE_NAME}=={PACKAGE_VESION}"  --- To ignore specific version of the package RECOMENDED 
+"{PACKAGE_NAME}=={PACKAGE_VERSION}"  --- To ignore specific version of the package RECOMMENDED 
 
 "{PACKAGE_NAME}" --- To ignore every version of this specific package
 
@@ -56,13 +60,16 @@ Format:
 ```
 Whitelist is a list of green licenses that shouldn't throw an error if found.
 
-* ### Ignore packages
+* ### Override packages
 ```
-  "overriden_packages": {
+   "overridden_packages": {
     "python_pipenv": {
-      "hamcrest-core==1.3": ["Apache", ""]
-    },
-    "npm": {},
+      "hamcrest-core==1.3": {
+        "license": "MIT",
+        "licenseText": "License text",
+        "reason": "This is reason for this override"
+      }
+    }
   }
 ```
 You can override specific package license and license text.
@@ -70,10 +77,16 @@ You can override specific package license and license text.
 Format:
 
  * Key
-"{PACKAGE_NAME}=={PACKAGE_VESION}"  --- To override specific package version RECOMENDED 
+"{PACKAGE_NAME}=={PACKAGE_VERSION}"  --- To override specific package version RECOMMENDED 
 
 "{PACKAGE_NAME}" --- To override every version of this package
 
  * Value
-[{LICENSE_NAME}, {LICENSE_TEXT}]
+ ```
+ {
+  "license": {OVERRIDE_LICENSE_NAME},
+  "licenseText": {OVERRIDE_LICENSE_TEXT},
+  "reason": {OVERRIDE_LICENSE_REASON}
+}
+ ```
 License text is only used if `--dependencies` flag is used
