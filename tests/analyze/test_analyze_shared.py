@@ -8,8 +8,7 @@ from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
     run_askalono,
     get_node_analyze_dict,
-    transform_html,
-    get_node_id
+    transform_html
 )
 
 ASKALONO_RESULT = [
@@ -49,8 +48,8 @@ class AnalyzeSharedTestCase(unittest.TestCase):
                 AnyNode(name="child2", version="1.0.1", children=[AnyNode(name="child2Child", version="9.9.9")]),
             ],
         )
-        root_id = get_node_id("root", "1.2.3")
-        childChild_Id = get_node_id("childChild", "1.0.0")
+        root_id = ("root", "1.2.3")
+        childChild_Id = ("childChild", "1.0.0")
         analyze = {
             root_id: [{"data": "Hey! I am a license text", "name": "Awesome license"}],
             childChild_Id: [
@@ -75,7 +74,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
 
     def test_add_analyze_to_dep_tree_license_file_negative(self):
         tree = AnyNode(name="root", version="1.0.0")
-        root_id = get_node_id("root", "1.0.0")
+        root_id = ("root", "1.0.0")
         analyze = {
             root_id: [
                 {
@@ -95,7 +94,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
 
     def test_add_analyze_to_dep_tree_license_file_positive(self):
         tree = AnyNode(name="root", version="1.0.0")
-        root_id = get_node_id("root", "1.0.0")
+        root_id = ("root", "1.0.0")
         analyze = {
             root_id: [
                 {
@@ -156,11 +155,11 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         mock_json_load.return_value = {"name": project_name, "version": project_version}
         result = get_node_analyze_dict("shouldnt/matter")
         self.assertEqual(
-            result.get(get_node_id(project_name, project_version))[0].get("name"),
+            result.get((project_name, project_version))[0].get("name"),
             "Apache-2.0",
         )
         self.assertEqual(
-            result.get(get_node_id(project_name, project_version))[0].get("file"),
+            result.get((project_name, project_version))[0].get("file"),
             "LICENSE",
         )
 
@@ -186,7 +185,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         mock_json_load.return_value = {"name": project_name, "version": project_version}
         result = get_node_analyze_dict("shouldnt/matter")
         self.assertEqual(
-            len(result.get(get_node_id(project_name, project_version))), 1,
+            len(result.get((project_name, project_version))), 1,
         )
 
     def test_transform_html_string(self):

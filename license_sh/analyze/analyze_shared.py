@@ -5,7 +5,7 @@ import subprocess
 from html.parser import HTMLParser
 from importlib import resources
 from sys import platform
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
 from anytree import AnyNode, PreOrderIter
 
@@ -82,7 +82,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
     Returns:
         [Dict]: Project id as a key and Dict with license text and analyzed license name
     """
-    data_dict: Dict[str, List[Dict[str, str]]] = {}
+    data_dict: Dict[Tuple[str, str], List[Dict[str, str]]] = {}
     license_data = run_askalono(directory)
     for item in license_data:
         *path_to_dependency, license_file = item.get("path").split("/")
@@ -91,7 +91,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
         if os.path.isfile(package_file_path):
             with open(package_file_path, "r") as package_file:
                 package_json = json.load(package_file)
-                node_id = get_node_id(
+                node_id = (
                     package_json.get("name", "project_name"),
                     package_json.get("version", "unknown"),
                 )
@@ -128,7 +128,7 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
         dep_tree (AnyNode): Dependency tree to update
     """
     for node in PreOrderIter(dep_tree):
-        node_analyze_list = analyze_dict.get(get_node_id(node.name, node.version))
+        node_analyze_list = analyze_dict.get((node.name, node.version))
         node.analyze = []
         if not node_analyze_list:
             continue
@@ -170,23 +170,3 @@ def transform_html(html_text: str, ignored_tags: List = IGNORED_HTML_TAGS) -> st
     html_filter = HTMLFilter()
     html_filter.feed(html_text)
     return html_filter.text
-
-
-def get_node_id(node_name: str, node_version: str, separator: str = ":-:") -> str:
-    """
-    Get node id from name and version
-    """
-    id_name = node_name.replace("/", ">")
-    id_version = node_version.replace("/", ">")
-    return f"{id_name}{separator}{id_version}"
-
-
-def decode_node_id(node_id: str, separator: str = ":-:") -> Union[Tuple[str, str], None]:
-    """
-    Get name and version from node id
-    """
-    node_id_split = node_id.split(separator)
-    if not len(node_id_split) != 2:
-        return None
-    node_name, node_version = node_id_split
-    return (node_name, node_version)
