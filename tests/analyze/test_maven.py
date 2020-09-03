@@ -14,7 +14,6 @@ from license_sh.analyze.maven import (
     analyze_maven,
     merge_licenses_analysis_with_jar_analysis,
 )
-from license_sh.helpers import get_node_id
 
 licenses_xml = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <licenseSummary>
@@ -83,11 +82,11 @@ class AnalyzeMavenTestCase(unittest.TestCase):
     def test_parse_licenses_xml(self):
         result = parse_licenses_xml(ET.fromstring(licenses_xml))
         self.assertEqual(
-            result.get(get_node_id("gson", "2.8.3")),
+            result.get(("gson", "2.8.3")),
             ["http://www.apache.org/licenses/LICENSE-2.0.txt"],
         )
         self.assertEqual(
-            result.get(get_node_id("javassist", "3.22.0-GA")),
+            result.get(("javassist", "3.22.0-GA")),
             [
                 "http://www.mozilla.org/MPL/MPL-1.1.html",
                 "http://www.gnu.org/licenses/lgpl-2.1.html",
@@ -109,8 +108,8 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         self.assertEqual(result.get("redux-4.4.4-GA")[0].get("name"), "Apache-2.0")
 
     def test_merge_licenses_analysis_with_jar_analysis(self):
-        package1 = get_node_id("package_name", "package_version")
-        package2 = get_node_id("package_name2", "package_version2")
+        package1 = ("package_name", "package_version")
+        package2 = ("package_name2", "package_version2")
         licenses_analysis = {
             package1: [{"data": "License text", "name": "MIT", "file": "LICENSE.md"}],
             package2: [{"data": None, "name": None, "file": None}],
@@ -150,12 +149,13 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         self, mock_get_maven_analyze_dict, mock_get_jar_analyze_data
     ):
         tree = AnyNode(
-            id=get_node_id("root", "1.0.0"),
+            name="root",
+            version="1.0.0",
             children=[
-                AnyNode(id=get_node_id("child", "0.0.2-GA")),
+                AnyNode(name="child", version="0.0.2-GA"),
                 AnyNode(
-                    id=get_node_id("child2", "0.0.5"),
-                    children=[AnyNode(id=get_node_id("childChild", "9.5.4"))],
+                    name="child2", version="0.0.5",
+                    children=[AnyNode(name="childChild", version="9.5.4")],
                 ),
             ],
         )
@@ -167,10 +167,10 @@ class AnalyzeMavenTestCase(unittest.TestCase):
             ],
         }
         mock_get_maven_analyze_dict.return_value = {
-            get_node_id("root", "1.0.0"): [{"data": "License text", "name": "MIT"}],
-            get_node_id("child", "0.0.2-GA"): [],
-            get_node_id("child2", "0.0.5"): [],
-            get_node_id("childChild", "9.5.4"): [
+            ("root", "1.0.0"): [{"data": "License text", "name": "MIT"}],
+            ("child", "0.0.2-GA"): [],
+            ("child2", "0.0.5"): [],
+            ("childChild", "9.5.4"): [
                 {"data": "License text", "name": "Apache-2.0"}
             ],
         }
@@ -189,6 +189,7 @@ class AnalyzeMavenTestCase(unittest.TestCase):
                 {"data": "MIT license", "name": "MIT"},
             ],
         )
+
         self.assertEqual(
             tree.children[1].children[0].analyze,
             [{"data": "License text", "name": "Apache-2.0"}],

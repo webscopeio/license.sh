@@ -4,7 +4,7 @@ import os
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from zipfile import ZipFile
 
 import aiohttp as aiohttp
@@ -15,7 +15,6 @@ from license_sh.analyze.analyze_shared import (
     add_analyze_to_dep_tree,
     transform_html,
 )
-from license_sh.helpers import get_node_id, decode_node_id
 
 
 def get_licenses_xml(directory: str):
@@ -53,10 +52,10 @@ def parse_licenses_xml(data_root) -> Dict:
     Returns:
         [Dict]: dependency id as key, licenses url list as value
     """
-    dep_data: Dict[str, List[str]] = {}
+    dep_data: Dict[Tuple[str, str], List[str]] = {}
 
     for dependency in data_root.find("dependencies"):
-        dep_id = get_node_id(
+        dep_id = (
             dependency.find("artifactId").text, dependency.find("version").text
         )
         licenses = dependency.find("licenses")
@@ -168,7 +167,7 @@ def merge_licenses_analysis_with_jar_analysis(
     for key, value in licenses_analysis.items():
         item = copy.deepcopy(value)
         result[key] = item
-        name, version = decode_node_id(key)
+        name, version = key
         jar_analyze_list = jar_analysis.get(f"{name}-{version}")
         if jar_analyze_list:
             item.extend(jar_analyze_list)

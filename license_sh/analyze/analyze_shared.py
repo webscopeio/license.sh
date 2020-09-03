@@ -5,12 +5,11 @@ import subprocess
 from html.parser import HTMLParser
 from importlib import resources
 from sys import platform
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from anytree import AnyNode, PreOrderIter
 
 from license_sh.analyze import lib
-from ..helpers import get_node_id
 
 IGNORED_HTML_TAGS = ["style", "script", "head"]
 GIT_IGNORE = ".gitignore"
@@ -83,7 +82,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
     Returns:
         [Dict]: Project id as a key and Dict with license text and analyzed license name
     """
-    data_dict: Dict[str, List[Dict[str, str]]] = {}
+    data_dict: Dict[Tuple[str, str], List[Dict[str, str]]] = {}
     license_data = run_askalono(directory)
     for item in license_data:
         *path_to_dependency, license_file = item.get("path").split("/")
@@ -92,7 +91,7 @@ def get_node_analyze_dict(directory: str) -> Dict:
         if os.path.isfile(package_file_path):
             with open(package_file_path, "r") as package_file:
                 package_json = json.load(package_file)
-                node_id = get_node_id(
+                node_id = (
                     package_json.get("name", "project_name"),
                     package_json.get("version", "unknown"),
                 )
@@ -129,7 +128,7 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
         dep_tree (AnyNode): Dependency tree to update
     """
     for node in PreOrderIter(dep_tree):
-        node_analyze_list = analyze_dict.get(node.id)
+        node_analyze_list = analyze_dict.get((node.name, node.version))
         node.analyze = []
         if not node_analyze_list:
             continue
