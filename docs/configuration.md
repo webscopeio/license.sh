@@ -19,7 +19,13 @@ Example:
   },
   "whitelist": [
     "MIT"
-  ]
+  ],
+  "overriden_packages": {
+    "python_pipenv": {
+      "hamcrest-core==1.3": ["Apache", ""]
+    }
+  }
+
 ```
 
 * ### Ignore packages
@@ -49,3 +55,25 @@ Format:
   ]
 ```
 Whitelist is a list of green licenses that shouldn't throw an error if found.
+
+* ### Ignore packages
+```
+  "overriden_packages": {
+    "python_pipenv": {
+      "hamcrest-core==1.3": ["Apache", ""]
+    },
+    "npm": {},
+  }
+```
+You can override specific package license and license text.
+
+Format:
+
+ * Key
+"{PACKAGE_NAME}=={PACKAGE_VESION}"  --- To override specific package version RECOMENDED 
+
+"{PACKAGE_NAME}" --- To override every version of this package
+
+ * Value
+[{LICENSE_NAME}, {LICENSE_TEXT}]
+License text is only used if `--dependencies` flag is used

@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from anytree import AnyNode
+from anytree import AnyNode, PreOrderIter
 from anytree.exporter import DictExporter
 
 from license_sh.helpers import (
@@ -12,6 +12,7 @@ from license_sh.helpers import (
     filter_dep_tree,
     parse_license,
     extract_npm_license,
+    override_packages,
     get_npm_license_from_licenses_array,
     is_problematic_node,
     get_problematic_packages_from_analyzed_tree,
@@ -643,6 +644,56 @@ class HelpersTestCase(unittest.TestCase):
             {("package6", "6.6.6"), },
         )
 
+    def test_override_packages_name(self):
+        tree = get_tree()
+        overriden_license = 'IAmLicense'
+        override_package_name = 'package5'
+        overriden_packages = {
+            override_package_name: [overriden_license, ""]
+        }
+        override_packages(tree, overriden_packages)
+        at_least_one_found = False
+        for node in PreOrderIter(tree):
+            if node.name == override_package_name:
+                at_least_one_found = True
+                self.assertEqual(node.license, overriden_license)
+                self.assertEqual(node.license_normalized, overriden_license)
+        self.assertEqual(at_least_one_found, True)
+
+
+    def test_override_packages_name_with_version(self):
+        tree = get_tree()
+        overriden_license = 'IAmLicense'
+        override_package_name = 'package4'
+        override_package_version = '4.4.4'
+        overriden_packages = {
+            f"{override_package_name}=={override_package_version}": [overriden_license, ""]
+        }
+        override_packages(tree, overriden_packages)
+        at_least_one_found = False
+        for node in PreOrderIter(tree):
+            if node.name == override_package_name and node.version == override_package_version:
+                at_least_one_found = True
+                self.assertEqual(node.license, overriden_license)
+                self.assertEqual(node.license_normalized, overriden_license)
+        self.assertEqual(at_least_one_found, True)
+
+    def test_override_packages_text(self):
+        tree = get_tree()
+        overriden_license = 'IAmLicense'
+        overriden_license_text = 'IAmLicenseText'
+        override_package_name = 'package4'
+        override_package_version = '4.4.4'
+        overriden_packages = {
+            f"{override_package_name}=={override_package_version}": [overriden_license, overriden_license_text]
+        }
+        override_packages(tree, overriden_packages, True)
+        at_least_one_found = False
+        for node in PreOrderIter(tree):
+            if node.name == override_package_name and node.version == override_package_version:
+                at_least_one_found = True
+                self.assertEqual(node.analyze, [{ "name": overriden_license, "data": overriden_license_text }])
+        self.assertEqual(at_least_one_found, True)
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,7 @@ from license_expression import Licensing, ExpressionError
 from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
 from license_sh.types.nodes import PackageNode, PackageInfo, AnnotatedPackageNode
+from license_sh.types.configuration import LanguageOverridenPackages
 from license_sh.version import __version__
 
 NODE_ID_SEP = ":-:"
@@ -291,6 +292,7 @@ def get_dependency_tree_with_licenses(
     dep_tree: PackageNode,
     whitelist: List[str],
     ignored_packages: List[str],
+    overriden_packages: LanguageOverridenPackages,
     get_full_tree: bool,
     analyze: bool = False,
 ) -> Tuple[AnnotatedPackageNode, Set[str], bool]:
@@ -303,6 +305,7 @@ def get_dependency_tree_with_licenses(
     :param analyze: Analyze flag
     :return:
     """
+    override_packages(dep_tree, overriden_packages, analyze)
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
         dep_tree,
         whitelist=whitelist,
@@ -314,6 +317,27 @@ def get_dependency_tree_with_licenses(
     dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
     return dependency_tree, unknown_licenses, has_issues
 
+def override_packages(
+    dep_tree: PackageNode,
+    overriden_packages: LanguageOverridenPackages,
+    analyze: bool = False,
+) -> PackageNode:   
+    for node in PreOrderIter(dep_tree):
+        new_license = None
+        new_license_text = None
+        node_name, node_version = getattr(node, 'name', None), getattr(node, 'version', None)
+        node_name_with_version = f"{node_name}=={node_version}"
+        if node_name in overriden_packages.keys():
+            new_license, new_license_text = overriden_packages.get(node_name)
+        if node_name_with_version in overriden_packages.keys():
+            new_license, new_license_text = overriden_packages.get(node_name_with_version)
+        
+        if new_license:
+            node.license_normalized = new_license
+            node.license = new_license
+            if analyze and new_license_text:
+                node.analyze = [{ "name": new_license, "data": new_license_text }]
+    
 
 def get_node_id(node_name: str, node_version: str) -> str:
     """
