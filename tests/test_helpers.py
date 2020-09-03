@@ -660,7 +660,6 @@ class HelpersTestCase(unittest.TestCase):
                 self.assertEqual(node.license_normalized, overriden_license)
         self.assertEqual(at_least_one_found, True)
 
-
     def test_override_packages_name_with_version(self):
         tree = get_tree()
         overriden_license = 'IAmLicense'
@@ -692,8 +691,9 @@ class HelpersTestCase(unittest.TestCase):
         for node in PreOrderIter(tree):
             if node.name == override_package_name and node.version == override_package_version:
                 at_least_one_found = True
-                self.assertEqual(node.analyze, [{ "name": overriden_license, "data": overriden_license_text }])
+                self.assertEqual(node.analyze, [{"name": overriden_license, "data": overriden_license_text}])
         self.assertEqual(at_least_one_found, True)
+
 
 if __name__ == "__main__":
     unittest.main()

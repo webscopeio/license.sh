@@ -317,27 +317,29 @@ def get_dependency_tree_with_licenses(
     dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
     return dependency_tree, unknown_licenses, has_issues
 
+
 def override_packages(
     dep_tree: PackageNode,
     overriden_packages: LanguageOverridenPackages,
     analyze: bool = False,
-) -> PackageNode:   
+) -> PackageNode:
     for node in PreOrderIter(dep_tree):
         new_license = None
         new_license_text = None
         node_name, node_version = getattr(node, 'name', None), getattr(node, 'version', None)
         node_name_with_version = f"{node_name}=={node_version}"
         if node_name in overriden_packages.keys():
-            new_license, new_license_text = overriden_packages.get(node_name)
+            new_license, new_license_text = overriden_packages.get(node_name, [None, None])
         if node_name_with_version in overriden_packages.keys():
-            new_license, new_license_text = overriden_packages.get(node_name_with_version)
-        
+            new_license, new_license_text = overriden_packages.get(node_name_with_version, [None, None])
+
         if new_license:
             node.license_normalized = new_license
             node.license = new_license
             if analyze and new_license_text:
-                node.analyze = [{ "name": new_license, "data": new_license_text }]
-    
+                node.analyze = [{"name": new_license, "data": new_license_text}]
+    return dep_tree
+
 
 def get_node_id(node_name: str, node_version: str) -> str:
     """
