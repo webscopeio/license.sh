@@ -39,7 +39,7 @@ def run_license_sh(arguments):
         exit(config_cmd(path, get_raw_config(path_to_config)))
 
     silent = output == "json" or debug
-    whitelist, ignored_packages_map, overriden_packages_map = get_config(path_to_config)
+    whitelist, ignored_packages_map, overridden_packages_map = get_config(path_to_config)
 
     # docopt guarantees that output variable contains either console or json
     Reporter = {"console": ConsoleReporter, "json": JSONConsoleReporter}[output]
@@ -84,7 +84,7 @@ def run_license_sh(arguments):
     # TODO we should deprecate this
     label_dep_tree(dep_tree, project_to_check)
     ignored_packages = ignored_packages_map.get(project_to_check.value, [])
-    overriden_packages = overriden_packages_map.get(project_to_check.value, {})
+    overridden_packages = overridden_packages_map.get(project_to_check.value, {})
 
     if analyze:
         analyzed_tree = run_analyze(project_to_check, path, dep_tree)
@@ -105,7 +105,7 @@ def run_license_sh(arguments):
     ) = get_dependency_tree_with_licenses(
         dep_tree,
         whitelist,
-        overriden_packages=overriden_packages,
+        overridden_packages=overridden_packages,
         ignored_packages=ignored_packages,
         get_full_tree=tree,
         analyze=analyze,
