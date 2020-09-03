@@ -5,13 +5,11 @@ import subprocess
 from html.parser import HTMLParser
 from importlib import resources
 from sys import platform
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 from anytree import AnyNode, PreOrderIter
 
 from license_sh.analyze import lib
-
-NODE_ID_SEP = ":-:"
 
 IGNORED_HTML_TAGS = ["style", "script", "head"]
 GIT_IGNORE = ".gitignore"
@@ -174,17 +172,21 @@ def transform_html(html_text: str, ignored_tags: List = IGNORED_HTML_TAGS) -> st
     return html_filter.text
 
 
-def get_node_id(node_name: str, node_version: str) -> str:
+def get_node_id(node_name: str, node_version: str, separator: str = ":-:") -> str:
     """
     Get node id from name and version
     """
     id_name = node_name.replace("/", ">")
     id_version = node_version.replace("/", ">")
-    return f"{id_name}{NODE_ID_SEP}{id_version}"
+    return f"{id_name}{separator}{id_version}"
 
 
-def decode_node_id(node_id: str) -> List:
+def decode_node_id(node_id: str, separator: str = ":-:") -> Union[Tuple[str, str], None]:
     """
     Get name and version from node id
     """
-    return node_id.split(NODE_ID_SEP)
+    node_id_split = node_id.split(separator)
+    if not len(node_id_split) != 2:
+        return None
+    node_name, node_version = node_id_split
+    return (node_name, node_version)

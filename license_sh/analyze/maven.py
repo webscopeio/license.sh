@@ -169,7 +169,10 @@ def merge_licenses_analysis_with_jar_analysis(
     for key, value in licenses_analysis.items():
         item = copy.deepcopy(value)
         result[key] = item
-        name, version = decode_node_id(key)
+        decoded_node_id = decode_node_id(key)
+        if not decoded_node_id:
+            continue
+        name, version = decoded_node_id
         jar_analyze_list = jar_analysis.get(f"{name}-{version}")
         if jar_analyze_list:
             item.extend(jar_analyze_list)
