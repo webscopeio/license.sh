@@ -9,8 +9,8 @@ from license_sh.analyze.analyze_shared import (
     run_askalono,
     get_node_analyze_dict,
     transform_html,
+    get_node_id
 )
-from license_sh.helpers import get_node_id
 
 ASKALONO_RESULT = [
     {
@@ -42,38 +42,42 @@ class Askalono_result:
 class AnalyzeSharedTestCase(unittest.TestCase):
     def test_add_analyze_to_dep_tree_simple(self):
         tree = AnyNode(
-            id="root",
+            name="root",
+            version="1.2.3",
             children=[
-                AnyNode(id="child", children=[AnyNode(id="childChild")]),
-                AnyNode(id="child2", children=[AnyNode(id="child2Child")]),
+                AnyNode(name="child", version="1.0.0", children=[AnyNode(name="childChild", version="1.0.0")]),
+                AnyNode(name="child2", version="1.0.1", children=[AnyNode(name="child2Child", version="9.9.9")]),
             ],
         )
+        root_id = get_node_id("root", "1.2.3")
+        childChild_Id = get_node_id("childChild", "1.0.0")
         analyze = {
-            "root": [{"data": "Hey! I am a license text", "name": "Awesome license"}],
-            "childChild": [
+            root_id: [{"data": "Hey! I am a license text", "name": "Awesome license"}],
+            childChild_Id: [
                 {"data": "Hmm, i am a license text too", "name": "Hmm license", }
             ],
         }
         updated_tree = add_analyze_to_dep_tree(analyze, tree)
         self.assertEqual(
-            updated_tree.analyze[0].get("data"), analyze.get("root")[0].get("data")
+            updated_tree.analyze[0].get("data"), analyze.get(root_id)[0].get("data")
         )
         self.assertEqual(
-            updated_tree.analyze[0].get("name"), analyze.get("root")[0].get("name")
+            updated_tree.analyze[0].get("name"), analyze.get(root_id)[0].get("name")
         )
         self.assertEqual(
             updated_tree.children[0].children[0].analyze[0].get("data"),
-            analyze.get("childChild")[0].get("data"),
+            analyze.get(childChild_Id)[0].get("data"),
         )
         self.assertEqual(
             updated_tree.children[0].children[0].analyze[0].get("name"),
-            analyze.get("childChild")[0].get("name"),
+            analyze.get(childChild_Id)[0].get("name"),
         )
 
     def test_add_analyze_to_dep_tree_license_file_negative(self):
-        tree = AnyNode(id="root")
+        tree = AnyNode(name="root", version="1.0.0")
+        root_id = get_node_id("root", "1.0.0")
         analyze = {
-            "root": [
+            root_id: [
                 {
                     "data": "Hey! I am a random text that might be license text",
                     "file": "README",
@@ -82,17 +86,18 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         }
         updated_tree = add_analyze_to_dep_tree(analyze, tree)
         try:
-            self.assertEqual(updated_tree.license_text, analyze.get("root").get("data"))
+            self.assertEqual(updated_tree.license_text, analyze.get(root_id).get("data"))
             self.assertEqual(
-                updated_tree.license_analyzed, analyze.get("root").get("name")
+                updated_tree.license_analyzed, analyze.get(root_id).get("name")
             )
         except Exception:
             pass
 
     def test_add_analyze_to_dep_tree_license_file_positive(self):
-        tree = AnyNode(id="root")
+        tree = AnyNode(name="root", version="1.0.0")
+        root_id = get_node_id("root", "1.0.0")
         analyze = {
-            "root": [
+            root_id: [
                 {
                     "data": "Hey! I am a random text that might be license text",
                     "file": "LICENSE",
@@ -101,7 +106,7 @@ class AnalyzeSharedTestCase(unittest.TestCase):
         }
         updated_tree = add_analyze_to_dep_tree(analyze, tree)
         self.assertEqual(
-            updated_tree.analyze[0].get("data"), analyze.get("root")[0].get("data")
+            updated_tree.analyze[0].get("data"), analyze.get(root_id)[0].get("data")
         )
 
     @mock.patch("license_sh.analyze.analyze_shared.subprocess")

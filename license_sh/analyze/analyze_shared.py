@@ -10,7 +10,8 @@ from typing import Dict, List
 from anytree import AnyNode, PreOrderIter
 
 from license_sh.analyze import lib
-from ..helpers import get_node_id
+
+NODE_ID_SEP = ":-:"
 
 IGNORED_HTML_TAGS = ["style", "script", "head"]
 GIT_IGNORE = ".gitignore"
@@ -129,7 +130,7 @@ def add_analyze_to_dep_tree(analyze_dict: Dict, dep_tree: AnyNode):
         dep_tree (AnyNode): Dependency tree to update
     """
     for node in PreOrderIter(dep_tree):
-        node_analyze_list = analyze_dict.get(node.id)
+        node_analyze_list = analyze_dict.get(get_node_id(node.name, node.version))
         node.analyze = []
         if not node_analyze_list:
             continue
@@ -171,3 +172,19 @@ def transform_html(html_text: str, ignored_tags: List = IGNORED_HTML_TAGS) -> st
     html_filter = HTMLFilter()
     html_filter.feed(html_text)
     return html_filter.text
+
+
+def get_node_id(node_name: str, node_version: str) -> str:
+    """
+    Get node id from name and version
+    """
+    id_name = node_name.replace("/", ">")
+    id_version = node_version.replace("/", ">")
+    return f"{id_name}{NODE_ID_SEP}{id_version}"
+
+
+def decode_node_id(node_id: str) -> List:
+    """
+    Get name and version from node id
+    """
+    return node_id.split(NODE_ID_SEP)

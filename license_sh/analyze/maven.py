@@ -14,8 +14,9 @@ from license_sh.analyze.analyze_shared import (
     run_askalono,
     add_analyze_to_dep_tree,
     transform_html,
+    get_node_id,
+    decode_node_id
 )
-from license_sh.helpers import get_node_id, decode_node_id
 
 
 def get_licenses_xml(directory: str):

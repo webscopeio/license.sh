@@ -14,7 +14,7 @@ from license_sh.analyze.maven import (
     analyze_maven,
     merge_licenses_analysis_with_jar_analysis,
 )
-from license_sh.helpers import get_node_id
+from license_sh.analyze.analyze_shared import get_node_id
 
 licenses_xml = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <licenseSummary>
@@ -150,12 +150,13 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         self, mock_get_maven_analyze_dict, mock_get_jar_analyze_data
     ):
         tree = AnyNode(
-            id=get_node_id("root", "1.0.0"),
+            name="root",
+            version="1.0.0",
             children=[
-                AnyNode(id=get_node_id("child", "0.0.2-GA")),
+                AnyNode(name="child", version="0.0.2-GA"),
                 AnyNode(
-                    id=get_node_id("child2", "0.0.5"),
-                    children=[AnyNode(id=get_node_id("childChild", "9.5.4"))],
+                    name="child2", version="0.0.5",
+                    children=[AnyNode(name="childChild", version="9.5.4")],
                 ),
             ],
         )
@@ -189,6 +190,7 @@ class AnalyzeMavenTestCase(unittest.TestCase):
                 {"data": "MIT license", "name": "MIT"},
             ],
         )
+
         self.assertEqual(
             tree.children[1].children[0].analyze,
             [{"data": "License text", "name": "Apache-2.0"}],
