@@ -1,6 +1,12 @@
-from typing import Tuple, List, Dict, TypedDict
+from typing import Tuple, List, Dict
+import sys
 
 from license_sh.project_identifier import ProjectType
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
 
 
 class PackageOverride(TypedDict):
