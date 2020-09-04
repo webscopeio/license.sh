@@ -3,13 +3,13 @@ from typing import List
 
 import questionary
 
+from license_sh.version import __version__
 from license_sh.analyze import run_analyze
 from . import config_cmd
 from ..config import get_config, get_raw_config, whitelist_licenses, ignore_packages
 from ..helpers import (
     get_dependency_tree_with_licenses,
     get_problematic_packages_from_analyzed_tree,
-    label_dep_tree
 )
 from ..project_identifier import ProjectType, get_project_types
 from ..reporters.ConsoleReporter import ConsoleReporter
@@ -81,8 +81,9 @@ def run_license_sh(arguments):
 
     dep_tree: PackageNode = run_check(project_to_check, path, silent, debug)
 
-    # TODO we should deprecate this
-    label_dep_tree(dep_tree, project_to_check)
+    dep_tree.data_version = __version__
+    dep_tree.project = project_to_check.value
+
     ignored_packages = ignored_packages_map.get(project_to_check.value, [])
     overridden_packages = overridden_packages_map.get(project_to_check.value, {})
 

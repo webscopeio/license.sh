@@ -9,7 +9,6 @@ from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
 from license_sh.types.nodes import PackageNode, PackageInfo, AnnotatedPackageNode
 from license_sh.types.configuration import LanguageOverrides, PackageOverride
-from license_sh.version import __version__
 
 NODE_ID_SEP = ":-:"
 
@@ -250,23 +249,6 @@ def annotate_dep_tree(
     return tree, licenses_not_found
 
 
-def label_dep_tree(tree: PackageNode, project: ProjectType) -> PackageNode:
-    """
-    An idea of this function is to go through elements from the bottom -> up and
-    add parameters
-    :param tree
-    :param project type
-    :return tree
-    """
-    for node in PreOrderIter(tree):
-        node.project = project.value
-        node.id = get_node_id(node.name, node.version)
-        node.leaf = node.is_leaf
-        node.data_version = __version__
-
-    return tree
-
-
 def filter_dep_tree(tree: AnnotatedPackageNode) -> AnnotatedPackageNode:
     """Filter dependency tree.
 
@@ -371,22 +353,6 @@ def override_dependency_node(
         node.analyze = [{"name": license, "data": license_text}]
 
     return node
-
-
-def get_node_id(node_name: str, node_version: str) -> str:
-    """
-    Get node id from name and version
-    """
-    id_name = node_name.replace("/", ">")
-    id_version = node_version.replace("/", ">")
-    return f"{id_name}{NODE_ID_SEP}{id_version}"
-
-
-def decode_node_id(node_id: str) -> List:
-    """
-    Get name and version from node id
-    """
-    return node_id.split(NODE_ID_SEP)
 
 
 def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:
