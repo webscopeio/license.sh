@@ -366,6 +366,7 @@ def override_dependency_node(
     node.license_normalized = license
     node.license = license
     node.license_override_reason = reason
+    node.license_overridden = True
     if analyze:
         node.analyze = [{"name": license, "data": license_text}]
 
