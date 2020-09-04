@@ -1,4 +1,4 @@
-from typing import Tuple, Set, List, Optional
+from typing import Tuple, Set, List, Optional, Union
 
 from anytree import PreOrderIter, LevelOrderIter, AnyNode
 from anytree.exporter import DictExporter
@@ -8,6 +8,7 @@ from license_expression import Licensing, ExpressionError
 from license_sh.normalizer import normalize
 from license_sh.project_identifier import ProjectType
 from license_sh.types.nodes import PackageNode, PackageInfo, AnnotatedPackageNode
+from license_sh.types.configuration import LanguageOverrides, PackageOverride
 
 NODE_ID_SEP = ":-:"
 
@@ -273,6 +274,7 @@ def get_dependency_tree_with_licenses(
     dep_tree: PackageNode,
     whitelist: List[str],
     ignored_packages: List[str],
+    overridden_packages: LanguageOverrides,
     get_full_tree: bool,
     analyze: bool = False,
 ) -> Tuple[AnnotatedPackageNode, Set[str], bool]:
@@ -285,6 +287,7 @@ def get_dependency_tree_with_licenses(
     :param analyze: Analyze flag
     :return:
     """
+    override_dependency_tree_nodes(dep_tree, overridden_packages, analyze)
     annotated_dep_tree, unknown_licenses = annotate_dep_tree(
         dep_tree,
         whitelist=whitelist,
@@ -295,6 +298,61 @@ def get_dependency_tree_with_licenses(
     has_issues = filtered_dependency_tree.height > 0
     dependency_tree = annotated_dep_tree if get_full_tree else filtered_dependency_tree
     return dependency_tree, unknown_licenses, has_issues
+
+
+def override_dependency_tree_nodes(
+    dep_tree: PackageNode,
+    overridden_packages: LanguageOverrides,
+    analyze: bool = False,
+) -> PackageNode:
+    """Override dependency tree node`s license and license texts
+
+    Args:
+        dep_tree (PackageNode): Dependency tree to override
+        overridden_packages (LanguageOverrides): Specified packages to override
+        analyze (bool, optional): [description]. Include license texts in the override
+
+    Returns:
+        PackageNode: Overridden dependency tree
+    """
+    for node in PreOrderIter(dep_tree):
+        node_name, node_version = getattr(node, 'name', None), getattr(node, 'version', None)
+        override_dependency_node(node, overridden_packages.get(node_name, None), analyze)
+        override_dependency_node(node, overridden_packages.get(f"{node_name}=={node_version}", None), analyze)
+
+    return dep_tree
+
+
+def override_dependency_node(
+    node: PackageNode,
+    override_dict: Union[PackageOverride, None],
+    analyze: bool = False
+) -> PackageNode:
+    """Override package node license data
+
+    Args:
+        node (PackageNode): Package to override
+        override_dict (Union[PackageOverride, None]): Override data or None, none will result in no override
+        analyze (bool, optional): Include override on license text. Defaults to False.
+
+    Returns:
+        PackageNode: Overridden package node
+    """
+    if not override_dict:
+        return node
+
+    license = override_dict.get('license', None)
+    license_text = override_dict.get('licenseText', None)
+    reason = override_dict.get('reason', None)
+
+    node.license_normalized = license
+    node.license = license
+    node.license_override_reason = reason
+    node.license_overridden = True
+    if analyze:
+        node.analyze = [{"name": license, "data": license_text}]
+
+    return node
 
 
 def is_problematic_node(node: AnyNode, check_subtree: bool = False) -> bool:

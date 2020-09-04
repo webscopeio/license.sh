@@ -12,6 +12,7 @@ docopt = "*"
 license-expression = "*"
 pipdeptree = "*"
 questionary = "*"
+typing-extensions = "==3.7.4"
 
 [dev-packages]
 mkdocs = "*"
