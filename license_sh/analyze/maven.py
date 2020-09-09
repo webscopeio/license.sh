@@ -168,8 +168,9 @@ def merge_licenses_analysis_with_jar_analysis(
     result = {}
     for key, value in licenses_analysis.items():
         item = copy.deepcopy(value)
-        result[key] = item
-        name, version = key
+        tuple_key = eval(key)
+        result[tuple_key] = item
+        (name, version) = tuple_key
         jar_analyze_list = jar_analysis.get(f"{name}-{version}")
         if jar_analyze_list:
             item.extend(jar_analyze_list)
