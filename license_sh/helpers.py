@@ -159,9 +159,11 @@ def is_license_ok(license_text, whitelist):
 
 
 def is_analyze_ok(node: AnyNode):
-    try:
-        node_analyze = node.analyze
-    except AttributeError:
+    if getattr(node, 'license_overridden', False):
+        return True
+
+    node_analyze = getattr(node, 'analyze', None)
+    if not node_analyze:
         return False
 
     node_analyze_names = {item.get("name") for item in node_analyze}
