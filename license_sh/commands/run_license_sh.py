@@ -133,7 +133,7 @@ def run_license_sh(arguments):
         ).ask()
         ignore_packages(path_to_config, project_to_check, new_ignored_packages)
 
-    if not has_issues:
+    if not has_issues and not silent:
         print("✅ Your project passed the compliance check 🎉🎉🎉")
 
     exit(1 if has_issues else 0)
