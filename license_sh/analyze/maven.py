@@ -61,9 +61,9 @@ def parse_licenses_xml(data_root) -> Dict:
         licenses = dependency.find("licenses")
         dep_data[dep_id] = []
         for license_data in licenses:
-            license_url = license_data.find("url").text
-            if license_url.startswith('http'):
-                dep_data[dep_id].append(license_url)
+            license_url_text = getattr(license_data.find("url"), "text", "")
+            if license_url_text.startswith('http'):
+                dep_data[dep_id].append(license_url_text)
     return dep_data
 
 
