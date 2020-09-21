@@ -274,6 +274,8 @@ def fetch_maven_licenses(dep_data: Dict, dir_path: str):
                     output, dep_id = await result
                 except aiohttp.client_exceptions.ClientConnectorCertificateError:
                     continue
+                except UnicodeDecodeError:
+                    continue
 
                 with open(os.path.join(dir_path, dep_id), "w") as file:
                     file.write(transform_html(output))
