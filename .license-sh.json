@@ -1,0 +1,39 @@
+{
+  "ignored_packages": {},
+  "whitelist": [
+    "Apache-1.0",
+    "Apache-1.1",
+    "Apache-2.0",
+    "MIT",
+    "MIT/X11",
+    "BSD-3-Clause",
+    "BSD-2-Clause",
+    "BSD-1-Clause",
+    "BSD",
+    "Unlicense",
+    "JSON",
+    "ISC",
+    "BSL-1.0",
+    "X11",
+    "NCSA",
+    "UPL-1.0",
+    "MPL-1.0",
+    "MPL-1.1",
+    "MPL-2.0",
+    "Zlib",
+    "CC0-1.0",
+    "CC-BY-3.0",
+    "CC-BY-4.0",
+    "AFL-2.1",
+    "WTFPL",
+    "Artistic-2.0",
+    "EPL-1.0",
+    "MPL 1.1",
+    "Public Domain",
+    "CPL-1.0"
+  ],
+  "projects": [
+    "./Pipfile.lock"
+  ],
+  "overridden_packages": {}
+}
