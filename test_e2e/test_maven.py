@@ -3,7 +3,7 @@ import unittest
 from license_sh.commands.run_license_sh import run_license_sh
 from anytree.importer import JsonImporter
 from unittest.mock import patch
-from tests import test_data
+from test_e2e import test_data
 from importlib import resources
 
 ARGUMENTS = {

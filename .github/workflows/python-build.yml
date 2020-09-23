@@ -38,3 +38,6 @@ jobs:
       run: |
         pip install mypy
         pipenv run check-types
+    - name: End-to-End tests
+      run: |
+        pipenv run test-e2e
