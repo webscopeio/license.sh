@@ -108,8 +108,8 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         self.assertEqual(result.get("redux-4.4.4-GA")[0].get("name"), "Apache-2.0")
 
     def test_merge_licenses_analysis_with_jar_analysis(self):
-        package1 = ("package_name", "package_version")
-        package2 = ("package_name2", "package_version2")
+        package1 = '("package_name", "package_version")'
+        package2 = '("package_name2", "package_version2")'
         licenses_analysis = {
             package1: [{"data": "License text", "name": "MIT", "file": "LICENSE.md"}],
             package2: [{"data": None, "name": None, "file": None}],
@@ -123,8 +123,8 @@ class AnalyzeMavenTestCase(unittest.TestCase):
         result = merge_licenses_analysis_with_jar_analysis(
             licenses_analysis, jar_analysis
         )
-        self.assertEqual(result.get(package1)[0].get("name"), "MIT")
-        self.assertEqual(result.get(package2)[1].get("name"), "MIT")
+        self.assertEqual(result.get(eval(package1))[0].get("name"), "MIT")
+        self.assertEqual(result.get(eval(package2))[1].get("name"), "MIT")
 
     @mock.patch("builtins.open", callable=mock_open(read_data="data"))
     @mock.patch("license_sh.analyze.maven.get_analyze_maven_data")
@@ -167,10 +167,10 @@ class AnalyzeMavenTestCase(unittest.TestCase):
             ],
         }
         mock_get_maven_analyze_dict.return_value = {
-            ("root", "1.0.0"): [{"data": "License text", "name": "MIT"}],
-            ("child", "0.0.2-GA"): [],
-            ("child2", "0.0.5"): [],
-            ("childChild", "9.5.4"): [
+            '("root", "1.0.0")': [{"data": "License text", "name": "MIT"}],
+            '("child", "0.0.2-GA")': [],
+            '("child2", "0.0.5")': [],
+            '("childChild", "9.5.4")': [
                 {"data": "License text", "name": "Apache-2.0"}
             ],
         }

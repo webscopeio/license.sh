@@ -61,7 +61,9 @@ def parse_licenses_xml(data_root) -> Dict:
         licenses = dependency.find("licenses")
         dep_data[dep_id] = []
         for license_data in licenses:
-            dep_data[dep_id].append(license_data.find("url").text)
+            license_url_text = getattr(license_data.find("url"), "text", "")
+            if license_url_text.startswith('http'):
+                dep_data[dep_id].append(license_url_text)
     return dep_data
 
 
@@ -166,8 +168,9 @@ def merge_licenses_analysis_with_jar_analysis(
     result = {}
     for key, value in licenses_analysis.items():
         item = copy.deepcopy(value)
-        result[key] = item
-        name, version = key
+        tuple_key = eval(key)
+        result[tuple_key] = item
+        (name, version) = tuple_key
         jar_analyze_list = jar_analysis.get(f"{name}-{version}")
         if jar_analyze_list:
             item.extend(jar_analyze_list)
@@ -183,7 +186,10 @@ def unzip_maven_dependencies(directory: str):
     for f in os.listdir(directory):
         if f.endswith(".jar"):
             with ZipFile(os.path.join(directory, f), "r") as zip_ref:
-                zip_ref.extractall(os.path.join(directory, f.split(".jar")[0]))
+                try:
+                    zip_ref.extractall(os.path.join(directory, f.split(".jar")[0]))
+                except FileExistsError:
+                    continue
 
 
 def get_maven_analyze_dict(directory: str) -> Dict:
@@ -264,7 +270,10 @@ def fetch_maven_licenses(dep_data: Dict, dir_path: str):
                     )
 
             for result in asyncio.as_completed(tasks):
-                output, dep_id = await result
+                try:
+                    output, dep_id = await result
+                except aiohttp.client_exceptions.ClientConnectorCertificateError:
+                    continue
 
                 with open(os.path.join(dir_path, dep_id), "w") as file:
                     file.write(transform_html(output))
