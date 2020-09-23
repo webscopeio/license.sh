@@ -60,7 +60,6 @@ def normalize(license: str) -> Tuple[str, bool]:
         "Apache 1.0": "Apache-1.0",
         "Apache 1": "Apache-1.0",
         "Apache Software License, Version 1.1": "Apache-1.1",
-
         # Apache 2
         "Apache-2": "Apache-2.0",
         "Apache2": "Apache-2.0",
@@ -74,67 +73,52 @@ def normalize(license: str) -> Tuple[str, bool]:
         "The Apache License, Version 2.0": "Apache-2.0",
         "APACHE LICENSE 2.0": "Apache-2.0",
         "ALv2": "Apache-2.0",
-
         # BSD
         "BSD License": "BSD",
-
         # BSD-2-Clause
         "Simplified BSD License": "BSD-2-Clause",
         "FreeBSD License": "BSD-2-Clause",
-
         # BSD-3-Clause
         "New BSD License": "BSD-3-Clause",
         "The New BSD License": "BSD-3-Clause",
         "Modified BSD License": "BSD-3-Clause",
         "The BSD 3-Clause License": "BSD-3-Clause",
-
         # GPL 2
         "GPL2": "GPL-2.0",
         "GPL-2": "GPL-2.0",
-
         # GPL 2 with exceptions
         "GNU General Public License (GPL), version 2, with the Classpath exception": "GPL-2.0 w/Classpath Exception",
         "GNU General Public License, version 2 (GPL2), with the classpath exception": "GPL-2.0 w/Classpath Exception",
-        
         # GPL 3
         "GPL 3": "GPL-3.0",
         "GPL3": "GPL-3.0",
         "GPL-3": "GPL-3.0",
-        
         # LGPL
         "GNU Lesser Public License": "LGPL",
         "GNU Lesser General Public License": "LGPL",
-        
         # LGPL 2
         "LGPL 2": "LGPL-2.0",
         "GNU Library General Public License, version 2": "LGPL-2.0",
-        
         # LGPL 2.1
         "LGPL 2.1": "LGPL-2.1",
         "GNU Lesser General Public License, version 2.1": "LGPL-2.1",
-        
         # LGPL 3
         "LGPL 3": "LGPL-3.0",
         "GNU Lesser General Public License, version 3": "LGPL-3.0",
-        
         # MPL-2.0
         "MPL 2.0": "MPL-2.0",
-        
         # CPL
         "Common Public License Version 1.0": "CPL-1.0",
-        
         # Python
         "Python": "Python-2.0",
         "Python-2": "Python-2.0",
         "PSF": "Python-2.0",
         "PSFL": "Python-2.0",
         "Python Software Foundation License": "Python-2.0",
-        
         # MIT
         "The MIT License": "MIT",
         "MIT license": "MIT",
         "M AND I AND T": "MIT",
-        
         # EPL
         "Eclipse Public License, Version 1.0": "EPL-1.0",
     }
