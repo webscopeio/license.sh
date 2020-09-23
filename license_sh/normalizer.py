@@ -65,8 +65,10 @@ def normalize(license: str) -> Tuple[str, bool]:
         "Apache2": "Apache-2.0",
         "Apache 2.0": "Apache-2.0",
         "Apache 2": "Apache-2.0",
+        "Apache 2.0 License": "Apache-2.0",
         "Apache License, Version 2.0": "Apache-2.0",
         "The Apache Software License, Version 2.0": "Apache-2.0",
+        "Apache Software License - Version 2.0": "Apache-2.0",
         "Apache License Version 2.0": "Apache-2.0",
         "Apache License Version 2": "Apache-2.0",
         "Apache Public License 2.0": "Apache-2.0",
@@ -83,10 +85,14 @@ def normalize(license: str) -> Tuple[str, bool]:
         "The New BSD License": "BSD-3-Clause",
         "Modified BSD License": "BSD-3-Clause",
         "The BSD 3-Clause License": "BSD-3-Clause",
+        "BSD Licence 3": "BSD-3-Clause",
+        "3-Clause BSD License": "BSD-3-Clause",
         # GPL 2
         "GPL2": "GPL-2.0",
         "GPL-2": "GPL-2.0",
         # GPL 2 with exceptions
+        "GPLv2+CE": "GPL-2.0 w/Classpath Exception",
+        "GPL2 w/ CPE": "GPL-2.0 w/Classpath Exception",
         "GNU General Public License (GPL), version 2, with the Classpath exception": "GPL-2.0 w/Classpath Exception",
         "GNU General Public License, version 2 (GPL2), with the classpath exception": "GPL-2.0 w/Classpath Exception",
         "GPLv2 WITH classpath exception": "GPL-2.0 w/Classpath Exception",
@@ -112,6 +118,7 @@ def normalize(license: str) -> Tuple[str, bool]:
         "MPL 2.0": "MPL-2.0",
         # CPL
         "Common Public License Version 1.0": "CPL-1.0",
+        "Common Public License, version 1.0 (CPL-1.0)": "CPL-1.0",
         # Python
         "Python": "Python-2.0",
         "Python-2": "Python-2.0",
@@ -124,12 +131,21 @@ def normalize(license: str) -> Tuple[str, bool]:
         "M AND I AND T": "MIT",
         # EPL-1.0
         "Eclipse Public License 1.0": "EPL-1.0",
+        "Eclipse Public License v1.0": "EPL-1.0",
+        "Eclipse Public License - v 1.0": "EPL-1.0",
+        "Eclipse Public License - Version 1.0": "EPL-1.0",
         "Eclipse Public License, Version 1.0": "EPL-1.0",
         "Eclipse Public License (EPL), Version 1.0": "EPL-1.0",
         # EPL-2.0
         "Eclipse Public License 2.0": "EPL-2.0",
+        "Eclipse Public License v2.0": "EPL-2.0",
+        "Eclipse Public License - v 2.0": "EPL-2.0",
+        "Eclipse Public License - Version 2.0": "EPL-2.0",
         "Eclipse Public License, Version 2.0": "EPL-2.0",
         "Eclipse Public License (EPL), Version 2.0": "EPL-2.0",
+        # CDDL
+        "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE": "CDDL",
+        "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)": "CDDL",
     }
 
     mapping = {k.upper(): v for k, v in mapping.items()}
