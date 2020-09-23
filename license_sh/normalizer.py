@@ -119,8 +119,14 @@ def normalize(license: str) -> Tuple[str, bool]:
         "The MIT License": "MIT",
         "MIT license": "MIT",
         "M AND I AND T": "MIT",
-        # EPL
+        # EPL-1.0
+        "Eclipse Public License 1.0": "EPL-1.0",
         "Eclipse Public License, Version 1.0": "EPL-1.0",
+        "Eclipse Public License (EPL), Version 1.0": "EPL-1.0",
+        # EPL-2.0
+        "Eclipse Public License 2.0": "EPL-2.0",
+        "Eclipse Public License, Version 2.0": "EPL-2.0",
+        "Eclipse Public License (EPL), Version 2.0": "EPL-2.0",
     }
 
     mapping = {k.upper(): v for k, v in mapping.items()}
