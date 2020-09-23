@@ -89,6 +89,7 @@ def normalize(license: str) -> Tuple[str, bool]:
         # GPL 2 with exceptions
         "GNU General Public License (GPL), version 2, with the Classpath exception": "GPL-2.0 w/Classpath Exception",
         "GNU General Public License, version 2 (GPL2), with the classpath exception": "GPL-2.0 w/Classpath Exception",
+        "GPLv2 WITH classpath exception": "GPL-2.0 w/Classpath Exception",
         # GPL 3
         "GPL 3": "GPL-3.0",
         "GPL3": "GPL-3.0",
@@ -98,9 +99,11 @@ def normalize(license: str) -> Tuple[str, bool]:
         "GNU Lesser General Public License": "LGPL",
         # LGPL 2
         "LGPL 2": "LGPL-2.0",
+        "LGPL, version 2": "LGPL-2.0",
         "GNU Library General Public License, version 2": "LGPL-2.0",
         # LGPL 2.1
         "LGPL 2.1": "LGPL-2.1",
+        "LGPL, version 2.1": "LGPL-2.1",
         "GNU Lesser General Public License, version 2.1": "LGPL-2.1",
         # LGPL 3
         "LGPL 3": "LGPL-3.0",
