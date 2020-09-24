@@ -256,7 +256,10 @@ def fetch_maven_licenses(dep_data: Dict, dir_path: str):
 
     async def fetch(session, url, dep_id):
         async with session.get(url) as resp:
-            return await resp.text(), dep_id
+            if resp.content_type.startswith('text'):
+                return await resp.text(), dep_id
+            else:
+                return None
             # Catch HTTP errors/exceptions here
 
     async def fetch_concurrent():
@@ -271,11 +274,12 @@ def fetch_maven_licenses(dep_data: Dict, dir_path: str):
 
             for result in asyncio.as_completed(tasks):
                 try:
-                    output, dep_id = await result
+                    response = await result
+                    if response:
+                        output, dep_id = response
+                        with open(os.path.join(dir_path, dep_id), "w") as file:
+                            file.write(transform_html(output))
                 except aiohttp.client_exceptions.ClientConnectorCertificateError:
                     continue
-
-                with open(os.path.join(dir_path, dep_id), "w") as file:
-                    file.write(transform_html(output))
 
     asyncio.run(fetch_concurrent())
