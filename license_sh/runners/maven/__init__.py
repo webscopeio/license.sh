@@ -17,18 +17,12 @@ from license_sh.runners import maven
 from license_sh.runners.abstract_runner import AbstractRunner
 from license_sh.runners.runners_shared import check_maven
 
-DEPENDENCY_JAR = path.join(
-    Path(__file__).parent,
-    "..",
-    "..",
-    "..",
-    "jar",
-    "maven-dependency-plugin-3.1.1-Licensesh.jar",
-)
+DEPENDENCY_JAR = "maven-dependency-plugin-3.1.3-Licensesh.jar"
 GROUP_ID = "org.apache.maven.plugins"
 ARTIFACT_ID = "maven-dependency-plugin"
-VERSION = "3.1.1-Licensesh"
+VERSION = "3.1.3-Licensesh"
 MULTI_LICENSE_JOIN = " AND "
+SKIP_TEST_SCOPE = True
 
 
 def get_dependency_tree_xml(directory: str, debug=False):
@@ -42,9 +36,9 @@ def get_dependency_tree_xml(directory: str, debug=False):
     """
 
     with resources.path(maven, "pom.xml") as maven_path:
-        subprocess.run(["mvn", "install", f"-f={maven_path}"], capture_output=not debug)
+        subprocess.run(["mvn", "install", f"-f={maven_path}", "-Drat.skip=true"], capture_output=not debug)
 
-    with resources.path(maven, "maven-dependency-plugin-3.1.1-Licensesh.jar") as maven_path:
+    with resources.path(maven, DEPENDENCY_JAR) as maven_path:
         subprocess.run(
             [
                 "mvn",
@@ -186,6 +180,8 @@ def parse_dependency_xml(xml, parent: AnyNode = None) -> AnyNode:
     if xml is None:
         return None
 
+    if xml.get('scope', '') == 'test' and SKIP_TEST_SCOPE:
+        return None
     root = AnyNode(name=xml.tag, version=xml.get("version"), parent=parent)
     for dependency in xml:
         parse_dependency_xml(dependency, root)
