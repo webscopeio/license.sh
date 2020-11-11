@@ -77,6 +77,10 @@ def normalize(license: str) -> Tuple[str, bool]:
         "ALv2": "Apache-2.0",
         # BSD
         "BSD License": "BSD",
+        "BSD-like": "BSD",
+        "BSD-style": "BSD",
+        "BSD like": "BSD",
+        "BSD style": "BSD",
         # BSD-2-Clause
         "Simplified BSD License": "BSD-2-Clause",
         "FreeBSD License": "BSD-2-Clause",
